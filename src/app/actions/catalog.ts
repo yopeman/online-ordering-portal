@@ -16,27 +16,74 @@ function str(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-/** Parses the dynamic `attachment_url_*` inputs rendered by the product form. */
-function parseAttachments(formData: FormData) {
-  const urls = formData.getAll("attachmentUrl").map((value) =>
-    typeof value === "string" ? value.trim() : "",
-  );
-  const alts = formData.getAll("attachmentAlt").map((value) =>
-    typeof value === "string" ? value.trim() : "",
-  );
-  const kinds = formData.getAll("attachmentKind").map((value) =>
-    typeof value === "string" ? value.trim() : "",
-  );
+function parseJson(value: string): unknown {
+  if (!value) return [];
+  try {
+    return JSON.parse(value);
+  } catch {
+    return [];
+  }
+}
 
-  return urls
-    .map((url, index) => ({ url, alt: alts[index] ?? "", kind: kinds[index] ?? "image" }))
-    .filter((item) => item.url.startsWith("http://") || item.url.startsWith("https://"))
-    .map((item, index) => ({
-      url: item.url,
-      alt: item.alt,
-      kind: item.kind === "file" || item.kind === "link" ? item.kind : "image",
+/** `[{ key, value }]` rows from the product Details table. */
+function parseDetails(value: string): Record<string, unknown> {
+  const rows = parseJson(value);
+  if (!Array.isArray(rows)) return {};
+
+  const details: Record<string, unknown> = {};
+  for (const row of rows) {
+    const raw = row as Record<string, unknown>;
+    const key = typeof raw.key === "string" ? raw.key.trim() : "";
+    const value = typeof raw.value === "string" ? raw.value.trim() : "";
+    if (key) details[key] = value;
+  }
+  return details;
+}
+
+export interface ProductFile {
+  url: string;
+  name: string;
+  type: "image" | "file";
+  order: number;
+}
+
+/** Files uploaded through the product drop zone. */
+function parseFiles(value: string): ProductFile[] {
+  const rows = parseJson(value);
+  if (!Array.isArray(rows)) return [];
+
+  return rows
+    .map((row) => row as Record<string, unknown>)
+    .filter((row) => typeof row.url === "string" && row.url.startsWith("/uploads/"))
+    .map((row, index) => ({
+      url: row.url as string,
+      name: typeof row.name === "string" ? row.name : "",
+      type: row.type === "file" ? ("file" as const) : ("image" as const),
       order: index,
-    }));
+    }))
+    .slice(0, 20);
+}
+
+async function syncAttachments(
+  productId: string,
+  files: ProductFile[],
+): Promise<string> {
+  await Attachment.deleteMany({ parentEntity: "catalog", parentId: productId });
+
+  if (files.length > 0) {
+    await Attachment.insertMany(
+      files.map((file) => ({
+        parentEntity: "catalog",
+        parentId: productId,
+        url: file.url,
+        alt: file.name,
+        kind: file.type,
+        order: file.order,
+      })),
+    );
+  }
+
+  return files.find((file) => file.type === "image")?.url ?? "";
 }
 
 async function ownedBusiness(businessId: string) {
@@ -58,10 +105,11 @@ export async function createProductAction(
 
   const name = str(formData.get("name"));
   const category = str(formData.get("category"));
-  const description = str(formData.get("description"));
+  const details = parseDetails(str(formData.get("details")));
   const price = Number(str(formData.get("price")) || 0);
   const currency = str(formData.get("currency")) || "ETB";
-  const image = str(formData.get("image"));
+  const files = parseFiles(str(formData.get("files")));
+  const isActive = str(formData.get("isActive")) !== "false";
 
   if (name.length < 2) return { ok: false, error: t("errors.validation") };
   if (!Number.isFinite(price) || price < 0) {
@@ -88,18 +136,15 @@ export async function createProductAction(
     category,
     price,
     currency,
-    image,
-    isActive: formData.get("isActive") !== "off",
-    details: { description },
+    isActive,
+    details,
   });
 
-  await Attachment.insertMany(
-    parseAttachments(formData).map((attachment) => ({
-      ...attachment,
-      parentEntity: "catalog",
-      parentId: product._id,
-    })),
-  );
+  const image = await syncAttachments(product._id.toString(), files);
+  if (image) {
+    product.image = image;
+    await product.save();
+  }
 
   await logActivity({
     businessId,
@@ -132,10 +177,11 @@ export async function updateProductAction(
 
   const name = str(formData.get("name"));
   const category = str(formData.get("category"));
-  const description = str(formData.get("description"));
+  const details = parseDetails(str(formData.get("details")));
   const price = Number(str(formData.get("price")) || 0);
   const currency = str(formData.get("currency")) || "ETB";
-  const image = str(formData.get("image"));
+  const files = parseFiles(str(formData.get("files")));
+  const isActive = str(formData.get("isActive")) !== "false";
 
   if (name.length < 2) return { ok: false, error: t("errors.validation") };
   if (!Number.isFinite(price) || price < 0) {
@@ -143,34 +189,23 @@ export async function updateProductAction(
   }
 
   const slug = await uniqueSlug(
-    str(formData.get("slug")) || name,
+    name,
     async (candidate) =>
       Boolean(await Catalog.exists({ slug: candidate, _id: { $ne: productId } })),
   );
-
-  const previousDetails = readCatalogDetails(product.details);
 
   product.name = name;
   product.slug = slug;
   product.category = category;
   product.price = price;
   product.currency = currency;
-  product.image = image;
-  product.isActive = formData.get("isActive") !== "off";
-  product.details = { ...previousDetails, description };
+  product.isActive = isActive;
+  product.details = { ...readCatalogDetails(product.details), ...details };
   await product.save();
 
-  await Attachment.deleteMany({ parentEntity: "catalog", parentId: product._id });
-  const attachments = parseAttachments(formData);
-  if (attachments.length > 0) {
-    await Attachment.insertMany(
-      attachments.map((attachment) => ({
-        ...attachment,
-        parentEntity: "catalog",
-        parentId: product._id,
-      })),
-    );
-  }
+  const image = await syncAttachments(productId, files);
+  product.image = image;
+  await product.save();
 
   await logActivity({
     businessId,
@@ -180,7 +215,6 @@ export async function updateProductAction(
   });
 
   revalidatePath(`/businesses/${businessId}/catalog`);
-  revalidatePath(`/businesses/${businessId}/catalog/${productId}`);
   revalidatePath(`/products/${slug}`);
   revalidatePath(`/store/${business.slug}`);
   revalidatePath("/marketplace");
@@ -195,7 +229,6 @@ export async function deleteProductAction(formData: FormData): Promise<void> {
 
   if (!business) return;
 
-  await connectDB();
   const product = await Catalog.findOne({ _id: productId, business: businessId });
   if (!product) return;
 

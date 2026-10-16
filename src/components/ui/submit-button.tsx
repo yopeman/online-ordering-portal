@@ -10,12 +10,20 @@ import { Spinner } from "./spinner";
 export function SubmitButton({
   children,
   pendingLabel,
+  busy,
   ...props
-}: ButtonProps & { pendingLabel?: ReactNode }) {
-  const { pending } = useFormStatus();
+}: ButtonProps & { pendingLabel?: ReactNode; busy?: boolean }) {
+  const { pending: formPending } = useFormStatus();
+  const pending = formPending || Boolean(busy);
 
   return (
-    <Button type="submit" {...props} loading={pending} aria-busy={pending}>
+    <Button
+      type="submit"
+      {...props}
+      loading={pending}
+      aria-busy={pending}
+      className={props.className}
+    >
       {pending && pendingLabel ? pendingLabel : children}
     </Button>
   );

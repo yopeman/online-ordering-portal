@@ -49,6 +49,13 @@ export async function placeOrderAction(
   const answers: Record<string, string> = {};
   const custom: Record<string, string> = {};
 
+  // Which of the business contact numbers should handle this order.
+  const requestedContact = str(formData.get("contactPhone"));
+  const contactPhone =
+    (business.contactPhones ?? []).includes(requestedContact)
+      ? requestedContact
+      : (business.contactPhones ?? [])[0] ?? "";
+
   for (const field of fields) {
     const value = str(formData.get(`field_${field.key}`));
     if (field.required && !value) {
@@ -67,6 +74,7 @@ export async function placeOrderAction(
   const details = {
     ...answers,
     custom,
+    contactPhone,
     quantity,
     unitPrice: price,
     currency: product.currency ?? "ETB",
@@ -85,7 +93,9 @@ export async function placeOrderAction(
     action: "order.received",
     detail:
       `New order for **${product.name}** ×${quantity} from **${answers.customerName || t("orders.unknownCustomer")}**` +
-      `${answers.phone ? ` (${answers.phone})` : ""} — ${t("common.total")} ${price * quantity} ${product.currency ?? "ETB"}.`,
+      `${answers.phone ? ` (${answers.phone})` : ""}` +
+      `${contactPhone ? ` — ${t("product.contactNumber")}: ${contactPhone}` : ""}` +
+      ` — ${t("common.total")} ${price * quantity} ${product.currency ?? "ETB"}.`,
   });
 
   revalidatePath(`/businesses/${product.business.toString()}/orders`);

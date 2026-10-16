@@ -5,27 +5,30 @@ import { Plus } from "lucide-react";
 
 import { createBusinessAction } from "@/app/actions/businesses";
 import {
-  BusinessFormFields,
-  BusinessFormAlerts,
-  type BusinessFormValues,
-} from "@/components/business/business-form-fields";
+  DetailRowsEditor,
+  FileDropZone,
+  FormSection,
+  SimpleRowsEditor,
+  type UploadRow,
+} from "@/components/business/form-blocks";
 import { Alert } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { useApp } from "@/components/providers/app-provider";
 import type { ActionState } from "@/app/actions/businesses";
+import type { OrderFormField } from "@/lib/models";
 
-const EMPTY_VALUES: BusinessFormValues = {
-  name: "",
-  details: [],
-  orderForms: [],
-  contacts: [],
-  files: [],
-  image: "",
-  isActive: true,
-};
+const ORDER_FORM_TYPES: OrderFormField["type"][] = [
+  "text",
+  "textarea",
+  "tel",
+  "email",
+  "select",
+];
 
+/** "Create business" button + modal with the five sections. */
 export function CreateBusinessButton({
   canCreate,
   reachedLimit,
@@ -41,6 +44,14 @@ export function CreateBusinessButton({
 }) {
   const { t } = useApp();
   const [open, setOpen] = useState(false);
+
+  const [details, setDetails] = useState([{ key: "", value: "" }]);
+  const [orderForms, setOrderForms] = useState<
+    { name: string; type: OrderFormField["type"] }[]
+  >([]);
+  const [contacts, setContacts] = useState([{ phone: "" }]);
+  const [files, setFiles] = useState<UploadRow[]>([]);
+
   const [state, formAction] = useActionState<ActionState, FormData>(
     createBusinessAction,
     { ok: false },
@@ -56,8 +67,21 @@ export function CreateBusinessButton({
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title={t("dashboard.createTitle")}
         size="lg"
+        title={t("dashboard.createTitle")}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              {t("common.cancel")}
+            </Button>
+            <SubmitButton
+              form="create-business-form"
+              pendingLabel={t("common.saving")}
+            >
+              {t("dashboard.createAction")}
+            </SubmitButton>
+          </>
+        }
       >
         {reachedLimit ? (
           <Alert tone="warning" className="mb-4">
@@ -65,24 +89,111 @@ export function CreateBusinessButton({
           </Alert>
         ) : null}
 
-        <div className="space-y-4">
-          <BusinessFormAlerts state={state} />
+        <form id="create-business-form" action={formAction} className="space-y-4">
+          <input type="hidden" name="details" value={JSON.stringify(details)} readOnly />
+          <input
+            type="hidden"
+            name="orderForms"
+            value={JSON.stringify(orderForms)}
+            readOnly
+          />
+          <input
+            type="hidden"
+            name="contacts"
+            value={JSON.stringify(contacts)}
+            readOnly
+          />
+          <input type="hidden" name="files" value={JSON.stringify(files)} readOnly />
 
-          <BusinessFormFields values={EMPTY_VALUES} submit={formAction}>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setOpen(false)}
-              >
-                {t("common.cancel")}
-              </Button>
-              <SubmitButton pendingLabel={t("common.saving")}>
-                {t("dashboard.createAction")}
-              </SubmitButton>
-            </div>
-          </BusinessFormFields>
-        </div>
+          {state.error ? (
+            <p
+              role="alert"
+              className="rounded-lg border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger"
+            >
+              {state.error}
+            </p>
+          ) : null}
+
+          <FormSection title={t("dashboard.businessName")}>
+            <Field label={t("dashboard.businessName")} htmlFor="new-business-name" required>
+              <Input
+                id="new-business-name"
+                name="name"
+                required
+                placeholder={t("dashboard.businessNamePlaceholder")}
+              />
+            </Field>
+          </FormSection>
+
+          <FormSection
+            title={t("dashboard.details")}
+            description={t("dashboard.detailsHint")}
+          >
+            <DetailRowsEditor rows={details} onChange={setDetails} />
+          </FormSection>
+
+          <FormSection
+            title={t("dashboard.orderForms")}
+            description={t("settings.orderFormHint")}
+          >
+            <SimpleRowsEditor
+              rows={orderForms}
+              onChange={setOrderForms}
+              create={() => ({ name: "", type: "text" as const })}
+              renderRow={(row, update) => (
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    placeholder={t("settings.fieldLabel")}
+                    value={row.name}
+                    onChange={(event) => update({ ...row, name: event.target.value })}
+                  />
+                  <select
+                    value={row.type}
+                    onChange={(event) =>
+                      update({
+                        ...row,
+                        type: event.target
+                          .value as typeof row.type,
+                      })
+                    }
+                    className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground"
+                  >
+                    {ORDER_FORM_TYPES.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            />
+          </FormSection>
+
+          <FormSection
+            title={t("dashboard.contactPersons")}
+            description={t("dashboard.contactPhonesHint")}
+          >
+            <SimpleRowsEditor
+              rows={contacts}
+              onChange={setContacts}
+              create={() => ({ phone: "" as string })}
+              renderRow={(row, update) => (
+                <Input
+                  placeholder={t("dashboard.phonePlaceholder")}
+                  value={row.phone}
+                  onChange={(event) => update({ phone: event.target.value })}
+                />
+              )}
+            />
+          </FormSection>
+
+          <FormSection
+            title={t("dashboard.uploadFiles")}
+            description={t("dashboard.uploadHint")}
+          >
+            <FileDropZone files={files} onChange={setFiles} />
+          </FormSection>
+        </form>
       </Modal>
     </>
   );

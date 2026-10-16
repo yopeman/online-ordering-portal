@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { CheckCircle2, ShoppingCart } from "lucide-react";
+import { CheckCircle2, Phone, ShoppingCart } from "lucide-react";
 
 import { placeOrderAction } from "@/app/actions/orders";
 import { Alert } from "@/components/ui/badge";
@@ -23,19 +23,21 @@ export interface OrderFormFieldDTO {
 export function OrderForm({
   slug,
   fields,
+  contactPhones,
   price,
   currency,
 }: {
   slug: string;
   fields: OrderFormFieldDTO[];
+  /** `contactPhones` of the business (schema: Businesses.contact phones). */
+  contactPhones: string[];
   price: number;
   currency: string;
 }) {
   const { t, locale } = useApp();
   const [quantity, setQuantity] = useState(1);
-  const [state, formAction] = useActionState(placeOrderAction, {
-    ok: false,
-  });
+  const [state, formAction] = useActionState(placeOrderAction, { ok: false });
+
   // Reset the quantity once per successful submission. Adjusting state during
   // render (instead of in an effect) avoids an extra cascading render.
   const [lastResultOk, setLastResultOk] = useState(false);
@@ -75,11 +77,49 @@ export function OrderForm({
         />
       </Field>
 
+      {/* ----------------------------- Your details ---------------------------- */}
       <div className="space-y-4 border-t border-border pt-4">
         <h3 className="text-sm font-semibold text-foreground">
           {t("product.yourDetails")}
         </h3>
 
+        {/* Contact numbers of the business (Business.contactPhones). */}
+        {contactPhones.length > 0 ? (
+          <div className="space-y-2">
+            <Field
+              label={t("product.contactNumber")}
+              htmlFor="contactPhone"
+              hint={t("product.contactHint")}
+            >
+              <Select
+                id="contactPhone"
+                name="contactPhone"
+                defaultValue={contactPhones[0]}
+              >
+                {contactPhones.map((phone) => (
+                  <option key={phone} value={phone}>
+                    {phone}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+
+            <div className="flex flex-wrap gap-2">
+              {contactPhones.map((phone) => (
+                <a
+                  key={phone}
+                  href={`tel:${phone}`}
+                  className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <Phone className="h-3.5 w-3.5" />
+                  {t("product.callBusiness")}: {phone}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Order form template configured by the business. */}
         {fields.map((field) => (
           <Field
             key={field.key}

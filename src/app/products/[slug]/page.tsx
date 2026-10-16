@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { connectDB } from "@/lib/db";
 import {
+  Business,
   DEFAULT_ORDER_FORM_FIELDS,
   readCatalogDetails,
   readOrderFormTemplates,
@@ -43,14 +44,16 @@ export default async function ProductPage({
   if (!product) notFound();
 
   await connectDB();
-  const raw = await Catalog.findOne({ slug }).lean();
+  const [raw, business] = await Promise.all([
+    Catalog.findOne({ slug }).lean(),
+    Business.findById(product.businessId).lean(),
+  ]);
   const details = readCatalogDetails(raw?.details);
 
-  const businessDoc = raw?.business;
-  const templates =
-    businessDoc && typeof businessDoc === "object" && "orderFormTemplates" in businessDoc
-      ? readOrderFormTemplates((businessDoc as { orderFormTemplates: unknown }).orderFormTemplates)
-      : [];
+  // Business.order form templates + contact phones drive the "Your details"
+  // section of the order form (see schema.md).
+  const contactPhones = business?.contactPhones ?? [];
+  const templates = readOrderFormTemplates(business?.orderFormTemplates);
 
   const fields: OrderFormFieldDTO[] = (
     templates.length > 0 ? templates : DEFAULT_ORDER_FORM_FIELDS
@@ -194,6 +197,7 @@ export default async function ProductPage({
             <OrderForm
               slug={product.slug}
               fields={fields}
+              contactPhones={contactPhones}
               price={product.price}
               currency={product.currency}
             />
