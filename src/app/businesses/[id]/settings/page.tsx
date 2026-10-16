@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth/guards";
 import { readDetails, readOrderFormTemplates } from "@/lib/models";
 import { getTranslator } from "@/lib/i18n-server";
-import { getBusinessForOwner } from "@/lib/queries";
+import { getBusinessForOwner, listAttachments } from "@/lib/queries";
 
 export const metadata = { title: "Settings" };
 
@@ -23,6 +23,8 @@ export default async function SettingsTabPage({
   if (!business) notFound();
 
   const details = readDetails(business.details);
+  const templates = readOrderFormTemplates(business.orderFormTemplates);
+  const attachments = await listAttachments("business", id);
 
   return (
     <div className="space-y-6">
@@ -35,14 +37,29 @@ export default async function SettingsTabPage({
         businessId={id}
         values={{
           name: business.name,
-          description: String(details.description ?? ""),
-          category: String(details.category ?? ""),
-          location: String(details.location ?? ""),
+          details: Object.entries(details)
+            .filter(([, value]) => value !== undefined && value !== null && value !== "")
+            .map(([key, value]) => ({
+              key,
+              value:
+                typeof value === "object"
+                  ? JSON.stringify(value)
+                  : String(value),
+            })),
+          orderForms: templates.map((field) => ({
+            name: field.label,
+            type: field.type,
+          })),
+          contacts: (business.contactPhones ?? []).map((phone) => ({ phone })),
+          files: attachments.map((attachment) => ({
+            url: attachment.url,
+            name: attachment.alt || attachment.url.split("/").pop() || "",
+            size: 0,
+            type: attachment.kind === "file" ? "file" : "image",
+          })),
           image: business.image ?? "",
           isActive: business.isActive ?? true,
-          contactPhones: business.contactPhones ?? [],
         }}
-        orderFormTemplates={readOrderFormTemplates(business.orderFormTemplates)}
       />
 
       <DeleteBusinessCard businessId={id} businessName={business.name} />

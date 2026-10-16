@@ -186,6 +186,17 @@ export const en = {
     contactPhones: "Contact phone numbers",
     contactPhonesHint: "One number per line.",
     createAction: "Create business",
+    details: "Details",
+    detailsHint: "Any extra information about the business.",
+    detailKey: "key",
+    detailValue: "value",
+    orderForms: "Order Forms",
+    contactPersons: "Contact Persons",
+    phonePlaceholder: "+251 91 000 0000",
+    uploadFiles: "Upload Files",
+    uploadHint: "Images or PDF files (max 4 MB each).",
+    dropFiles: "Drag and drop files here",
+    pasteFiles: "or copy paste / Ctrl+V",
     limitReached:
       "You have reached the maximum number of businesses allowed ({max}) for your account.",
     catalogLimit:

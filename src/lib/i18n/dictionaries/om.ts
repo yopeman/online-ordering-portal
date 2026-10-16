@@ -189,6 +189,17 @@ export const om: Dictionary = {
     contactPhones: "Lakkooyii bilisaa",
     contactPhonesHint: "Karraa tokkoon tokkoo dhaabu.",
     createAction: "Daldalaa uumamaa",
+    details: "Faayyaa",
+    detailsHint: "Ragaa dabalataa daldalaa kanaa.",
+    detailKey: "maqaa",
+    detailValue: "hojii",
+    orderForms: "Ajaja formii",
+    contactPersons: "Namroota",
+    phonePlaceholder: "+251 91 000 0000",
+    uploadFiles: "Fayilii dabalchi",
+    uploadHint: "Suuraa yookaan PDF (4 MB giddutti).",
+    dropFiles: "Fayilii heree",
+    pasteFiles: "yookaan garagalchi / Ctrl+V",
     limitReached:
       "Akeekkachiisaakee daldalaa kamaa qaba yoo qabu ta'e ({max}) ga'e dhaafe.",
     catalogLimit:

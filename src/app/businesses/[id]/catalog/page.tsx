@@ -123,13 +123,6 @@ export default async function CatalogTabPage({
                     </Link>
                     <a
                       href={`#edit-${product.id}`}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        window.location.hash = `edit-${product.id}`;
-                        document
-                          .querySelector(`[data-product-edit="${product.id}"]`)
-                          ?.scrollIntoView({ behavior: "smooth", block: "center" });
-                      }}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-surface-muted hover:text-foreground"
                       aria-label={t("common.edit")}
                     >

@@ -46,28 +46,38 @@ export function toUserDTO(doc: {
   email: string;
   provider: string;
   providerId: string;
-  status: UserStatus;
-  role: UserRole;
-  maxBusinesses: number;
-  maxCatalogs: number;
-  image: string;
+  status?: UserStatus | null;
+  role?: UserRole | null;
+  maxBusinesses?: number | null;
+  maxCatalogs?: number | null;
+  image?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }) {
+  // Older documents may predate these fields, so every value is normalised.
+  const maxBusinesses = clampLimit(doc.maxBusinesses, 3);
+  const maxCatalogs = clampLimit(doc.maxCatalogs, 50);
+
   return {
     id: doc._id.toString(),
-    name: doc.name,
+    name: doc.name ?? doc.email ?? "Unknown user",
     email: doc.email,
-    provider: doc.provider,
-    providerId: doc.providerId,
-    status: doc.status,
-    role: doc.role,
-    maxBusinesses: doc.maxBusinesses,
-    maxCatalogs: doc.maxCatalogs,
-    image: doc.image,
+    provider: doc.provider ?? "unknown",
+    providerId: doc.providerId ?? "",
+    status: doc.status ?? "active",
+    role: doc.role ?? "business_owner",
+    maxBusinesses,
+    maxCatalogs,
+    image: doc.image ?? "",
     createdAt: doc.createdAt ?? null,
     updatedAt: doc.updatedAt ?? null,
   };
+}
+
+function clampLimit(value: number | null | undefined, fallback: number): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(MAX_LIMIT, Math.max(1, Math.round(parsed)));
 }
 
 export type UserDTO = ReturnType<typeof toUserDTO>;

@@ -6,10 +6,10 @@ import { redirect } from "next/navigation";
 import { logActivity } from "@/lib/activity";
 import { requireUser } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
-import { Activity, Attachment, Business, Catalog, Order, readDetails } from "@/lib/models";
-import type { OrderFormField } from "@/lib/models";
-import { uniqueSlug } from "@/lib/slug";
+import { Activity, Attachment, Business, Catalog, Order } from "@/lib/models";
+import type { BusinessDetails, OrderFormField } from "@/lib/models";
 import { countBusinesses } from "@/lib/queries";
+import { uniqueSlug } from "@/lib/slug";
 import { getTranslator } from "@/lib/i18n-server";
 
 export interface ActionState {
@@ -22,53 +22,136 @@ function str(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function parsePhones(value: string): string[] {
-  return value
-    .split(/[\n,]/)
+function parseJson(value: string): unknown {
+  if (!value) return [];
+  try {
+    return JSON.parse(value);
+  } catch {
+    return [];
+  }
+}
+
+/** `[{ key, value }]` rows from the Details table. */
+function parseDetails(value: string): BusinessDetails {
+  const rows = parseJson(value);
+  if (!Array.isArray(rows)) return {};
+
+  const details: BusinessDetails = {};
+  for (const row of rows) {
+    const raw = row as Record<string, unknown>;
+    const key = typeof raw.key === "string" ? raw.key.trim() : "";
+    const value = typeof raw.value === "string" ? raw.value.trim() : "";
+    if (key) details[key] = value;
+  }
+  return details;
+}
+
+/** `[{ phone }]` rows from the Contact Persons table. */
+function parseContacts(value: string): string[] {
+  const rows = parseJson(value);
+  if (!Array.isArray(rows)) return [];
+
+  return rows
+    .map((row) =>
+      typeof row === "string"
+        ? row
+        : String((row as Record<string, unknown>)?.phone ?? ""),
+    )
     .map((phone) => phone.trim())
     .filter(Boolean)
     .slice(0, 10);
 }
 
+export interface UploadedRow {
+  url: string;
+  name?: string;
+  size?: number;
+  type?: string;
+  order?: number;
+}
+
+export interface BusinessFile {
+  url: string;
+  name: string;
+  type: "image" | "file";
+  order: number;
+}
+
+/** Files uploaded through the drop zone. */
+function parseFiles(value: string): BusinessFile[] {
+  const rows = parseJson(value);
+  if (!Array.isArray(rows)) return [];
+
+  return rows
+    .map((row) => row as UploadedRow)
+    .filter((row) => typeof row.url === "string" && row.url.startsWith("/uploads/"))
+    .map((row, index) => ({
+      url: row.url,
+      name: row.name ?? row.url.split("/").pop() ?? "",
+      type: row.type === "file" ? ("file" as const) : ("image" as const),
+      order: index,
+    }))
+    .slice(0, 20);
+}
+
 const ORDER_FIELD_TYPES = ["text", "textarea", "tel", "email", "select"] as const;
 
-/** Validates the order form template JSON produced by the settings form. */
+/** `[{ name, type }]` rows from the Order Forms table. */
 function parseOrderFormTemplates(value: string): OrderFormField[] {
-  if (!value) return [];
+  const rows = parseJson(value);
+  if (!Array.isArray(rows)) return [];
 
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(value);
-  } catch {
-    return [];
-  }
+  const usedKeys = new Set<string>();
 
-  if (!Array.isArray(parsed)) return [];
-
-  return parsed
-    .map((field, index) => {
-      const raw = field as Record<string, unknown>;
-      const label = typeof raw.label === "string" ? raw.label.trim() : "";
-      const key =
-        typeof raw.key === "string" && raw.key.trim()
-          ? raw.key.trim().replace(/[^a-zA-Z0-9_]/g, "_")
-          : `field_${index + 1}`;
-      const type = ORDER_FIELD_TYPES.includes(raw.type as (typeof ORDER_FIELD_TYPES)[number])
+  return rows
+    .map((row, index) => {
+      const raw = row as Record<string, unknown>;
+      const label = typeof raw.name === "string" ? raw.name.trim() : "";
+      const type = ORDER_FIELD_TYPES.includes(
+        raw.type as (typeof ORDER_FIELD_TYPES)[number],
+      )
         ? (raw.type as OrderFormField["type"])
         : "text";
 
-      return {
-        key,
-        label: label || key,
-        type,
-        required: Boolean(raw.required),
-        options: Array.isArray(raw.options)
-          ? raw.options.filter((option): option is string => typeof option === "string")
-          : [],
-      };
+      const baseKey =
+        label
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "")
+          .slice(0, 24) || `field_${index + 1}`;
+
+      let key = baseKey;
+      let suffix = 2;
+      while (usedKeys.has(key)) key = `${baseKey}_${suffix++}`;
+      usedKeys.add(key);
+
+      return { key, label, type, required: index < 2 } satisfies OrderFormField;
     })
     .filter((field) => field.label.length > 0)
     .slice(0, 20);
+}
+
+/** Replaces the business attachments with the ones currently in the form. */
+async function syncAttachments(
+  businessId: string,
+  files: UploadedRow[],
+): Promise<string> {
+  await Attachment.deleteMany({ parentEntity: "business", parentId: businessId });
+
+  if (files.length === 0) return "";
+
+  await Attachment.insertMany(
+    files.map((file) => ({
+      parentEntity: "business",
+      parentId: businessId,
+      url: file.url,
+      alt: file.name,
+      kind: file.type === "file" ? "file" : "image",
+      order: file.order,
+    })),
+  );
+
+  return files[0]?.url ?? "";
 }
 
 export async function createBusinessAction(
@@ -79,15 +162,12 @@ export async function createBusinessAction(
   const t = await getTranslator();
 
   const name = str(formData.get("name"));
-  const description = str(formData.get("description"));
-  const category = str(formData.get("category"));
-  const location = str(formData.get("location"));
-  const image = str(formData.get("image"));
-  const contactPhones = parsePhones(str(formData.get("contactPhones")));
+  const details = parseDetails(str(formData.get("details")));
+  const orderFormTemplates = parseOrderFormTemplates(str(formData.get("orderForms")));
+  const contactPhones = parseContacts(str(formData.get("contacts")));
+  const files = parseFiles(str(formData.get("files")));
 
-  if (name.length < 2) {
-    return { ok: false, error: t("errors.validation") };
-  }
+  if (name.length < 2) return { ok: false, error: t("errors.validation") };
 
   await connectDB();
 
@@ -108,11 +188,17 @@ export async function createBusinessAction(
     name,
     slug,
     owner: user.id,
-    image,
     contactPhones,
-    details: { description, category, location },
-    orderFormTemplates: [],
+    details,
+    orderFormTemplates,
+    isActive: true,
   });
+
+  const image = await syncAttachments(business._id.toString(), files);
+  if (image) {
+    business.image = image;
+    await business.save();
+  }
 
   await logActivity({
     businessId: business._id.toString(),
@@ -136,15 +222,11 @@ export async function updateBusinessAction(
 
   const businessId = str(formData.get("businessId"));
   const name = str(formData.get("name"));
-  const description = str(formData.get("description"));
-  const category = str(formData.get("category"));
-  const location = str(formData.get("location"));
-  const image = str(formData.get("image"));
-  const isActive = formData.get("isActive") === "on";
-  const contactPhones = parsePhones(str(formData.get("contactPhones")));
-  const orderFormTemplates = parseOrderFormTemplates(
-    str(formData.get("orderFormTemplates")),
-  );
+  const details = parseDetails(str(formData.get("details")));
+  const orderFormTemplates = parseOrderFormTemplates(str(formData.get("orderForms")));
+  const contactPhones = parseContacts(str(formData.get("contacts")));
+  const files = parseFiles(str(formData.get("files")));
+  const isActive = formData.get("isActive") !== "off";
 
   if (name.length < 2) return { ok: false, error: t("errors.validation") };
 
@@ -153,7 +235,6 @@ export async function updateBusinessAction(
   const business = await Business.findOne({ _id: businessId, owner: user.id });
   if (!business) return { ok: false, error: t("errors.notFound") };
 
-  const previousDetails = readDetails(business.details);
   const slug = await uniqueSlug(
     name,
     async (candidate) =>
@@ -162,15 +243,18 @@ export async function updateBusinessAction(
 
   business.name = name;
   business.slug = slug;
-  business.image = image;
   business.contactPhones = contactPhones;
-  business.isActive = isActive;
-  business.details = { ...previousDetails, description, category, location };
+  business.details = details;
   business.orderFormTemplates = orderFormTemplates;
+  business.isActive = isActive;
+  await business.save();
+
+  const image = await syncAttachments(businessId, files);
+  business.image = image;
   await business.save();
 
   await logActivity({
-    businessId: businessId,
+    businessId,
     action: "business.updated",
     detail: `**${user.name}** updated the business details.`,
     actorId: user.id,
@@ -216,11 +300,4 @@ export async function deleteBusinessAction(formData: FormData): Promise<void> {
   revalidatePath("/businesses");
   revalidatePath("/marketplace");
   redirect("/businesses");
-}
-
-export async function loadOwnedBusiness(businessId: string) {
-  const user = await requireUser();
-  await connectDB();
-  const business = await Business.findOne({ _id: businessId, owner: user.id }).lean();
-  return { user, business: business as Awaited<ReturnType<typeof Business.findOne>> };
 }

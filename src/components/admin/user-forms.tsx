@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
+import { useActionState, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import { createUserAction, deleteUserAction, updateUserAction } from "@/app/actions/admin";
@@ -204,7 +204,6 @@ export function DeleteUserButton({
 }) {
   const { t } = useApp();
   const [open, setOpen] = useState(false);
-  const [pending, startTransition] = useTransition();
 
   return (
     <>
@@ -225,23 +224,15 @@ export function DeleteUserButton({
         size="sm"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setOpen(false)} disabled={pending}>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
               {t("common.cancel")}
             </Button>
-            <Button
-              variant="danger"
-              loading={pending}
-              onClick={() =>
-                startTransition(async () => {
-                  const formData = new FormData();
-                  formData.set("userId", user.id);
-                  await deleteUserAction(formData);
-                  setOpen(false);
-                })
-              }
-            >
-              {t("common.confirmDelete")}
-            </Button>
+            <form action={deleteUserAction}>
+              <input type="hidden" name="userId" value={user.id} />
+              <SubmitButton variant="danger" pendingLabel={t("common.loading")}>
+                {t("common.confirmDelete")}
+              </SubmitButton>
+            </form>
           </>
         }
       >

@@ -4,12 +4,27 @@ import { useActionState, useState } from "react";
 import { Plus } from "lucide-react";
 
 import { createBusinessAction } from "@/app/actions/businesses";
+import {
+  BusinessFormFields,
+  BusinessFormAlerts,
+  type BusinessFormValues,
+} from "@/components/business/business-form-fields";
 import { Alert } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Field, Input, Textarea } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { useApp } from "@/components/providers/app-provider";
+import type { ActionState } from "@/app/actions/businesses";
+
+const EMPTY_VALUES: BusinessFormValues = {
+  name: "",
+  details: [],
+  orderForms: [],
+  contacts: [],
+  files: [],
+  image: "",
+  isActive: true,
+};
 
 export function CreateBusinessButton({
   canCreate,
@@ -26,15 +41,14 @@ export function CreateBusinessButton({
 }) {
   const { t } = useApp();
   const [open, setOpen] = useState(false);
-  const [state, formAction] = useActionState(createBusinessAction, { ok: false });
+  const [state, formAction] = useActionState<ActionState, FormData>(
+    createBusinessAction,
+    { ok: false },
+  );
 
   return (
     <>
-      <Button
-        variant={variant}
-        onClick={() => setOpen(true)}
-        disabled={!canCreate}
-      >
+      <Button variant={variant} onClick={() => setOpen(true)} disabled={!canCreate}>
         <Plus className="h-4 w-4" />
         {label ?? t("dashboard.create")}
       </Button>
@@ -43,7 +57,7 @@ export function CreateBusinessButton({
         open={open}
         onClose={() => setOpen(false)}
         title={t("dashboard.createTitle")}
-        footer={null}
+        size="lg"
       >
         {reachedLimit ? (
           <Alert tone="warning" className="mb-4">
@@ -51,43 +65,24 @@ export function CreateBusinessButton({
           </Alert>
         ) : null}
 
-        <form action={formAction} className="space-y-4">
-          {state.error ? <Alert tone="danger">{state.error}</Alert> : null}
+        <div className="space-y-4">
+          <BusinessFormAlerts state={state} />
 
-          <Field label={t("dashboard.businessName")} htmlFor="name" required>
-            <Input id="name" name="name" required placeholder={t("dashboard.businessNamePlaceholder")} />
-          </Field>
-
-          <Field label={t("dashboard.description")} htmlFor="description">
-            <Textarea id="description" name="description" rows={3} />
-          </Field>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label={t("dashboard.category")} htmlFor="category">
-              <Input id="category" name="category" placeholder={t("dashboard.categoryPlaceholder")} />
-            </Field>
-            <Field label={t("dashboard.location")} htmlFor="location">
-              <Input id="location" name="location" placeholder={t("dashboard.locationPlaceholder")} />
-            </Field>
-          </div>
-
-          <Field
-            label={t("dashboard.contactPhones")}
-            htmlFor="contactPhones"
-            hint={t("dashboard.contactPhonesHint")}
-          >
-            <Textarea id="contactPhones" name="contactPhones" rows={2} />
-          </Field>
-
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
-              {t("common.cancel")}
-            </Button>
-            <SubmitButton pendingLabel={t("common.saving")}>
-              {t("dashboard.createAction")}
-            </SubmitButton>
-          </div>
-        </form>
+          <BusinessFormFields values={EMPTY_VALUES} submit={formAction}>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setOpen(false)}
+              >
+                {t("common.cancel")}
+              </Button>
+              <SubmitButton pendingLabel={t("common.saving")}>
+                {t("dashboard.createAction")}
+              </SubmitButton>
+            </div>
+          </BusinessFormFields>
+        </div>
       </Modal>
     </>
   );
