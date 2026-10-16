@@ -1,26 +1,248 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Theme variants. `data-theme` is always resolved to light | dark | night by
+   the server (system is resolved from the cookie + user preference). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant night (&:where([data-theme="night"], [data-theme="night"] *));
+
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ * ------------------------------------------------------------------ */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-muted: #f4f4f5;
+  --surface-raised: #ffffff;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+
+  --fg: #18181b;
+  --fg-muted: #52525b;
+  --fg-subtle: #71717a;
+
+  --primary: #ea580c;
+  --primary-hover: #c2410c;
+  --primary-fg: #ffffff;
+  --primary-soft: #fff7ed;
+  --primary-border: #fed7aa;
+
+  --success: #15803d;
+  --success-soft: #f0fdf4;
+  --warning: #b45309;
+  --warning-soft: #fffbeb;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-soft: #fef2f2;
+  --info: #1d4ed8;
+  --info-soft: #eff6ff;
+
+  --shadow-color: 240 5% 50%;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0b0b0e;
+  --surface: #141418;
+  --surface-muted: #1c1c22;
+  --surface-raised: #1a1a20;
+  --border: #2a2a33;
+  --border-strong: #3a3a45;
+
+  --fg: #fafafa;
+  --fg-muted: #a1a1aa;
+  --fg-subtle: #83838f;
+
+  --primary: #f97316;
+  --primary-hover: #fb923c;
+  --primary-fg: #1a0d02;
+  --primary-soft: #23150a;
+  --primary-border: #7c3d10;
+
+  --success: #4ade80;
+  --success-soft: #0c1a12;
+  --warning: #fbbf24;
+  --warning-soft: #1e1607;
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --danger-soft: #230f0f;
+  --info: #60a5fa;
+  --info-soft: #0b1626;
+
+  --shadow-color: 240 10% 2%;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  [data-theme="system"] {
+    color-scheme: dark;
+
+    --bg: #0b0b0e;
+    --surface: #141418;
+    --surface-muted: #1c1c22;
+    --surface-raised: #1a1a20;
+    --border: #2a2a33;
+    --border-strong: #3a3a45;
+
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --fg-subtle: #83838f;
+
+    --primary: #f97316;
+    --primary-hover: #fb923c;
+    --primary-fg: #1a0d02;
+    --primary-soft: #23150a;
+    --primary-border: #7c3d10;
+
+    --success: #4ade80;
+    --success-soft: #0c1a12;
+    --warning: #fbbf24;
+    --warning-soft: #1e1607;
+    --danger: #f87171;
+    --danger-hover: #ef4444;
+    --danger-soft: #230f0f;
+    --info: #60a5fa;
+    --info-soft: #0b1626;
+
+    --shadow-color: 240 10% 2%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* "night" — OLED friendly, higher contrast, cool tinted. */
+[data-theme="night"] {
+  color-scheme: dark;
+
+  --bg: #03050a;
+  --surface: #080d17;
+  --surface-muted: #0e1523;
+  --surface-raised: #101a2b;
+  --border: #1c2a40;
+  --border-strong: #2b3d58;
+
+  --fg: #e8f0fb;
+  --fg-muted: #9db0cc;
+  --fg-subtle: #7286a3;
+
+  --primary: #fb923c;
+  --primary-hover: #fdba74;
+  --primary-fg: #170a00;
+  --primary-soft: #1d1108;
+  --primary-border: #8a4318;
+
+  --success: #34d399;
+  --success-soft: #04170f;
+  --warning: #fcd34d;
+  --warning-soft: #1a1505;
+  --danger: #fb7185;
+  --danger-hover: #f43f5e;
+  --danger-soft: #1c070d;
+  --info: #7dd3fc;
+  --info-soft: #06131f;
+
+  --shadow-color: 220 60% 2%;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-foreground: var(--fg);
+  --color-muted-foreground: var(--fg-muted);
+  --color-subtle-foreground: var(--fg-subtle);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-fg);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-border: var(--primary-border);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  --font-sans: var(--font-geist-sans), var(--font-ethiopic), ui-sans-serif,
+    system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-fg);
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 80rem;
+  padding-inline: 1rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
