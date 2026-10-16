@@ -8,6 +8,7 @@
 
 ## Businesses
 - name: string
+- slug: string auto slugify
 - owner: ObjectId ref to Users
 - details: Mixed
 - order form temples: Mixed
@@ -15,12 +16,14 @@
 
 ## Catalogs
 - name: string
+- slug: string auto slugify
 - business: ObjectId ref Businesses
 - category: string
 - details: Mixed
 
 ## Orders
 - product: ObjectId ref Catalogs
+- is read: boolean
 - details: Mixed
 
 ## Attachments
@@ -28,7 +31,8 @@
 - parent id: ObjectId ref Catalogs or Businesses
 - url: string
 
-## Audit Log
+## Activities
 - business: ObjectId ref Businesses
+- is read: boolean
 - action: string
-- details: Mixed
+- detail: string - detail markdown text

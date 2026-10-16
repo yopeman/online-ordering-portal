@@ -1,0 +1,11 @@
+# This Next.JS project pages: 
+- public landing page
+- public businesses page: google + passport
+- protected business details page. this contain 4 tabs
+    - catalog (create, edit, delete)
+    - orders: (readonly, except is read field)
+    - activities (readonly)
+    - settings (edit business details) (edit & delete (danger zone)) 
+- public product detail page
+- public business's catalog page for sing business and its products
+- public marketplace page for all business and their products
