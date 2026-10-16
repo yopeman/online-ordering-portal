@@ -10,7 +10,6 @@
 - name: string
 - owner: ObjectId ref to Users
 - details: Mixed
-- attachments: [string]
 - order form temples: Mixed
 - contact phones: [string]
 
@@ -19,16 +18,15 @@
 - business: ObjectId ref Businesses
 - category: string
 - details: Mixed
-- attachments: [string]
 
 ## Orders
 - product: ObjectId ref Catalogs
 - details: Mixed
 
 ## Attachments
-- parent entity
-- parent id
-- url
+- parent entity: Catalogs | Businesses
+- parent id: ObjectId ref Catalogs or Businesses
+- url: string
 
 ## Audit Log
 - business: ObjectId ref Businesses
