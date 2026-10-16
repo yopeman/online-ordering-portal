@@ -4,6 +4,8 @@
 - email: string
 - provider: string
 - provider id: string
+- status: active, inactive
+- role: admin, business_owner
 - image: string
 
 ## Businesses
@@ -30,6 +32,7 @@
 - parent entity: Catalogs | Businesses
 - parent id: ObjectId ref Catalogs or Businesses
 - url: string
+- order: float
 
 ## Activities
 - business: ObjectId ref Businesses
