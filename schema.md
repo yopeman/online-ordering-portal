@@ -6,6 +6,8 @@
 - provider id: string
 - status: active, inactive
 - role: admin, business_owner
+- max businesses allowed: number - max 1000
+- max catalogs allowed per business: number - max 1000
 - image: string
 
 ## Businesses

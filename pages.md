@@ -10,3 +10,4 @@
 - public product detail page
 - public business's catalog page for sing business and its products
 - public marketplace page for all business and their products
+- protected admin page: users (CRUD) >> businesses (readonly) >> catalog (readonly), orders (readonly), activities (readonly)
