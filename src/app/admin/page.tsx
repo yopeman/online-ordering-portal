@@ -141,12 +141,6 @@ export default async function AdminUsersPage({
           page: t("common.page"),
         }}
       />
-
-      <p className="text-xs text-muted-foreground">
-        <Link href="/admin/businesses" className="hover:text-foreground">
-          {t("admin.tabBusinesses")}
-        </Link>
-      </p>
     </div>
   );
 }

@@ -78,14 +78,6 @@ export default async function ProductPage({
 
   return (
     <div className="container-page py-8">
-      <Link
-        href={product.businessSlug ? `/store/${product.businessSlug}` : "/marketplace"}
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {t("product.backToBusiness")}
-      </Link>
-
       <div className="mt-4 grid gap-8 lg:grid-cols-[1fr_380px]">
         <div className="space-y-6">
           <Card className="overflow-hidden">
@@ -204,13 +196,14 @@ export default async function ProductPage({
           </Card>
 
           {product.businessSlug ? (
-            <div className="mt-4 flex justify-center">
+            <div className="mt-4 gap-3 flex justify-center">
               <Link href={`/store/${product.businessSlug}`}>
                 <Button variant="secondary">
                   <Store className="h-4 w-4" />
                   {t("businessPublic.menu")}
                 </Button>
               </Link>
+              <Button variant="secondary">SHARE THE PRODUCT</Button>
             </div>
           ) : null}
         </aside>

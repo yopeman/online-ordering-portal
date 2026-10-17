@@ -22,15 +22,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
 
-  const nextParam = request.nextUrl.searchParams.get("next");
-  const next = nextParam?.startsWith("/") ? nextParam : "/businesses";
-
   await connectDB();
   const user = await User.findOne({ _id: userId, status: "active" }).lean();
+  console.log({user});
+  
 
   if (!user) {
     return NextResponse.redirect(new URL("/login", request.nextUrl.origin));
   }
+
+  // const nextParam = request.nextUrl.searchParams.get("next");
+  // const next = nextParam?.startsWith("/") ? nextParam : `/${user.role}`;
+  const next = user.role === 'admin' ? '/admin' : '/businesses';
+  console.log({next});
+  
 
   await setSessionCookie({
     sub: user._id.toString(),

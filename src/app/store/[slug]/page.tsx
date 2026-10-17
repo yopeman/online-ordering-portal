@@ -42,14 +42,6 @@ export default async function StorefrontPage({
 
   return (
     <div className="container-page space-y-6 py-8">
-      <Link
-        href="/marketplace"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {t("businessPublic.backToMarketplace")}
-      </Link>
-
       <Card className="overflow-hidden">
         <div className="flex h-40 items-center justify-center bg-surface-muted sm:h-52">
           {business.image ? (
@@ -158,9 +150,7 @@ export default async function StorefrontPage({
       </section>
 
       <div className="flex justify-end pt-4">
-        <Link href="/login">
-          <Button variant="secondary">{t("businessPublic.viewDashboard")}</Button>
-        </Link>
+        <Button variant="secondary">SHARE THE BUSINESS</Button>
       </div>
     </div>
   );

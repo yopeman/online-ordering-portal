@@ -23,7 +23,6 @@ export default async function AdminLayout({
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {t("admin.title")}
             </h1>
-            <Badge tone="warning">{t("admin.readonly")}</Badge>
           </div>
           <p className="text-sm text-muted-foreground">{t("admin.subtitle")}</p>
         </div>
@@ -41,12 +40,6 @@ export default async function AdminLayout({
       />
 
       {children}
-
-      <div className="pt-2">
-        <Link href="/businesses" className="text-sm text-muted-foreground hover:text-foreground">
-          {t("nav.myBusinesses")}
-        </Link>
-      </div>
     </div>
   );
 }
