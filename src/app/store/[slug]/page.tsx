@@ -3,9 +3,7 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   Clock,
-  Download,
   ExternalLink,
-  FileText,
   Globe,
   ImageOff,
   Mail,
@@ -20,6 +18,7 @@ import {
 
 import { ProductCard } from "@/components/business/product-card";
 import { ShareBusinessButton } from "@/components/business/share-business-button";
+import { StoreAttachments } from "@/components/business/store-attachments";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -115,7 +114,9 @@ export default async function StorefrontPage({
     currentUser &&
     (currentUser.id === business.owner.toString() || currentUser.role === "admin");
 
-  if (!business.isActive && !isOwner) {
+  const isActive = business.isActive !== false;
+
+  if (!isActive && !isOwner) {
     notFound();
   }
 
@@ -254,9 +255,14 @@ export default async function StorefrontPage({
       typeof value !== "function",
   );
 
-  // Grouped attachments
-  const imageAttachments = attachments.filter((a) => a.kind === "image");
-  const fileAttachments = attachments.filter((a) => a.kind === "file");
+  // Serialized attachments for client preview & modal lightbox
+  const serializedAttachments = attachments.map((a) => ({
+    id: String(a._id),
+    url: a.url,
+    alt: a.alt || "",
+    kind: a.kind as "image" | "file" | "link",
+    order: a.order,
+  }));
 
   // Products and Category filters
   const categories = [
@@ -301,7 +307,7 @@ export default async function StorefrontPage({
       </div>
 
       {/* Inactive Alert for owner/admin */}
-      {!business.isActive ? (
+      {!isActive ? (
         <div
           role="status"
           className="flex items-center justify-between gap-3 rounded-xl border border-warning/30 bg-warning-soft px-4 py-3 text-sm text-warning"
@@ -358,7 +364,7 @@ export default async function StorefrontPage({
                     {business.name}
                   </h1>
                   {category ? <Badge tone="primary">{category}</Badge> : null}
-                  {!business.isActive ? (
+                  {!isActive ? (
                     <Badge tone="warning">{t("dashboard.inactive")}</Badge>
                   ) : (
                     <Badge tone="success">{t("dashboard.active")}</Badge>
@@ -516,62 +522,12 @@ export default async function StorefrontPage({
         </Card>
       ) : null}
 
-      {/* Photo Gallery (Attachments) */}
-      {imageAttachments.length > 0 ? (
-        <Card className="p-5 sm:p-6 shadow-sm">
-          <h2 className="text-base font-semibold text-foreground mb-4">
-            Photos ({imageAttachments.length})
-          </h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {imageAttachments.map((attachment) => (
-              <a
-                key={String(attachment._id)}
-                href={attachment.url}
-                target="_blank"
-                rel="noreferrer"
-                className="group relative aspect-4/3 overflow-hidden rounded-xl border border-border bg-surface-muted"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={attachment.url}
-                  alt={attachment.alt || business.name}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </a>
-            ))}
-          </div>
-        </Card>
-      ) : null}
-
-      {/* File Attachments / Documents */}
-      {fileAttachments.length > 0 ? (
-        <Card className="p-5 sm:p-6 shadow-sm">
-          <h2 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
-            <FileText className="h-4 w-4 text-primary" />
-            <span>Documents & Menus</span>
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {fileAttachments.map((file) => (
-              <a
-                key={String(file._id)}
-                href={file.url}
-                download
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface p-3 transition-colors hover:bg-surface-muted hover:border-primary-border"
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <FileText className="h-5 w-5 shrink-0 text-primary" />
-                  <span className="truncate text-sm font-medium text-foreground">
-                    {file.alt || file.url.split("/").pop()}
-                  </span>
-                </div>
-                <Download className="h-4 w-4 shrink-0 text-muted-foreground" />
-              </a>
-            ))}
-          </div>
-        </Card>
-      ) : null}
+      {/* Attachments (Photos & Documents) with Preview & Modal */}
+      <StoreAttachments
+        businessName={business.name}
+        attachments={serializedAttachments}
+        maxPreview={3}
+      />
 
       {/* Menu / Products Section */}
       <section className="space-y-4">
