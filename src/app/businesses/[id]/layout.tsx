@@ -36,14 +36,6 @@ export default async function BusinessLayout({
   return (
     <div className="container-page space-y-5 py-8">
       <div>
-        <Link
-          href="/businesses"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t("business.backToBusinesses")}
-        </Link>
-
         <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">

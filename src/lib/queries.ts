@@ -217,9 +217,13 @@ export async function getBusinessById(
   return (business as BusinessDoc | null) ?? null;
 }
 
-export async function getBusinessBySlug(slug: string): Promise<BusinessDoc | null> {
+export async function getBusinessBySlug(
+  slug: string,
+  includeInactive = false,
+): Promise<BusinessDoc | null> {
   await connectDB();
-  const business = await Business.findOne({ slug, isActive: true }).lean();
+  const filter = includeInactive ? { slug } : { slug, isActive: { $ne: false } };
+  const business = await Business.findOne(filter).lean();
   return (business as BusinessDoc | null) ?? null;
 }
 
