@@ -24,6 +24,7 @@ import {
 import { ProductCard } from "@/components/business/product-card";
 import { ProductGallery } from "@/components/business/product-gallery";
 import { ShareBusinessButton } from "@/components/business/share-business-button";
+import { StoreAttachments } from "@/components/business/store-attachments";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -134,7 +135,7 @@ export default async function ProductPage({
     options: field.options ?? [],
   }));
 
-  // Fetch only image attachments for product (user requested: no document)
+  // Fetch product attachments (images and document files)
   const attachments = await listAttachments("catalog", product.id);
 
   // Collect and deduplicate all product images
@@ -154,6 +155,15 @@ export default async function ProductPage({
   const galleryImages = uniqueImageUrls.map((url) => ({
     url,
     alt: product.name,
+  }));
+
+  // Serialized attachments for product files and documents preview & modal
+  const serializedAttachments = attachments.map((a) => ({
+    id: String(a._id),
+    url: a.url,
+    alt: a.alt || a.url.split("/").pop() || "",
+    kind: a.kind as "image" | "file" | "link",
+    order: a.order,
   }));
 
   // Pricing calculations
@@ -366,7 +376,7 @@ export default async function ProductPage({
             <span>{business.name}</span>
           </Link>
           <span>/</span>
-          <span className="truncate max-w-[200px] sm:max-w-xs text-foreground font-medium">
+          <span className="truncate max-w-50 sm:max-w-xs text-foreground font-medium">
             {product.name}
           </span>
         </div>
@@ -522,7 +532,7 @@ export default async function ProductPage({
                         <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                           {formatDetailLabel(key)}
                         </dt>
-                        <dd className="mt-1 text-sm font-medium text-foreground break-words">
+                        <dd className="mt-1 text-sm font-medium text-foreground wrap-break-word">
                           {renderDetailValue(value)}
                         </dd>
                       </div>
@@ -533,7 +543,17 @@ export default async function ProductPage({
             </div>
           </Card>
 
-          {/* 3. Business Detail Card (NO DOCUMENT) */}
+          {/* 3. Product Documents & Files (if any attached) */}
+          <StoreAttachments
+            businessName={product.name}
+            title={`Documents & Specifications · ${product.name}`}
+            filesTitle="Documents & Specifications"
+            attachments={serializedAttachments}
+            showPhotos={false}
+            maxFilesPreview={4}
+          />
+
+          {/* 4. Business Detail Card (NO DOCUMENT) */}
           <Card className="overflow-hidden p-0 shadow-sm border border-border">
             <div className="p-5 sm:p-6 space-y-6">
               {/* Business Header with Avatar/Logo & Visit Store button */}

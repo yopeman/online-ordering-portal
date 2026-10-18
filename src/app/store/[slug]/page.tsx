@@ -489,6 +489,13 @@ export default async function StorefrontPage({
         </div>
       </Card>
 
+      {/* Attachments (Photos & Documents) with Preview & Modal */}
+      <StoreAttachments
+        businessName={business.name}
+        attachments={serializedAttachments}
+        maxPreview={3}
+      />
+
       {/* Additional Details Section (All Custom Fields) */}
       {customDetails.length > 0 ? (
         <Card className="p-5 sm:p-6 shadow-sm">
@@ -513,13 +520,6 @@ export default async function StorefrontPage({
           </dl>
         </Card>
       ) : null}
-
-      {/* Attachments (Photos & Documents) with Preview & Modal */}
-      <StoreAttachments
-        businessName={business.name}
-        attachments={serializedAttachments}
-        maxPreview={3}
-      />
 
       {/* Menu / Products Section */}
       <section className="space-y-4">

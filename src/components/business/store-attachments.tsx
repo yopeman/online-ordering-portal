@@ -23,24 +23,46 @@ export interface StoreAttachmentItem {
 }
 
 export interface StoreAttachmentsProps {
-  businessName: string;
+  businessName?: string;
+  title?: string;
+  filesTitle?: string;
+  photosTitle?: string;
   attachments: StoreAttachmentItem[];
   maxPreview?: number;
+  maxFilesPreview?: number;
+  showPhotos?: boolean;
+  showFiles?: boolean;
 }
 
 export function StoreAttachments({
-  businessName,
+  businessName = "Store",
+  title,
+  filesTitle = "Documents & Menus",
+  photosTitle = "Photos",
   attachments,
   maxPreview = 3,
+  maxFilesPreview = 2,
+  showPhotos = true,
+  showFiles = true,
 }: StoreAttachmentsProps) {
-  const images = attachments.filter((a) => a.kind === "image");
-  const files = attachments.filter((a) => a.kind === "file");
+  const images = showPhotos ? attachments.filter((a) => a.kind === "image") : [];
+  const files = showFiles
+    ? attachments.filter((a) => a.kind === "file" || a.kind === "link")
+    : [];
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"photos" | "files">(
+  const [activeTab, setActiveTab] = useState<"photos" | "files">(() =>
     images.length > 0 ? "photos" : "files",
   );
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
+
+  useEffect(() => {
+    if (images.length === 0 && files.length > 0) {
+      setActiveTab("files");
+    } else if (images.length > 0 && files.length === 0) {
+      setActiveTab("photos");
+    }
+  }, [images.length, files.length]);
 
   useEffect(() => {
     if (!modalOpen || activeTab !== "photos") return;
@@ -55,7 +77,7 @@ export function StoreAttachments({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalOpen, activeTab, images.length]);
 
-  if (attachments.length === 0) return null;
+  if (images.length === 0 && files.length === 0) return null;
 
   const visibleImages = images.slice(0, maxPreview);
   const remainingImagesCount = images.length - maxPreview;
@@ -89,7 +111,7 @@ export function StoreAttachments({
               <div className="flex items-center gap-2">
                 <Images className="h-4 w-4 text-primary" />
                 <h2 className="text-base font-semibold text-foreground">
-                  Photos ({images.length})
+                  {photosTitle} ({images.length})
                 </h2>
               </div>
 
@@ -148,40 +170,74 @@ export function StoreAttachments({
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-primary" />
                 <h2 className="text-base font-semibold text-foreground">
-                  Documents & Menus ({files.length})
+                  {filesTitle} ({files.length})
                 </h2>
               </div>
 
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={openFilesModal}
-                className="gap-1.5"
-              >
-                <FileText className="h-3.5 w-3.5" />
-                <span>Show more ({files.length})</span>
-              </Button>
+              {files.length > maxFilesPreview ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={openFilesModal}
+                  className="gap-1.5"
+                >
+                  <FileText className="h-3.5 w-3.5" />
+                  <span>Show more ({files.length})</span>
+                </Button>
+              ) : files.length > 0 ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={openFilesModal}
+                  className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <FileText className="h-3.5 w-3.5" />
+                  <span>View all</span>
+                </Button>
+              ) : null}
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              {files.slice(0, 2).map((file) => (
-                <a
+              {files.slice(0, maxFilesPreview).map((file) => (
+                <div
                   key={file.id}
-                  href={file.url}
-                  download
-                  target="_blank"
-                  rel="noreferrer"
                   className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface p-3 transition-colors hover:bg-surface-muted hover:border-primary-border"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2.5 min-w-0 flex-1 hover:text-primary transition-colors"
+                  >
                     <FileText className="h-5 w-5 shrink-0 text-primary" />
                     <span className="truncate text-sm font-medium text-foreground">
                       {file.alt || file.url.split("/").pop()}
                     </span>
+                  </a>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <a
+                      href={file.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Open in new tab"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-surface hover:text-foreground"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                    {file.kind !== "link" ? (
+                      <a
+                        href={file.url}
+                        download
+                        title="Download file"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                      </a>
+                    ) : null}
                   </div>
-                  <Download className="h-4 w-4 shrink-0 text-muted-foreground" />
-                </a>
+                </div>
               ))}
             </div>
           </Card>
@@ -195,7 +251,12 @@ export function StoreAttachments({
         size="lg"
         title={
           <div className="flex items-center gap-2">
-            <span>Attachments · {businessName}</span>
+            <span>
+              {title ||
+                (!showPhotos || images.length === 0
+                  ? `${filesTitle} · ${businessName}`
+                  : `Attachments · ${businessName}`)}
+            </span>
           </div>
         }
         description={
@@ -225,7 +286,7 @@ export function StoreAttachments({
                 }`}
               >
                 <Images className="h-3.5 w-3.5" />
-                <span>Photos ({images.length})</span>
+                <span>{photosTitle} ({images.length})</span>
               </button>
               <button
                 type="button"
@@ -343,12 +404,17 @@ export function StoreAttachments({
                     key={file.id}
                     className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:bg-surface-muted"
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
+                    <a
+                      href={file.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-2.5 min-w-0 flex-1 hover:text-primary transition-colors"
+                    >
                       <FileText className="h-5 w-5 shrink-0 text-primary" />
                       <span className="truncate text-sm font-medium text-foreground">
                         {file.alt || file.url.split("/").pop()}
                       </span>
-                    </div>
+                    </a>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <a
                         href={file.url}
@@ -359,14 +425,16 @@ export function StoreAttachments({
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                       </a>
-                      <a
-                        href={file.url}
-                        download
-                        title="Download file"
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                      </a>
+                      {file.kind !== "link" ? (
+                        <a
+                          href={file.url}
+                          download
+                          title="Download file"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                        </a>
+                      ) : null}
                     </div>
                   </div>
                 ))}
