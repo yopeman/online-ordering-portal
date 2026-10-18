@@ -182,7 +182,7 @@ export function BusinessOwnerCard({
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-all duration-200 hover:border-border-strong hover:shadow-md">
       {/* Visual Header / Cover Image */}
-      <div className="relative flex h-36 w-full items-center justify-center overflow-hidden bg-surface-muted">
+      <div className="relative h-50 w-full items-center justify-center overflow-hidden bg-surface-muted">
         <Link
           href={`/businesses/${business.id}/catalog`}
           className="absolute inset-0 z-0 flex items-center justify-center"

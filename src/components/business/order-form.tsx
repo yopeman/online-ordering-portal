@@ -83,42 +83,6 @@ export function OrderForm({
           {t("product.yourDetails")}
         </h3>
 
-        {/* Contact numbers of the business (Business.contactPhones). */}
-        {contactPhones.length > 0 ? (
-          <div className="space-y-2">
-            <Field
-              label={t("product.contactNumber")}
-              htmlFor="contactPhone"
-              hint={t("product.contactHint")}
-            >
-              <Select
-                id="contactPhone"
-                name="contactPhone"
-                defaultValue={contactPhones[0]}
-              >
-                {contactPhones.map((phone) => (
-                  <option key={phone} value={phone}>
-                    {phone}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-
-            <div className="flex flex-wrap gap-2">
-              {contactPhones.map((phone) => (
-                <a
-                  key={phone}
-                  href={`tel:${phone}`}
-                  className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  <Phone className="h-3.5 w-3.5" />
-                  {t("product.callBusiness")}: {phone}
-                </a>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
         {/* Order form template configured by the business. */}
         {fields.map((field) => (
           <Field
