@@ -276,16 +276,8 @@ export default async function StorefrontPage({
   return (
     <div className="container-page space-y-6 py-6 sm:py-8">
       {/* Top Navigation & Owner Shortcuts */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href="/marketplace"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>{t("businessPublic.backToMarketplace")}</span>
-        </Link>
-
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-3">
+        <div className="flex items-center justify-end gap-2">
           {isOwner ? (
             <Link
               href={`/businesses/${businessId}/catalog`}
@@ -617,25 +609,6 @@ export default async function StorefrontPage({
           </div>
         )}
       </section>
-
-      {/* Footer Share Action */}
-      <div className="flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
-        <Link
-          href="/marketplace"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>{t("businessPublic.backToMarketplace")}</span>
-        </Link>
-
-        <ShareBusinessButton
-          businessName={business.name}
-          description={description}
-          label="Share this business"
-          copiedLabel="Link copied!"
-          variant="secondary"
-        />
-      </div>
     </div>
   );
 }

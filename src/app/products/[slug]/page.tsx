@@ -370,14 +370,6 @@ export default async function ProductPage({
             {product.name}
           </span>
         </div>
-
-        <Link
-          href={`/store/${business.slug}`}
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Back to {business.name}</span>
-        </Link>
       </div>
 
       {/* Main Two-Column Layout */}
