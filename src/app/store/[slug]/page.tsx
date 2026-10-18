@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { ProductCard } from "@/components/business/product-card";
+import { ProductGallery } from "@/components/business/product-gallery";
 import { ShareBusinessButton } from "@/components/business/share-business-button";
 import { StoreAttachments } from "@/components/business/store-attachments";
 import { Badge } from "@/components/ui/badge";
@@ -255,11 +256,30 @@ export default async function StorefrontPage({
       typeof value !== "function",
   );
 
-  // Serialized attachments for client preview & modal lightbox
+  // Collect and deduplicate all business images for the top interactive gallery
+  const rawStoreImages: string[] = [];
+  if (coverImage) rawStoreImages.push(coverImage);
+  if (Array.isArray(details.images)) {
+    for (const img of details.images) {
+      if (typeof img === "string" && img.trim()) rawStoreImages.push(img.trim());
+    }
+  }
+  for (const att of attachments) {
+    if (att.kind === "image" && att.url) {
+      rawStoreImages.push(att.url);
+    }
+  }
+  const uniqueStoreImages = Array.from(new Set(rawStoreImages));
+  const storeGalleryImages = uniqueStoreImages.map((url) => ({
+    url,
+    alt: business.name,
+  }));
+
+  // Serialized attachments for client preview & modal lightbox (documents/files)
   const serializedAttachments = attachments.map((a) => ({
     id: String(a._id),
     url: a.url,
-    alt: a.alt || "",
+    alt: a.alt || a.url.split("/").pop() || "",
     kind: a.kind as "image" | "file" | "link",
     order: a.order,
   }));
@@ -319,26 +339,22 @@ export default async function StorefrontPage({
         </div>
       ) : null}
 
-      {/* Hero Card */}
-      <Card className="overflow-hidden shadow-sm">
-        {/* Cover Banner */}
-        <div className="relative flex h-48 w-full items-center justify-center overflow-hidden bg-surface-muted sm:h-64">
-          {coverImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={coverImage}
-              alt={business.name}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-surface-muted via-surface to-surface-muted/60">
+      {/* Hero Card with Interactive Image Gallery and Store Details */}
+      <Card className="overflow-hidden shadow-sm p-5 sm:p-6 space-y-6">
+        {/* Interactive Store Image Gallery */}
+        <ProductGallery
+          images={storeGalleryImages}
+          productName={business.name}
+          aspectRatio="aspect-16/9 sm:aspect-21/9"
+          fallbackNode={
+            <div className="flex h-48 sm:h-64 w-full items-center justify-center bg-linear-to-br from-surface-muted via-surface to-surface-muted/60">
               <Store className="h-16 w-16 text-subtle-foreground/50" />
             </div>
-          )}
-        </div>
+          }
+        />
 
         {/* Header Details */}
-        <div className="space-y-5 p-5 sm:p-6">
+        <div className="space-y-5 pt-1">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-4">
               {logoUrl ? (
@@ -346,7 +362,7 @@ export default async function StorefrontPage({
                 <img
                   src={logoUrl}
                   alt={`${business.name} logo`}
-                  className="-mt-12 h-20 w-20 shrink-0 rounded-2xl border-4 border-surface bg-surface object-cover shadow-md sm:-mt-14 sm:h-24 sm:w-24"
+                  className="h-20 w-20 shrink-0 rounded-2xl border border-border bg-surface object-cover shadow-sm sm:h-24 sm:w-24"
                 />
               ) : null}
 
@@ -489,13 +505,6 @@ export default async function StorefrontPage({
         </div>
       </Card>
 
-      {/* Attachments (Photos & Documents) with Preview & Modal */}
-      <StoreAttachments
-        businessName={business.name}
-        attachments={serializedAttachments}
-        maxPreview={3}
-      />
-
       {/* Additional Details Section (All Custom Fields) */}
       {customDetails.length > 0 ? (
         <Card className="p-5 sm:p-6 shadow-sm">
@@ -520,6 +529,16 @@ export default async function StorefrontPage({
           </dl>
         </Card>
       ) : null}
+
+      {/* File Attachments (Documents & Menus) with Preview & Modal */}
+      <StoreAttachments
+        businessName={business.name}
+        title={`Documents & Menus · ${business.name}`}
+        filesTitle="Documents & Menus"
+        attachments={serializedAttachments}
+        showPhotos={false}
+        maxFilesPreview={4}
+      />
 
       {/* Menu / Products Section */}
       <section className="space-y-4">

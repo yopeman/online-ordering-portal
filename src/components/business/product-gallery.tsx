@@ -12,13 +12,19 @@ export interface ProductGalleryImage {
   alt?: string;
 }
 
+export interface ProductGalleryProps {
+  images: ProductGalleryImage[];
+  productName: string;
+  aspectRatio?: string;
+  fallbackNode?: React.ReactNode;
+}
+
 export function ProductGallery({
   images,
   productName,
-}: {
-  images: ProductGalleryImage[];
-  productName: string;
-}) {
+  aspectRatio = "aspect-4/3 sm:aspect-16/10",
+  fallbackNode,
+}: ProductGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
@@ -52,7 +58,7 @@ export function ProductGallery({
     <div className="space-y-3">
       {/* Main Image Container */}
       <Card className="group relative overflow-hidden bg-surface-muted">
-        <div className="relative flex aspect-4/3 w-full items-center justify-center sm:aspect-16/10">
+        <div className={`relative flex w-full items-center justify-center ${aspectRatio}`}>
           {activeImage ? (
             <button
               type="button"
@@ -65,7 +71,8 @@ export function ProductGallery({
                 alt={activeImage.alt || productName}
                 fill
                 priority
-                sizes="(max-width: 1024px) 100vw, 760px"
+                unoptimized={activeImage.url.startsWith("http://")}
+                sizes="(max-width: 1024px) 100vw, 1200px"
                 className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
               />
               <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg bg-black/60 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-xs opacity-0 transition-opacity duration-200 group-hover:opacity-100">
@@ -73,6 +80,8 @@ export function ProductGallery({
                 <span>Enlarge</span>
               </div>
             </button>
+          ) : fallbackNode ? (
+            fallbackNode
           ) : (
             <div className="flex flex-col items-center justify-center p-8 text-subtle-foreground">
               <ImageOff className="h-12 w-12" />
@@ -128,6 +137,7 @@ export function ProductGallery({
                   src={img.url}
                   alt={img.alt || `Thumbnail ${index + 1}`}
                   fill
+                  unoptimized={img.url.startsWith("http://")}
                   sizes="64px"
                   className="object-cover"
                 />
