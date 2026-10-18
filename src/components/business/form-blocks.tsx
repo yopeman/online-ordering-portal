@@ -168,7 +168,8 @@ export function FileDropZone({
 }) {
   const { t } = useApp();
   const [isDragging, setIsDragging] = useState(false);
-  const [, startUpload] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startUpload] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function upload(list: FileList | File[]) {
@@ -178,9 +179,18 @@ export function FileDropZone({
     const formData = new FormData();
     for (const file of selected.slice(0, 10)) formData.append("files", file);
 
+    setError(null);
     startUpload(async () => {
-      const result = await uploadFilesAction(formData);
-      onChange([...files, ...result.files]);
+      try {
+        const result = await uploadFilesAction(formData);
+        if (!result.ok) {
+          setError(result.error || "Upload failed.");
+        } else {
+          onChange([...files, ...result.files]);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Upload failed.");
+      }
     });
   }
 
@@ -240,6 +250,16 @@ export function FileDropZone({
           }}
         />
       </div>
+
+      {isPending ? (
+        <p className="text-xs font-medium text-primary animate-pulse">
+          Uploading files...
+        </p>
+      ) : null}
+
+      {error ? (
+        <p className="text-xs font-medium text-danger">{error}</p>
+      ) : null}
 
       {files.length > 0 ? (
         <ul className="space-y-2">

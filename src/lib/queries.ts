@@ -229,14 +229,14 @@ export async function getBusinessBySlug(
 
 export async function listBusinessCategories(): Promise<string[]> {
   await connectDB();
-  const rows = await Business.aggregate<{ category: string }>([
-    { $match: { isActive: true } },
+  const rows = await Business.aggregate<{ _id: string }>([
+    { $match: { isActive: { $ne: false } } },
     { $project: { category: "$details.category" } },
     { $match: { category: { $type: "string", $ne: "" } } },
     { $group: { _id: "$category" } },
     { $sort: { _id: 1 } },
   ]);
-  return rows.map((row) => row.category);
+  return rows.map((row) => row._id).filter(Boolean);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -374,12 +374,12 @@ export async function countProducts(businessId: string): Promise<number> {
 
 export async function listProductCategories(businessId: string): Promise<string[]> {
   await connectDB();
-  const rows = await Catalog.aggregate<{ category: string }>([
+  const rows = await Catalog.aggregate<{ _id: string }>([
     { $match: { business: businessId as unknown as Types.ObjectId, category: { $ne: "" } } },
     { $group: { _id: "$category" } },
     { $sort: { _id: 1 } },
   ]);
-  return rows.map((row) => row.category);
+  return rows.map((row) => row._id).filter(Boolean);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -200,7 +200,7 @@ export const om: Dictionary = {
     contactPersons: "Namroota",
     phonePlaceholder: "+251 91 000 0000",
     uploadFiles: "Fayilii dabalchi",
-    uploadHint: "Suuraa yookaan PDF (4 MB giddutti).",
+    uploadHint: "Suuraa yookaan PDF (10 MB giddutti).",
     dropFiles: "Fayilii heree",
     pasteFiles: "yookaan garagalchi / Ctrl+V",
     limitReached:

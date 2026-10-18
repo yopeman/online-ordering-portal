@@ -199,7 +199,7 @@ export const am: Dictionary = {
     contactPersons: "የመያወጫ ሰዎች",
     phonePlaceholder: "+251 91 000 0000",
     uploadFiles: "ፋይሎች ጫን",
-    uploadHint: "ምስሎች ወይም PDF ፋይሎች (በእያንዳንዱ ቢያንስ 4 MB)።",
+    uploadHint: "ምስሎች ወይም PDF ፋይሎች (በእያንዳንዱ ቢያንስ 10 MB)።",
     dropFiles: "ፋይሎችን ወደሚሉ ጣት",
     pasteFiles: "ወይም ቅዳ / Ctrl+V ጫን",
     limitReached: "ለመለያዎ የተወሰነውን የትዕዛዝ ደረጃ ከፍተኛ ቁጥር ({max}) ደርሰዋል።",

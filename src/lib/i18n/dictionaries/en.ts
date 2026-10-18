@@ -197,7 +197,7 @@ export const en = {
     contactPersons: "Contact Persons",
     phonePlaceholder: "+251 91 000 0000",
     uploadFiles: "Upload Files",
-    uploadHint: "Images or PDF files (max 4 MB each).",
+    uploadHint: "Images or PDF files (max 10 MB each).",
     dropFiles: "Drag and drop files here",
     pasteFiles: "or copy paste / Ctrl+V",
     limitReached:

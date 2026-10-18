@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-export const MAX_UPLOAD_BYTES = 4 * 1024 * 1024; // 4 MB per file
+export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB per file
 
 const ALLOWED_MIME = new Set([
   "image/jpeg",
@@ -44,7 +44,7 @@ export const UPLOAD_URL_PREFIX = "/uploads";
  */
 export function uploadDir(): string {
   const configured = process.env.UPLOAD_DIR ?? path.join(process.cwd(), "public", "uploads");
-  return path.resolve(process.cwd(), configured);
+  return path.resolve(/*turbopackIgnore: true*/ process.cwd(), configured);
 }
 
 function isImage(type: string): boolean {
@@ -70,7 +70,7 @@ export async function saveUpload(file: File): Promise<UploadedFile> {
 
   await mkdir(directory, { recursive: true });
   await writeFile(
-    path.join(directory, name),
+    path.join(/*turbopackIgnore: true*/ directory, name),
     Buffer.from(await file.arrayBuffer()),
   );
 
