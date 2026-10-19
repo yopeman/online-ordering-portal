@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   ArrowRight,
   Bell,
@@ -11,14 +12,18 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { getCurrentUser } from "@/lib/auth/session";
+import { getCurrentUser, isAdmin } from "@/lib/auth/session";
 import { MissingMongoUriError } from "@/lib/db";
 import { getTranslator } from "@/lib/i18n-server";
 import { platformStats } from "@/lib/queries";
 
 export default async function LandingPage() {
-  const t = await getTranslator();
   const user = await getCurrentUser();
+  if (user) {
+    redirect(isAdmin(user) ? "/admin" : "/businesses");
+  }
+
+  const t = await getTranslator();
 
   let stats = { businesses: 0, products: 0, orders: 0 };
   let dbMissing = false;
