@@ -95,6 +95,9 @@ export const am: Dictionary = {
     featureOrdersTitle: "የትዕዛዝ ኢንቦክስ",
     featureOrdersBody:
       "እያንዳንዱ ትዕዛዝ በየድህ መረጃው ጋር በአንድ ኢንቦክስ ውስጥ ይቀርባል።",
+    featureNotificationsTitle: "የማሳወቂያ ቻናሎች",
+    featureNotificationsBody:
+      "ትዕዛዝ ሲደርስ በቴሌግራም፣ በSMS፣ በዋትስአፕ ወይም በኢሜይል ፈጣን ማሳወቂያዎችን በቀጥታ ያግኙ።",
     featureInsightsTitle: "የእንቅስቃሴ ታሪክ",
     featureInsightsBody:
       "ምን መታወቅ እና መቼ እንዳለ ያወቁ — ለእርስዎም ለቡድናዎም የሚያስችል ታሪክ።",

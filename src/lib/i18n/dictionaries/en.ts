@@ -93,6 +93,9 @@ export const en = {
     featureOrdersTitle: "Orders inbox",
     featureOrdersBody:
       "Every order lands in one inbox with customer details so nothing slips through.",
+    featureNotificationsTitle: "Multi-channel alerts",
+    featureNotificationsBody:
+      "Receive real-time order alerts across Telegram, SMS, WhatsApp, and Email so you never miss a sale.",
     featureInsightsTitle: "Activity timeline",
     featureInsightsBody:
       "Know what changed and when — a readable history for you and your team.",

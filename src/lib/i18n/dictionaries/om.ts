@@ -95,6 +95,9 @@ export const om: Dictionary = {
     featureOrdersTitle: "Akaayii ajaja",
     featureOrdersBody:
       "Ajaja hunda booda teessoo tokkoon gaaficha isaa dhangalaa dhufu.",
+    featureNotificationsTitle: "Ergawwan beeksisaa",
+    featureNotificationsBody:
+      "Ajaja haaraa irratti Telegram, SMS, WhatsApp yookiin Imeeyiliin beeksisa battalaa argadhaa.",
     featureInsightsTitle: "Taariiffa hojii",
     featureInsightsBody:
       "Maaltii maaltuu qaqqabe erga — taariiffa siif qaqqabsiif.",

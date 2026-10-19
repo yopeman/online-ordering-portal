@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  Bell,
   ClipboardList,
   History,
   LayoutGrid,
@@ -38,6 +39,11 @@ export default async function LandingPage() {
       icon: ClipboardList,
       title: t("landing.featureOrdersTitle"),
       body: t("landing.featureOrdersBody"),
+    },
+    {
+      icon: Bell,
+      title: t("landing.featureNotificationsTitle"),
+      body: t("landing.featureNotificationsBody"),
     },
     {
       icon: History,

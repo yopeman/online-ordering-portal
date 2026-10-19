@@ -94,6 +94,9 @@ export const ti: Dictionary = {
       "በምስል፣ ዋጋ እና ምድብ የታለበው የምርት አስተዳደር ፍጠር። በማንኛውም ጊዜ አስተካክሉ።",
     featureOrdersTitle: "የትዕዛዝ ኢንቦክስ",
     featureOrdersBody: "እያንዳንዱ ትዕዛዝ በየድህ መረጃው ጋር በአንድ ኢንቦክስ ውስጥ ይቀርባል።",
+    featureNotificationsTitle: "ናይ ምፍላጥ መስመራት",
+    featureNotificationsBody:
+      "ሓደሽቲ ትእዛዛት ምስ መጹ ብቴሌግራም፣ ብSMS፣ ብዋትስኣፕ ወይ ብኢመይል ቅልጡፍ መልእኽቲ ብቐጥታ ርኸቡ።",
     featureInsightsTitle: "የእንቅስቃሴ ታሪክ",
     featureInsightsBody:
       "ምን መታወቅ እና መቼ እንዳለ ያወቁ — ለእርስዎም ለቡድናዎም የሚያስችል ታሪክ።",
