@@ -295,8 +295,22 @@ export default async function StorefrontPage({
 
   return (
     <div className="container-page space-y-6 py-6 sm:py-8">
-      {/* Top Navigation & Owner Shortcuts */}
-      <div className="flex flex-wrap items-center justify-end gap-3">
+      {/* Top Breadcrumb & Navigation */}
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Link
+            href="/marketplace"
+            className="transition-colors hover:text-foreground"
+          >
+            {t("marketplace.title")}
+          </Link>
+          <span>/</span>
+          <span className="flex items-center gap-1 font-medium text-foreground">
+            <Store className="h-3.5 w-3.5" />
+            <span className="truncate max-w-50 sm:max-w-xs">{business.name}</span>
+          </span>
+        </div>
+
         <div className="flex items-center justify-end gap-2">
           {isOwner ? (
             <Link
