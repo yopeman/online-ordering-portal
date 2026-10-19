@@ -32,7 +32,7 @@ export default async function AdminBusinessLayout({
       <div>
         <Link
           href="/admin/businesses"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center gap-1 mt-2.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           {t("admin.tabBusinesses")}

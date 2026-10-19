@@ -61,7 +61,7 @@ export function PageHeader({
 }) {
   return (
     <div
-      className={`flex flex-wrap items-end justify-between gap-4 ${className}`}
+      className={`flex flex-wrap items-end justify-between mt-2.5 gap-4 ${className}`}
     >
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
