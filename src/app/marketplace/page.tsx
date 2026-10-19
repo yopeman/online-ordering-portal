@@ -1,33 +1,59 @@
-import Link from "next/link";
-import { PackageSearch, Search, Store } from "lucide-react";
-
-import { BusinessCard } from "@/components/business/business-card";
-import { ProductCard } from "@/components/business/product-card";
-import { Card } from "@/components/ui/card";
-import { EmptyState } from "@/components/ui/empty-state";
-import { PageHeader } from "@/components/ui/card";
-import { Pagination } from "@/components/ui/pagination";
+import type { Metadata } from "next";
 import { MissingMongoUriError } from "@/lib/db";
 import { getFormatters, getTranslator } from "@/lib/i18n-server";
-import { listBusinesses, listBusinessCategories, listProducts } from "@/lib/queries";
+import {
+  getMarketplaceStats,
+  listBusinesses,
+  listBusinessLocations,
+  listProducts,
+} from "@/lib/queries";
+import { MarketplaceHero } from "@/components/marketplace/marketplace-hero";
+import { MarketplaceClient } from "@/components/marketplace/marketplace-client";
+import { Card } from "@/components/ui/card";
+import type { MarketplaceView } from "@/components/marketplace/types";
 
-export const metadata = { title: "Marketplace" };
-
-const PER_PAGE = 12;
+export const metadata: Metadata = {
+  title: "Marketplace",
+  description:
+    "Explore local businesses and diverse product catalogs on Yope Order.",
+};
 
 export default async function MarketplacePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; page?: string; view?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+    location?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    sort?: string;
+    page?: string;
+    perPage?: string;
+    view?: string;
+    layout?: string;
+  }>;
 }) {
   const params = await searchParams;
   const t = await getTranslator();
-  const { locale, number } = await getFormatters();
+  const { locale } = await getFormatters();
 
   const search = params.q?.trim() ?? "";
   const category = params.category?.trim() ?? "";
+  const location = params.location?.trim() ?? "";
+  const minPrice = params.minPrice && !isNaN(Number(params.minPrice))
+    ? Number(params.minPrice)
+    : undefined;
+  const maxPrice = params.maxPrice && !isNaN(Number(params.maxPrice))
+    ? Number(params.maxPrice)
+    : undefined;
+  const sort = params.sort?.trim() || "newest";
   const page = Math.max(1, Number(params.page) || 1);
-  const view = params.view === "products" ? "products" : "businesses";
+  const perPage = [12, 24, 36].includes(Number(params.perPage))
+    ? Number(params.perPage)
+    : 12;
+  const view: MarketplaceView =
+    params.view === "products" ? "products" : "businesses";
 
   let businesses: Awaited<ReturnType<typeof listBusinesses>> = {
     items: [],
@@ -41,162 +67,128 @@ export default async function MarketplacePage({
     page,
     totalPages: 1,
   };
-  let categories: string[] = [];
+
+  let stats: Awaited<ReturnType<typeof getMarketplaceStats>> = {
+    businessCount: 0,
+    productCount: 0,
+    businessCategories: [],
+    productCategories: [],
+  };
+  let locations: string[] = [];
   let dbMissing = false;
 
   try {
-    categories = await listBusinessCategories();
+    const [fetchedStats, fetchedLocations] = await Promise.all([
+      getMarketplaceStats(),
+      listBusinessLocations(),
+    ]);
+    stats = fetchedStats;
+    locations = fetchedLocations;
+
     if (view === "products") {
-      products = await listProducts({ search, category, page, perPage: PER_PAGE });
+      products = await listProducts({
+        search,
+        category,
+        minPrice,
+        maxPrice,
+        sort: sort as "newest" | "oldest" | "price_asc" | "price_desc" | "alpha",
+        page,
+        perPage,
+      });
     } else {
-      businesses = await listBusinesses({ search, category, page, perPage: PER_PAGE });
+      businesses = await listBusinesses({
+        search,
+        category,
+        location,
+        sort: sort as "newest" | "oldest" | "alpha" | "products",
+        page,
+        perPage,
+      });
     }
   } catch (error) {
     if (!(error instanceof MissingMongoUriError)) throw error;
     dbMissing = true;
   }
 
-  const buildHref = (nextPage: number) => {
-    const query = new URLSearchParams();
-    if (search) query.set("q", search);
-    if (category) query.set("category", category);
-    if (view === "products") query.set("view", "products");
-    if (nextPage > 1) query.set("page", String(nextPage));
-    const queryString = query.toString();
-    return queryString ? `/marketplace?${queryString}` : "/marketplace";
-  };
-
-  const hasResults = view === "products" ? products.total > 0 : businesses.total > 0;
+  const activeCategories =
+    view === "products" ? stats.productCategories : stats.businessCategories;
+  const totalItems = view === "products" ? products.total : businesses.total;
+  const totalPages = view === "products" ? products.totalPages : businesses.totalPages;
 
   return (
-    <div className="container-page space-y-6 py-10">
-      <PageHeader
-        title={t("marketplace.title")}
-        description={t("marketplace.subtitle")}
+    <div className="container-page space-y-8 py-8 sm:py-12 animate-enter-up">
+      {/* Rich Hero with Ambient Glow, Counters & View Tabs */}
+      <MarketplaceHero
+        view={view}
+        businessCount={stats.businessCount}
+        productCount={stats.productCount}
+        labels={{
+          badge: t("marketplace.badge"),
+          heroTitle: t("marketplace.heroTitle"),
+          heroSubtitle: t("marketplace.heroSubtitle"),
+          businesses: t("marketplace.businesses"),
+          products: t("marketplace.products"),
+          totalBusinesses: t("marketplace.totalBusinesses"),
+          totalProducts: t("marketplace.totalProducts"),
+        }}
       />
 
-      <form method="get" className="flex flex-col gap-3 sm:flex-row">
-        {view === "products" ? <input type="hidden" name="view" value="products" /> : null}
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle-foreground" />
-          <input
-            type="search"
-            name="q"
-            defaultValue={search}
-            placeholder={t("marketplace.searchPlaceholder")}
-            className="h-11 w-full rounded-lg border border-border bg-surface pl-9 pr-3 text-sm text-foreground placeholder:text-subtle-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
-          />
-        </div>
-
-        {categories.length > 0 ? (
-          <select
-            name="category"
-            defaultValue={category}
-            className="h-11 w-full sm:w-auto rounded-lg border border-border bg-surface px-3 text-sm text-foreground focus:border-primary focus:outline-none"
-          >
-            <option value="">{t("common.all")}</option>
-            {categories.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        ) : null}
-
-        <button
-          type="submit"
-          className="h-11 w-full sm:w-auto rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover cursor-pointer"
-        >
-          {t("common.search")}
-        </button>
-      </form>
-
-      <div className="flex items-center gap-2 border-b border-border text-sm overflow-x-auto no-scrollbar">
-        <Link
-          href={search ? `/marketplace?q=${encodeURIComponent(search)}` : "/marketplace"}
-          className={`-mb-px shrink-0 border-b-2 px-3 py-2 font-medium ${view === "businesses"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-        >
-          {t("marketplace.businesses")} ({number(businesses.total)})
-        </Link>
-        <Link
-          href={`/marketplace?view=products${search ? `&q=${encodeURIComponent(search)}` : ""}`}
-          className={`-mb-px shrink-0 border-b-2 px-3 py-2 font-medium ${view === "products"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-        >
-          {t("marketplace.products")}
-        </Link>
-      </div>
-
       {dbMissing ? (
-        <Card className="p-6 text-sm text-muted-foreground">
+        <Card className="p-8 text-center text-sm text-muted-foreground">
           {t("errors.mongoMissing")}
         </Card>
-      ) : !hasResults ? (
-        <EmptyState
-          icon={view === "products" ? <PackageSearch className="h-8 w-8" /> : <Store className="h-8 w-8" />}
-          title={search || category ? t("marketplace.noResults") : t("marketplace.empty")}
-          description={search || category ? t("marketplace.noResultsHint") : t("marketplace.emptyHint")}
-          action={
-            <Link
-              href="/login"
-              className="inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
-            >
-              {t("landing.ctaPrimary")}
-            </Link>
-          }
-        />
-      ) : view === "products" ? (
-        <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {products.items.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                locale={locale}
-                altLabel={t("product.imageOf")}
-                showBusiness
-              />
-            ))}
-          </div>
-          <Pagination
-            page={products.page}
-            totalPages={products.totalPages}
-            buildHref={buildHref}
-            labels={{
-              previous: t("common.previous"),
-              next: t("common.next"),
-              page: t("common.page"),
-            }}
-          />
-        </>
       ) : (
-        <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {businesses.items.map((business) => (
-              <BusinessCard
-                key={business.id}
-                business={business}
-                locale={locale}
-                productLabel={t("marketplace.productCount")}
-              />
-            ))}
-          </div>
-          <Pagination
-            page={businesses.page}
-            totalPages={businesses.totalPages}
-            buildHref={buildHref}
-            labels={{
-              previous: t("common.previous"),
-              next: t("common.next"),
-              page: t("common.page"),
-            }}
-          />
-        </>
+        /* Client coordinator: sidebar + toolbar + listing + server pagination */
+        <MarketplaceClient
+          view={view}
+          total={totalItems}
+          page={page}
+          totalPages={totalPages}
+          perPage={perPage}
+          businesses={businesses.items}
+          products={products.items}
+          categories={activeCategories}
+          locations={locations}
+          locale={locale}
+          labels={{
+            filters: t("marketplace.filters"),
+            clearFilters: t("marketplace.clearFilters"),
+            searchPlaceholder: t("marketplace.searchPlaceholder"),
+            categories: t("marketplace.categories"),
+            allCategories: t("marketplace.allCategories"),
+            priceRange: t("marketplace.priceRange"),
+            minPrice: t("marketplace.minPrice"),
+            maxPrice: t("marketplace.maxPrice"),
+            apply: t("marketplace.apply"),
+            location: t("marketplace.location"),
+            allLocations: t("marketplace.allLocations"),
+            sortBy: t("marketplace.sortBy"),
+            sortNewest: t("marketplace.sortNewest"),
+            sortOldest: t("marketplace.sortOldest"),
+            sortAlpha: t("marketplace.sortAlpha"),
+            sortPopular: t("marketplace.sortPopular"),
+            sortPriceLow: t("marketplace.sortPriceLow"),
+            sortPriceHigh: t("marketplace.sortPriceHigh"),
+            showingResults: t("marketplace.showingResults"),
+            perPage: t("marketplace.perPage"),
+            page: t("marketplace.page"),
+            previous: t("common.previous"),
+            next: t("common.next"),
+            viewStore: t("marketplace.viewStore"),
+            viewProduct: t("marketplace.viewProduct"),
+            verified: t("marketplace.verified"),
+            productCount: t("marketplace.productCount"),
+            empty: t("marketplace.empty"),
+            emptyHint: t("marketplace.emptyHint"),
+            noResults: t("marketplace.noResults"),
+            noResultsHint: t("marketplace.noResultsHint"),
+            businesses: t("marketplace.businesses"),
+            products: t("marketplace.products"),
+            gridView: t("marketplace.gridView"),
+            listView: t("marketplace.listView"),
+            ctaPrimary: t("landing.ctaPrimary"),
+          }}
+        />
       )}
     </div>
   );

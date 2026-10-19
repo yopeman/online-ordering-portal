@@ -48,6 +48,8 @@ export interface BusinessListItem {
 export async function listBusinesses(options: {
   search?: string;
   category?: string;
+  location?: string;
+  sort?: "newest" | "oldest" | "alpha" | "products";
   page?: number;
   perPage?: number;
 } = {}): Promise<{ items: BusinessListItem[]; total: number; page: number; totalPages: number }> {
@@ -66,10 +68,27 @@ export async function listBusinesses(options: {
       { name: { $regex: escaped, $options: "i" } },
       { slug: { $regex: escaped, $options: "i" } },
       { "details.description": { $regex: escaped, $options: "i" } },
+      { "details.category": { $regex: escaped, $options: "i" } },
+      { "details.location": { $regex: escaped, $options: "i" } },
     ];
   }
 
   if (options.category) filter["details.category"] = options.category;
+  if (options.location) {
+    filter["details.location"] = {
+      $regex: options.location.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+      $options: "i",
+    };
+  }
+
+  const sortStage: Record<string, 1 | -1> =
+    options.sort === "oldest"
+      ? { createdAt: 1 }
+      : options.sort === "alpha"
+      ? { name: 1 }
+      : options.sort === "products"
+      ? { productCount: -1, createdAt: -1 }
+      : { createdAt: -1 };
 
   const [items, total] = await Promise.all([
     Business.aggregate<{ _id: Types.ObjectId; productCount: number }>([
@@ -95,7 +114,7 @@ export async function listBusinesses(options: {
           productCount: { $ifNull: [{ $first: "$catalogs.count" }, 0] },
         },
       },
-      { $sort: { createdAt: -1 } },
+      { $sort: sortStage },
       { $skip: (page - 1) * perPage },
       { $limit: perPage },
     ]),
@@ -304,13 +323,16 @@ export async function listProducts(options: {
   businessId?: string;
   search?: string;
   category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: "newest" | "oldest" | "price_asc" | "price_desc" | "alpha";
   includeInactive?: boolean;
   page?: number;
   perPage?: number;
 }): Promise<{ items: ProductListItem[]; total: number; page: number; totalPages: number }> {
   await connectDB();
   const page = Math.max(1, options.page ?? 1);
-  const perPage = Math.min(60, Math.max(1, options.perPage ?? 24));
+  const perPage = Math.min(60, Math.max(1, options.perPage ?? 12));
 
   const filter: QueryFilter<CatalogDoc> = {};
   if (options.businessId) {
@@ -325,6 +347,19 @@ export async function listProducts(options: {
   if (!options.includeInactive) filter.isActive = true;
   if (options.category) filter.category = options.category;
 
+  if (options.minPrice !== undefined || options.maxPrice !== undefined) {
+    const priceFilter: { $gte?: number; $lte?: number } = {};
+    if (options.minPrice !== undefined && !isNaN(options.minPrice) && options.minPrice >= 0) {
+      priceFilter.$gte = options.minPrice;
+    }
+    if (options.maxPrice !== undefined && !isNaN(options.maxPrice) && options.maxPrice >= 0) {
+      priceFilter.$lte = options.maxPrice;
+    }
+    if (Object.keys(priceFilter).length > 0) {
+      filter.price = priceFilter;
+    }
+  }
+
   if (options.search) {
     const escaped = options.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     filter.$or = [
@@ -334,10 +369,21 @@ export async function listProducts(options: {
     ];
   }
 
+  const sortStage: Record<string, 1 | -1> =
+    options.sort === "oldest"
+      ? { createdAt: 1 }
+      : options.sort === "price_asc"
+      ? { price: 1, createdAt: -1 }
+      : options.sort === "price_desc"
+      ? { price: -1, createdAt: -1 }
+      : options.sort === "alpha"
+      ? { name: 1 }
+      : { createdAt: -1 };
+
   const [catalogs, total] = await Promise.all([
     Catalog.find(filter)
       .populate("business", "name slug")
-      .sort({ createdAt: -1 })
+      .sort(sortStage)
       .skip((page - 1) * perPage)
       .limit(perPage)
       .lean(),
@@ -392,17 +438,70 @@ export async function countProducts(businessId: string): Promise<number> {
   return Catalog.countDocuments({ business: businessId });
 }
 
-export async function listProductCategories(businessId: string): Promise<string[]> {
+export async function listProductCategories(businessId?: string): Promise<string[]> {
   await connectDB();
-  const matchBusiness = Types.ObjectId.isValid(businessId)
-    ? { $in: [businessId, new Types.ObjectId(businessId)] }
-    : businessId;
+  const match: Record<string, unknown> = { category: { $type: "string", $ne: "" }, isActive: true };
+  if (businessId) {
+    match.business = Types.ObjectId.isValid(businessId)
+      ? { $in: [businessId, new Types.ObjectId(businessId)] }
+      : businessId;
+  }
   const rows = await Catalog.aggregate<{ _id: string }>([
-    { $match: { business: matchBusiness, category: { $type: "string", $ne: "" } } },
+    { $match: match },
     { $group: { _id: "$category" } },
     { $sort: { _id: 1 } },
   ]);
   return rows.map((row) => row._id).filter(Boolean);
+}
+
+export async function listBusinessLocations(): Promise<string[]> {
+  await connectDB();
+  const rows = await Business.aggregate<{ _id: string }>([
+    { $match: { status: { $ne: "hide" }, isActive: { $ne: false } } },
+    { $project: { location: "$details.location" } },
+    { $match: { location: { $type: "string", $ne: "" } } },
+    { $group: { _id: "$location" } },
+    { $sort: { _id: 1 } },
+  ]);
+  return rows.map((row) => row._id).filter(Boolean);
+}
+
+export interface MarketplaceStats {
+  businessCount: number;
+  productCount: number;
+  businessCategories: { category: string; count: number }[];
+  productCategories: { category: string; count: number }[];
+}
+
+export async function getMarketplaceStats(): Promise<MarketplaceStats> {
+  await connectDB();
+  const [businessCount, productCount, businessCats, productCats] = await Promise.all([
+    Business.countDocuments({ status: { $ne: "hide" }, isActive: { $ne: false } }),
+    Catalog.countDocuments({ isActive: true }),
+    Business.aggregate<{ _id: string; count: number }>([
+      {
+        $match: {
+          status: { $ne: "hide" },
+          isActive: { $ne: false },
+          "details.category": { $type: "string", $ne: "" },
+        },
+      },
+      { $group: { _id: "$details.category", count: { $sum: 1 } } },
+      { $sort: { count: -1, _id: 1 } },
+    ]),
+    Catalog.aggregate<{ _id: string; count: number }>([
+      { $match: { isActive: true, category: { $type: "string", $ne: "" } } },
+      { $group: { _id: "$category", count: { $sum: 1 } } },
+      { $sort: { count: -1, _id: 1 } },
+    ]),
+  ]);
+
+  return {
+    businessCount,
+    productCount,
+    businessCategories: businessCats.map((c) => ({ category: c._id, count: c.count })),
+    productCategories: productCats.map((c) => ({ category: c._id, count: c.count })),
+  };
 }
 
 /* -------------------------------------------------------------------------- */
