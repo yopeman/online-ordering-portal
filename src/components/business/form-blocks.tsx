@@ -270,7 +270,7 @@ export function FileDropZone({
             >
               <Paperclip className="h-4 w-4 shrink-0 text-muted-foreground" />
               <span className="min-w-0 flex-1 truncate text-sm text-foreground">
-                {file.name}
+                {file.name || file.url.split("/").pop() || "Attachment"}
               </span>
               {file.size ? (
                 <span className="text-xs text-muted-foreground">

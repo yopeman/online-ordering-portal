@@ -22,6 +22,7 @@ export interface ProductFormValues {
   category: string;
   details: DetailRow[];
   files: UploadRow[];
+  image?: string;
   price: string;
   currency: string;
   isActive: boolean;
@@ -32,6 +33,7 @@ export const EMPTY_PRODUCT: ProductFormValues = {
   category: "",
   details: [],
   files: [],
+  image: "",
   price: "",
   currency: "ETB",
   isActive: true,
@@ -43,7 +45,20 @@ export const EMPTY_PRODUCT: ProductFormValues = {
  * Serialises the tables into hidden inputs so the form works with a plain
  * server action submit (and still works without JavaScript).
  */
-export function ProductFormModal({
+export function ProductFormModal(props: {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (formData: FormData) => void;
+  values: ProductFormValues;
+  busy?: boolean;
+  error?: string;
+}) {
+  if (!props.open) return null;
+
+  return <ProductFormDialog key={props.values.id ?? "new"} {...props} />;
+}
+
+function ProductFormDialog({
   open,
   onClose,
   onSubmit,
@@ -63,7 +78,7 @@ export function ProductFormModal({
   const [files, setFiles] = useState<UploadRow[]>(values.files);
   const [isActive, setIsActive] = useState(values.isActive);
 
-  const image = files.find((file) => file.type === "image")?.url ?? "";
+  const image = files.find((file) => file.type === "image")?.url ?? values.image ?? "";
 
   return (
     <Modal

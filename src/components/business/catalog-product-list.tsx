@@ -87,6 +87,7 @@ export function CatalogProductList({
         category: editing.category,
         details: editing.description ? [{ key: "description", value: editing.description }] : [],
         files: editing.files,
+        image: editing.image,
         price: String(editing.price),
         currency: editing.currency,
         isActive: editing.isActive,
@@ -170,14 +171,17 @@ export function CatalogProductList({
         </div>
       </Card>
 
-      <ProductFormModal
-        open={open}
-        onClose={() => setOpen(false)}
-        onSubmit={submit}
-        values={values}
-        busy={pending}
-        error={error}
-      />
+      {open ? (
+        <ProductFormModal
+          key={editing?.id ?? "new"}
+          open={open}
+          onClose={() => setOpen(false)}
+          onSubmit={submit}
+          values={values}
+          busy={pending}
+          error={error}
+        />
+      ) : null}
     </div>
   );
 }

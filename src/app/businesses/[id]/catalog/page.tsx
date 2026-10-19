@@ -53,15 +53,28 @@ export default async function CatalogTabPage({
   );
   const attachmentMap = new Map(attachmentsByProduct);
 
-  const rows: CatalogRow[] = products.map((product) => ({
-    ...product,
-    priceLabel: price(product.price, product.currency),
-    files:
-      attachmentMap.get(product.id) ??
-      (product.image
-        ? [{ url: product.image, name: "", size: 0, type: "image" }]
-        : []),
-  }));
+  const rows: CatalogRow[] = products.map((product) => {
+    const productAttachments = attachmentMap.get(product.id) ?? [];
+    const files =
+      productAttachments.length > 0
+        ? productAttachments
+        : product.image
+          ? [
+              {
+                url: product.image,
+                name: product.image.split("/").pop() || "",
+                size: 0,
+                type: "image",
+              },
+            ]
+          : [];
+
+    return {
+      ...product,
+      priceLabel: price(product.price, product.currency),
+      files,
+    };
+  });
 
   const maxCatalogs = owner?.maxCatalogs ?? 50;
 
