@@ -288,7 +288,7 @@ export default async function StorefrontPage({
   const serializedAttachments = attachments.map((a) => ({
     id: String(a._id),
     url: a.url,
-    alt: a.alt || a.url.split("/").pop() || "",
+    alt: a.alt || (a.url.startsWith("data:") ? "Attachment" : a.url.split("/").pop() || "Attachment"),
     kind: a.kind as "image" | "file" | "link",
     order: a.order,
   }));

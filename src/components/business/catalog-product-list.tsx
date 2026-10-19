@@ -180,7 +180,7 @@ export function CatalogProductList({
                       alt={product.name}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      unoptimized={coverImage.startsWith("http://") || coverImage.startsWith("/uploads/")}
+                      unoptimized={coverImage.startsWith("http://") || coverImage.startsWith("data:") || coverImage.startsWith("/uploads/")}
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
@@ -306,7 +306,7 @@ export function CatalogProductList({
                         alt={product.name}
                         fill
                         sizes="44px"
-                        unoptimized={coverImage.startsWith("http://") || coverImage.startsWith("/uploads/")}
+                        unoptimized={coverImage.startsWith("http://") || coverImage.startsWith("data:") || coverImage.startsWith("/uploads/")}
                         className="object-cover"
                       />
                     ) : (

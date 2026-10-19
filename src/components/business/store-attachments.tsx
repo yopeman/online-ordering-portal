@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
+import { getAttachmentDisplayName } from "@/lib/attachment-utils";
 
 export interface StoreAttachmentItem {
   id: string;
@@ -206,7 +207,7 @@ export function StoreAttachments({
                   >
                     <FileText className="h-5 w-5 shrink-0 text-primary" />
                     <span className="truncate text-sm font-medium text-foreground">
-                      {file.alt || file.url.split("/").pop()}
+                      {getAttachmentDisplayName(file.alt, file.url, "Document")}
                     </span>
                   </a>
                   <div className="flex items-center gap-1 shrink-0">
@@ -405,7 +406,7 @@ export function StoreAttachments({
                     >
                       <FileText className="h-5 w-5 shrink-0 text-primary" />
                       <span className="truncate text-sm font-medium text-foreground">
-                        {file.alt || file.url.split("/").pop()}
+                        {getAttachmentDisplayName(file.alt, file.url, "Document")}
                       </span>
                     </a>
                     <div className="flex items-center gap-1.5 shrink-0">

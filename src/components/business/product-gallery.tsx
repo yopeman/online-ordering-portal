@@ -71,7 +71,7 @@ export function ProductGallery({
                 alt={activeImage.alt || productName}
                 fill
                 priority
-                unoptimized={activeImage.url.startsWith("http://")}
+                unoptimized={activeImage.url.startsWith("http://") || activeImage.url.startsWith("data:")}
                 sizes="(max-width: 1024px) 100vw, 1200px"
                 className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
               />
@@ -137,7 +137,7 @@ export function ProductGallery({
                   src={img.url}
                   alt={img.alt || `Thumbnail ${index + 1}`}
                   fill
-                  unoptimized={img.url.startsWith("http://")}
+                  unoptimized={img.url.startsWith("http://") || img.url.startsWith("data:")}
                   sizes="64px"
                   className="object-cover"
                 />

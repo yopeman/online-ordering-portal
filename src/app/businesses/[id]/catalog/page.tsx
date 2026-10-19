@@ -44,7 +44,11 @@ export default async function CatalogTabPage({
         product.id,
         attachments.map((attachment) => ({
           url: attachment.url,
-          name: attachment.alt || attachment.url.split("/").pop() || "",
+          name:
+            attachment.alt ||
+            (attachment.url.startsWith("data:")
+              ? "Attachment"
+              : attachment.url.split("/").pop() || "Attachment"),
           size: 0,
           type: attachment.kind === "file" ? "file" : "image",
         })),
@@ -62,7 +66,9 @@ export default async function CatalogTabPage({
           ? [
               {
                 url: product.image,
-                name: product.image.split("/").pop() || "",
+                name: product.image.startsWith("data:")
+                  ? "Image"
+                  : product.image.split("/").pop() || "Image",
                 size: 0,
                 type: "image",
               },

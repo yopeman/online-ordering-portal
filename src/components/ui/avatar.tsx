@@ -29,6 +29,7 @@ export function Avatar({
         alt={name}
         width={56}
         height={56}
+        unoptimized={src.startsWith("data:") || src.startsWith("http://")}
         className={`${SIZES[size]} rounded-full object-cover`}
       />
     );

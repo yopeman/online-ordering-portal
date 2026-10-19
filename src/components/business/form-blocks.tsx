@@ -10,7 +10,6 @@ import {
 } from "react";
 import { FileUp, Paperclip, Plus, Trash2, X } from "lucide-react";
 
-import { uploadFilesAction } from "@/app/actions/uploads";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/form";
 import { useApp } from "@/components/providers/app-provider";
@@ -158,7 +157,67 @@ function AddLabel() {
   return <>{t("common.add")}</>;
 }
 
-/** Drag & drop / paste / click upload area. */
+/** Reads a File as a base64 data URL */
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") resolve(reader.result);
+      else reject(new Error("Failed to read file as data URL"));
+    };
+    reader.onerror = () => reject(reader.error || new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Resizes and compresses an image file using browser Canvas, returning a Base64 data URL */
+async function compressImageToDataUrl(file: File, maxDim = 1600, quality = 0.85): Promise<string> {
+  if (file.type === "image/svg+xml" || file.type === "image/gif") {
+    return readFileAsDataUrl(file);
+  }
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      let { width, height } = img;
+
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        readFileAsDataUrl(file).then(resolve).catch(() => resolve(""));
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+      const mime = file.type === "image/png" ? "image/png" : "image/jpeg";
+      resolve(canvas.toDataURL(mime, quality));
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      readFileAsDataUrl(file).then(resolve).catch(() => resolve(""));
+    };
+
+    img.src = objectUrl;
+  });
+}
+
+/** Drag & drop / paste / click upload area using Base64 data URLs. */
 export function FileDropZone({
   files,
   onChange,
@@ -176,18 +235,30 @@ export function FileDropZone({
     const selected = Array.from(list).filter((file) => file.size > 0);
     if (selected.length === 0) return;
 
-    const formData = new FormData();
-    for (const file of selected.slice(0, 10)) formData.append("files", file);
-
     setError(null);
     startUpload(async () => {
       try {
-        const result = await uploadFilesAction(formData);
-        if (!result.ok) {
-          setError(result.error || "Upload failed.");
-        } else {
-          onChange([...files, ...result.files]);
+        const newRows: UploadRow[] = [];
+        for (const file of selected.slice(0, 10)) {
+          if (file.size > 10 * 1024 * 1024) {
+            throw new Error(`Files must be smaller than 10 MB.`);
+          }
+          const isImg = file.type.startsWith("image/");
+          let dataUrl: string;
+          if (isImg) {
+            dataUrl = await compressImageToDataUrl(file);
+          } else {
+            dataUrl = await readFileAsDataUrl(file);
+          }
+          if (!dataUrl) continue;
+          newRows.push({
+            url: dataUrl,
+            name: file.name,
+            size: Math.round((dataUrl.length * 3) / 4),
+            type: isImg ? "image" : "file",
+          });
         }
+        onChange([...files, ...newRows]);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed.");
       }
@@ -253,7 +324,7 @@ export function FileDropZone({
 
       {isPending ? (
         <p className="text-xs font-medium text-primary animate-pulse">
-          Uploading files...
+          Processing files...
         </p>
       ) : null}
 
@@ -263,32 +334,48 @@ export function FileDropZone({
 
       {files.length > 0 ? (
         <ul className="space-y-2">
-          {files.map((file, index) => (
-            <li
-              key={`${file.url}-${index}`}
-              className="flex items-center gap-3 rounded-lg border border-border px-3 py-2"
-            >
-              <Paperclip className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <span className="min-w-0 flex-1 truncate text-sm text-foreground">
-                {file.name || file.url.split("/").pop() || "Attachment"}
-              </span>
-              {file.size ? (
-                <span className="text-xs text-muted-foreground">
-                  {Math.max(1, Math.round(file.size / 1024))} KB
-                </span>
-              ) : null}
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={t("common.remove")}
-                onClick={() => onChange(files.filter((_, i) => i !== index))}
-                className="text-muted-foreground hover:text-danger"
+          {files.map((file, index) => {
+            const isImg = file.type === "image" || file.url.startsWith("data:image/");
+            return (
+              <li
+                key={`${file.name}-${index}`}
+                className="flex items-center gap-3 rounded-lg border border-border px-3 py-2 bg-surface"
               >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </li>
-          ))}
+                {isImg ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={file.url}
+                    alt={file.name}
+                    className="h-10 w-10 shrink-0 rounded-md border border-border object-cover"
+                  />
+                ) : (
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface-muted text-muted-foreground">
+                    <Paperclip className="h-4 w-4" />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-foreground">
+                    {file.name || "Attachment"}
+                  </p>
+                  {file.size ? (
+                    <p className="text-xs text-muted-foreground">
+                      {Math.max(1, Math.round(file.size / 1024))} KB
+                    </p>
+                  ) : null}
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t("common.remove")}
+                  onClick={() => onChange(files.filter((_, i) => i !== index))}
+                  className="text-muted-foreground hover:text-danger"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </li>
+            );
+          })}
         </ul>
       ) : null}
     </div>

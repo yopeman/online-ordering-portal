@@ -54,13 +54,27 @@ function parseFiles(value: string): ProductFile[] {
 
   return rows
     .map((row) => row as Record<string, unknown>)
-    .filter((row) => typeof row.url === "string" && row.url.startsWith("/uploads/"))
-    .map((row, index) => ({
-      url: row.url as string,
-      name: typeof row.name === "string" ? row.name : "",
-      type: row.type === "file" ? ("file" as const) : ("image" as const),
-      order: index,
-    }))
+    .filter(
+      (row) =>
+        typeof row.url === "string" &&
+        (row.url.startsWith("data:") ||
+          row.url.startsWith("/uploads/") ||
+          row.url.startsWith("http://") ||
+          row.url.startsWith("https://")),
+    )
+    .map((row, index) => {
+      const url = row.url as string;
+      const rawName = typeof row.name === "string" ? row.name.trim() : "";
+      const name =
+        rawName || (url.startsWith("data:") ? "Attachment" : url.split("/").pop() ?? "Attachment");
+
+      return {
+        url,
+        name,
+        type: row.type === "file" ? ("file" as const) : ("image" as const),
+        order: index,
+      };
+    })
     .slice(0, 20);
 }
 

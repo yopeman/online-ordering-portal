@@ -74,10 +74,22 @@ function parseFiles(value: string): BusinessFile[] {
 
   return rows
     .map((row) => row as UploadedRow)
-    .filter((row) => typeof row.url === "string" && row.url.startsWith("/uploads/"))
+    .filter(
+      (row) =>
+        typeof row.url === "string" &&
+        (row.url.startsWith("data:") ||
+          row.url.startsWith("/uploads/") ||
+          row.url.startsWith("http://") ||
+          row.url.startsWith("https://")),
+    )
     .map((row, index) => ({
       url: row.url,
-      name: row.name ?? row.url.split("/").pop() ?? "",
+      name:
+        row.name && row.name.trim()
+          ? row.name.trim()
+          : row.url.startsWith("data:")
+            ? "Attachment"
+            : row.url.split("/").pop() ?? "Attachment",
       type: row.type === "file" ? ("file" as const) : ("image" as const),
       order: index,
     }))

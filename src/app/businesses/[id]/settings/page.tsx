@@ -54,7 +54,11 @@ export default async function SettingsTabPage({
           contacts: readContacts(business.contactPhones),
           files: attachments.map((attachment) => ({
             url: attachment.url,
-            name: attachment.alt || attachment.url.split("/").pop() || "",
+            name:
+              attachment.alt ||
+              (attachment.url.startsWith("data:")
+                ? "Attachment"
+                : attachment.url.split("/").pop() || "Attachment"),
             size: 0,
             type: attachment.kind === "file" ? "file" : "image",
           })),

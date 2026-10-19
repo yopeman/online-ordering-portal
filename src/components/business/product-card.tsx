@@ -30,6 +30,7 @@ export function ProductCard({
             alt={altLabel.replace("{name}", product.name)}
             fill
             sizes="(max-width: 640px) 100vw, 320px"
+            unoptimized={product.image.startsWith("data:") || product.image.startsWith("http://")}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
