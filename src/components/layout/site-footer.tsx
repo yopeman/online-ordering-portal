@@ -7,7 +7,7 @@ export async function SiteFooter() {
 
   return (
     <footer className="mt-auto border-t border-border bg-surface">
-      <div className="container-page flex flex-col items-center justify-between gap-3 py-6 text-sm text-muted-foreground sm:flex-row">
+      <div className="container-page flex flex-col items-center justify-between gap-3 py-6 text-center sm:text-left text-sm text-muted-foreground sm:flex-row">
         <p>
           © {year} Yope Order. {t("footer.rights")}
         </p>

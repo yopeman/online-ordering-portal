@@ -66,9 +66,9 @@ export function Modal({
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <div className="flex-1 overflow-y-auto px-4 py-4">{children}</div>
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">{children}</div>
         {footer ? (
-          <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-4 py-3">
             {footer}
           </div>
         ) : null}

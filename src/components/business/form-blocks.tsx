@@ -74,7 +74,7 @@ export function DetailRowsEditor({
           key={index}
           onRemove={() => onChange(rows.filter((_, i) => i !== index))}
         >
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Input
               placeholder={t("dashboard.detailKey")}
               value={row.key}

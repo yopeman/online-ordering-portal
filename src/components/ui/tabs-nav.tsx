@@ -16,7 +16,7 @@ export function TabsNav({ items }: { items: TabItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="no-scrollbar -mb-px flex gap-1 overflow-x-auto border-b border-border">
+    <nav className="no-scrollbar -mb-px flex flex-nowrap gap-1 overflow-x-auto overscroll-x-contain border-b border-border">
       {items.map((item) => {
         const active =
           pathname === item.href ||

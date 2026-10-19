@@ -117,7 +117,7 @@ export function BusinessCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="font-semibold text-foreground">{business.name}</h3>
+        <h3 className="font-semibold text-foreground wrap-break-word">{business.name}</h3>
         {business.description ? (
           <p className="line-clamp-2 text-sm text-muted-foreground">
             {business.description}
@@ -270,7 +270,7 @@ export function BusinessOwnerCard({
           {business.contactPhones[0] ? (
             <span className="inline-flex items-center gap-1">
               <Phone className="h-3.5 w-3.5 shrink-0" />
-              <span>
+              <span className="truncate max-w-35">
                 {typeof business.contactPhones[0] === "string"
                   ? business.contactPhones[0]
                   : business.contactPhones[0].target}

@@ -92,7 +92,7 @@ export default async function MarketplacePage({
           <select
             name="category"
             defaultValue={category}
-            className="h-11 rounded-lg border border-border bg-surface px-3 text-sm text-foreground focus:border-primary focus:outline-none"
+            className="h-11 w-full sm:w-auto rounded-lg border border-border bg-surface px-3 text-sm text-foreground focus:border-primary focus:outline-none"
           >
             <option value="">{t("common.all")}</option>
             {categories.map((item) => (
@@ -105,16 +105,16 @@ export default async function MarketplacePage({
 
         <button
           type="submit"
-          className="h-11 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+          className="h-11 w-full sm:w-auto rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover cursor-pointer"
         >
           {t("common.search")}
         </button>
       </form>
 
-      <div className="flex items-center gap-2 border-b border-border text-sm">
+      <div className="flex items-center gap-2 border-b border-border text-sm overflow-x-auto no-scrollbar">
         <Link
           href={search ? `/marketplace?q=${encodeURIComponent(search)}` : "/marketplace"}
-          className={`-mb-px border-b-2 px-3 py-2 font-medium ${view === "businesses"
+          className={`-mb-px shrink-0 border-b-2 px-3 py-2 font-medium ${view === "businesses"
               ? "border-primary text-primary"
               : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
@@ -123,7 +123,7 @@ export default async function MarketplacePage({
         </Link>
         <Link
           href={`/marketplace?view=products${search ? `&q=${encodeURIComponent(search)}` : ""}`}
-          className={`-mb-px border-b-2 px-3 py-2 font-medium ${view === "products"
+          className={`-mb-px shrink-0 border-b-2 px-3 py-2 font-medium ${view === "products"
               ? "border-primary text-primary"
               : "border-transparent text-muted-foreground hover:text-foreground"
             }`}

@@ -84,7 +84,7 @@ export default async function LandingPage() {
 
   return (
     <>
-      <section className="border-b border-border bg-gradient-to-b from-primary-soft to-transparent">
+      <section className="border-b border-border bg-linear-to-b from-primary-soft to-transparent">
         <div className="container-page flex flex-col items-center gap-6 py-16 text-center sm:py-24">
           <Badge tone="primary">{t("landing.heroBadge")}</Badge>
           <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
@@ -94,23 +94,23 @@ export default async function LandingPage() {
             {t("landing.heroSubtitle")}
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex w-full sm:w-auto flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href={user ? "/businesses" : "/login"}
-              className="inline-flex h-12 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+              className="inline-flex h-12 w-full sm:w-auto justify-center items-center gap-2 rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
             >
               {t("landing.ctaPrimary")}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/marketplace"
-              className="inline-flex h-12 items-center rounded-lg border border-border bg-surface px-6 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
+              className="inline-flex h-12 w-full sm:w-auto justify-center items-center rounded-lg border border-border bg-surface px-6 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
             >
               {t("landing.ctaSecondary")}
             </Link>
           </div>
 
-          <dl className="mt-6 grid w-full max-w-2xl grid-cols-3 divide-x divide-border rounded-xl border border-border bg-surface">
+          <dl className="mt-6 grid w-full max-w-2xl grid-cols-1 divide-y sm:grid-cols-3 sm:divide-y-0 sm:divide-x divide-border rounded-xl border border-border bg-surface">
             <Stat label={t("landing.statsBusinesses")} value={stats.businesses} />
             <Stat label={t("landing.statsProducts")} value={stats.products} />
             <Stat label={t("landing.statsOrders")} value={stats.orders} />

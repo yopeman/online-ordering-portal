@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  ArrowLeft,
   Clock,
   ExternalLink,
   Globe,
@@ -12,7 +11,6 @@ import {
   Package,
   Phone,
   Send,
-  Share2,
   Store,
   Tag,
   Truck,
@@ -379,19 +377,19 @@ export default async function StorefrontPage({
         {/* Header Details */}
         <div className="space-y-5 pt-1">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
               {logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={logoUrl}
                   alt={`${business.name} logo`}
-                  className="h-20 w-20 shrink-0 rounded-2xl border border-border bg-surface object-cover shadow-sm sm:h-24 sm:w-24"
+                  className="h-16 w-16 sm:h-24 sm:w-24 shrink-0 rounded-2xl border border-border bg-surface object-cover shadow-sm"
                 />
               ) : null}
 
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-foreground wrap-break-word">
                     {business.name}
                   </h1>
                   {category ? <Badge tone="primary">{category}</Badge> : null}
@@ -403,7 +401,7 @@ export default async function StorefrontPage({
                   {currency ? <Badge tone="neutral">{currency}</Badge> : null}
                 </div>
 
-                <p className="font-mono text-xs text-muted-foreground">
+                <p className="font-mono text-xs text-muted-foreground truncate">
                   /{business.slug}
                 </p>
 
@@ -421,7 +419,7 @@ export default async function StorefrontPage({
 
             {/* Quick Contact Action Buttons */}
             {contactPhones.length > 0 ? (
-              <div className="gap-2 sm:flex-col sm:items-end">
+              <div className="flex flex-wrap gap-2 sm:flex-col sm:items-end">
                 {contactPhones.map((contact, index) => {
                   const href = getContactHref(contact);
                   const isExternal = contact.type === "telegram" || contact.type === "wa";
@@ -431,7 +429,7 @@ export default async function StorefrontPage({
                       href={href}
                       target={isExternal ? "_blank" : undefined}
                       rel={isExternal ? "noopener noreferrer" : undefined}
-                      className="inline-flex ml-1.5 my-1 h-10 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-surface-muted hover:border-primary-border"
+                      className="inline-flex h-9 sm:h-10 items-center gap-2 rounded-lg border border-border bg-surface px-3 sm:px-4 text-xs sm:text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-surface-muted hover:border-primary-border"
                     >
                       {contact.type === "telegram" ? (
                         <Send className="h-4 w-4 text-sky-500" />
@@ -467,41 +465,41 @@ export default async function StorefrontPage({
                   href={mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground transition-colors hover:bg-surface-muted hover:text-primary hover:border-primary-border"
+                  className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground transition-colors hover:bg-surface-muted hover:text-primary hover:border-primary-border"
                 >
                   <MapPin className="h-4 w-4 shrink-0 text-primary" />
-                  <span className="font-medium">{displayLocation}</span>
+                  <span className="font-medium truncate">{displayLocation}</span>
                   <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
                 </a>
               ) : (
-                <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground">
+                <div className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground">
                   <MapPin className="h-4 w-4 shrink-0 text-primary" />
-                  <span className="font-medium">{displayLocation}</span>
+                  <span className="font-medium truncate">{displayLocation}</span>
                 </div>
               )
             ) : null}
 
             {openingHours ? (
-              <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground">
+              <div className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground">
                 <Clock className="h-4 w-4 shrink-0 text-primary" />
-                <span>{openingHours}</span>
+                <span className="truncate">{openingHours}</span>
               </div>
             ) : null}
 
             {delivery ? (
-              <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground">
+              <div className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground">
                 <Truck className="h-4 w-4 shrink-0 text-primary" />
-                <span>{delivery}</span>
+                <span className="truncate">{delivery}</span>
               </div>
             ) : null}
 
             {email ? (
               <a
                 href={`mailto:${email}`}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground transition-colors hover:bg-surface-muted hover:text-primary"
+                className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground transition-colors hover:bg-surface-muted hover:text-primary"
               >
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <span>{email}</span>
+                <span className="truncate">{email}</span>
               </a>
             ) : null}
 
@@ -510,10 +508,10 @@ export default async function StorefrontPage({
                 href={website.startsWith("http") ? website : `https://${website}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground transition-colors hover:bg-surface-muted hover:text-primary"
+                className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border bg-surface-muted/60 px-3 py-1.5 text-foreground transition-colors hover:bg-surface-muted hover:text-primary"
               >
                 <Globe className="h-4 w-4 shrink-0 text-primary" />
-                <span>
+                <span className="truncate">
                   {website.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
                 </span>
                 <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />

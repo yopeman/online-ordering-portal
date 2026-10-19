@@ -41,7 +41,7 @@ export default async function AdminBusinessesPage({
         description={t("admin.businessesSubtitle")}
       />
 
-      <form method="get" className="flex gap-3">
+      <form method="get" className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle-foreground" />
           <input
@@ -54,7 +54,7 @@ export default async function AdminBusinessesPage({
         </div>
         <button
           type="submit"
-          className="h-10 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+          className="h-10 w-full sm:w-auto rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover cursor-pointer"
         >
           {t("common.search")}
         </button>

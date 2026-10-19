@@ -118,7 +118,7 @@ export function ProductGallery({
 
       {/* Thumbnails Row */}
       {images.length > 1 ? (
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+        <div className="flex gap-2 overflow-x-auto pb-1 overscroll-x-contain no-scrollbar sm:scrollbar-thin">
           {images.map((img, index) => {
             const isSelected = index === selectedIndex;
             return (
@@ -127,7 +127,7 @@ export function ProductGallery({
                 type="button"
                 onClick={() => setSelectedIndex(index)}
                 aria-label={`Select photo ${index + 1}`}
-                className={`relative aspect-square h-16 w-16 shrink-0 overflow-hidden rounded-lg border text-left transition-all cursor-pointer ${
+                className={`relative aspect-square h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-lg border text-left transition-all cursor-pointer ${
                   isSelected
                     ? "border-primary ring-2 ring-primary/40"
                     : "border-border opacity-70 hover:opacity-100 hover:border-primary-border"
@@ -188,7 +188,7 @@ export function ProductGallery({
             </div>
 
             {images.length > 1 ? (
-              <div className="flex gap-2 overflow-x-auto p-1">
+              <div className="flex gap-2 overflow-x-auto overscroll-x-contain no-scrollbar p-1">
                 {images.map((img, idx) => (
                   <button
                     key={`modal-${img.url}-${idx}`}

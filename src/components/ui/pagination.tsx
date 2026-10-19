@@ -24,25 +24,25 @@ export function Pagination({
   );
 
   return (
-    <nav className="flex items-center justify-between gap-4" aria-label="Pagination">
+    <nav className="flex items-center justify-between gap-2 sm:gap-4" aria-label="Pagination">
       <Link
         href={buildHref(Math.max(1, page - 1))}
         aria-disabled={page === 1}
-        className={`inline-flex h-9 items-center gap-1 rounded-lg border border-border px-3 text-sm ${
+        className={`inline-flex h-9 shrink-0 items-center gap-1 rounded-lg border border-border px-2 sm:px-3 text-sm ${
           page === 1 ? "pointer-events-none opacity-50" : "hover:bg-surface-muted"
         }`}
       >
         <ChevronLeft className="h-4 w-4" />
-        {labels.previous}
+        <span className="hidden sm:inline">{labels.previous}</span>
       </Link>
 
-      <ul className="flex items-center gap-1">
+      <ul className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 max-w-[60vw] sm:max-w-none">
         {visible.map((candidate, index) => {
           const previous = visible[index - 1];
           const gap = previous !== undefined && candidate - previous > 1;
 
           return (
-            <li key={candidate} className="flex items-center gap-1">
+            <li key={candidate} className="flex shrink-0 items-center gap-1">
               {gap ? <span className="px-1 text-subtle-foreground">…</span> : null}
               <Link
                 href={buildHref(candidate)}
@@ -63,13 +63,13 @@ export function Pagination({
       <Link
         href={buildHref(Math.min(totalPages, page + 1))}
         aria-disabled={page === totalPages}
-        className={`inline-flex h-9 items-center gap-1 rounded-lg border border-border px-3 text-sm ${
+        className={`inline-flex h-9 shrink-0 items-center gap-1 rounded-lg border border-border px-2 sm:px-3 text-sm ${
           page === totalPages
             ? "pointer-events-none opacity-50"
             : "hover:bg-surface-muted"
         }`}
       >
-        {labels.next}
+        <span className="hidden sm:inline">{labels.next}</span>
         <ChevronRight className="h-4 w-4" />
       </Link>
     </nav>

@@ -52,7 +52,7 @@ export function ProductCard({
         {showBusiness && product.businessName ? (
           <p className="text-xs text-muted-foreground">{product.businessName}</p>
         ) : null}
-        <h3 className="font-medium text-foreground">{product.name}</h3>
+        <h3 className="font-medium text-foreground wrap-break-word">{product.name}</h3>
         {product.description ? (
           <p className="line-clamp-2 text-sm text-muted-foreground">
             {product.description}

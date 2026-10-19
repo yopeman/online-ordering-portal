@@ -143,7 +143,7 @@ export function CreateBusinessButton({
               create={() => ({ name: "", type: "text" as const, options: [] })}
               renderRow={(row, update) => (
                 <div className="space-y-2">
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <Input
                       placeholder={t("settings.fieldLabel")}
                       value={row.name}

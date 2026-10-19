@@ -395,7 +395,7 @@ export default async function ProductPage({
             <span>{business.name}</span>
           </Link>
           <span>/</span>
-          <span className="truncate max-w-50 sm:max-w-xs text-foreground font-medium">
+          <span className="truncate max-w-36 sm:max-w-xs text-foreground font-medium">
             {product.name}
           </span>
         </div>
@@ -620,8 +620,8 @@ export default async function ProductPage({
                   </div>
                 </div>
 
-                <Link href={`/store/${business.slug}`}>
-                  <Button variant="secondary" className="gap-1.5 shadow-xs">
+                <Link href={`/store/${business.slug}`} className="w-full sm:w-auto">
+                  <Button variant="secondary" className="w-full sm:w-auto justify-center gap-1.5 shadow-xs">
                     <Store className="h-4 w-4 text-primary" />
                     <span>Visit Storefront</span>
                   </Button>
