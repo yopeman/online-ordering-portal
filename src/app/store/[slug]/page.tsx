@@ -421,7 +421,7 @@ export default async function StorefrontPage({
 
             {/* Quick Contact Action Buttons */}
             {contactPhones.length > 0 ? (
-              <div className="flex flex-wrap gap-2 sm:flex-col sm:items-end">
+              <div className="gap-2 sm:flex-col sm:items-end">
                 {contactPhones.map((contact, index) => {
                   const href = getContactHref(contact);
                   const isExternal = contact.type === "telegram" || contact.type === "wa";
@@ -431,7 +431,7 @@ export default async function StorefrontPage({
                       href={href}
                       target={isExternal ? "_blank" : undefined}
                       rel={isExternal ? "noopener noreferrer" : undefined}
-                      className="inline-flex h-10 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-surface-muted hover:border-primary-border"
+                      className="inline-flex ml-1.5 h-10 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-surface-muted hover:border-primary-border"
                     >
                       {contact.type === "telegram" ? (
                         <Send className="h-4 w-4 text-sky-500" />
