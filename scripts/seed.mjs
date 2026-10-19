@@ -92,6 +92,7 @@ function collectionSchema() {
       orderFormTemplates: { type: [Schema.Types.Mixed], default: [] },
       contactPhones: { type: [String], default: [] },
       image: { type: String, default: "" },
+      status: { type: String, enum: ["visible", "hide"], default: "visible" },
       isActive: { type: Boolean, default: true },
     },
     { timestamps: true, collection: "businesses" },
@@ -197,6 +198,8 @@ async function main() {
         slug,
         owner: owner._id,
         image: "",
+        status: "visible",
+        isActive: true,
         contactPhones: entry.phones,
         details: {
           description: entry.description,

@@ -115,7 +115,9 @@ export default async function StorefrontPage({
     currentUser &&
     (currentUser.id === business.owner.toString() || currentUser.role === "admin");
 
-  const isActive = business.isActive !== false;
+  const isActive =
+    (business.status ? business.status === "visible" : true) &&
+    business.isActive !== false;
 
   if (!isActive && !isOwner) {
     notFound();

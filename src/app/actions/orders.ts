@@ -39,7 +39,9 @@ export async function placeOrderAction(
   if (!product) return { ok: false, error: t("errors.notFound") };
 
   const business = await Business.findById(product.business).lean();
-  if (!business || !business.isActive) return { ok: false, error: t("errors.notFound") };
+  if (!business || !business.isActive || business.status === "hide") {
+    return { ok: false, error: t("errors.notFound") };
+  }
 
   const fields: OrderFormField[] = (() => {
     const configured = readOrderFormTemplates(business.orderFormTemplates);

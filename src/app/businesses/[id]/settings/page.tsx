@@ -58,6 +58,9 @@ export default async function SettingsTabPage({
             type: attachment.kind === "file" ? "file" : "image",
           })),
           image: business.image ?? "",
+          status:
+            (business.status as "visible" | "hide") ||
+            (business.isActive !== false ? "visible" : "hide"),
           isActive: business.isActive ?? true,
         }}
       />

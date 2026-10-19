@@ -59,6 +59,7 @@ export interface AdminBusinessItem {
   slug: string;
   category: string;
   location: string;
+  status: "visible" | "hide";
   isActive: boolean;
   contactPhones: string[];
   ownerName: string;
@@ -144,7 +145,10 @@ export async function listAllBusinesses(options: {
         slug: business.slug,
         category: String(details.category ?? ""),
         location: String(details.location ?? ""),
-        isActive: business.isActive ?? true,
+        status:
+          (business.status as "visible" | "hide") ||
+          (business.isActive !== false ? "visible" : "hide"),
+        isActive: business.isActive !== false && business.status !== "hide",
         contactPhones: business.contactPhones ?? [],
         ownerName: owner?.name ?? "",
         ownerEmail: owner?.email ?? "",

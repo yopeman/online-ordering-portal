@@ -24,6 +24,8 @@ export interface BusinessDetails {
   [key: string]: unknown;
 }
 
+export type BusinessStatus = "visible" | "hide";
+
 const BusinessSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -42,10 +44,26 @@ const BusinessSchema = new Schema(
     contactPhones: { type: [String], default: [] },
     /** Logo / cover image URL shown on the public storefront. */
     image: { type: String, default: "" },
+    status: {
+      type: String,
+      enum: ["visible", "hide"] as const,
+      default: "visible" as const,
+      index: true,
+    },
     isActive: { type: Boolean, default: true, index: true },
   },
   { timestamps: true, collection: "businesses" },
 );
+
+BusinessSchema.pre("save", function () {
+  if (this.isModified("status")) {
+    this.isActive = this.status === "visible";
+  } else if (this.isModified("isActive")) {
+    this.status = this.isActive ? "visible" : "hide";
+  } else if (!this.status) {
+    this.status = this.isActive !== false ? "visible" : "hide";
+  }
+});
 
 export type BusinessDoc = InferSchemaType<typeof BusinessSchema> & {
   _id: mongoose.Types.ObjectId;

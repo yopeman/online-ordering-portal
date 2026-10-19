@@ -42,8 +42,16 @@ export default async function BusinessLayout({
               <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                 {business.name}
               </h1>
-              <Badge tone={business.isActive ? "success" : "warning"}>
-                {business.isActive ? t("dashboard.active") : t("dashboard.inactive")}
+              <Badge
+                tone={
+                  business.status === "hide" || business.isActive === false
+                    ? "warning"
+                    : "success"
+                }
+              >
+                {business.status === "hide" || business.isActive === false
+                  ? t("dashboard.hide")
+                  : t("dashboard.visible")}
               </Badge>
               {details.category ? (
                 <Badge tone="primary">{String(details.category)}</Badge>

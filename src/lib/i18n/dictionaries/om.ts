@@ -214,6 +214,10 @@ export const om: Dictionary = {
     you: "ati",
     active: "Hojiirra",
     inactive: "Hin hojjanne",
+    visible: "Mul'ataa",
+    hide: "Dhokataa",
+    statusVisibleHint: "Suuqiin gabaa keessatti ifatti mul'ata fi hojjechaa jira.",
+    statusHideHint: "Suuqiin gabaa uummataa irraa dhokateera.",
   },
   business: {
     backToBusinesses: "Daldalaa hunda",

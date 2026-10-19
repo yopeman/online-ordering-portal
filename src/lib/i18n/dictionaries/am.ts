@@ -211,6 +211,10 @@ export const am: Dictionary = {
     you: "እርስዎ",
     active: "ንቁ",
     inactive: "አልተነቃም",
+    visible: "የሚታይ",
+    hide: "የተደበቀ",
+    statusVisibleHint: "መደብሩ በገበያው ውስጥ የሚታይ እና ንቁ ነው።",
+    statusHideHint: "መደብሩ ከህዝብ ገበያ ተደብቋል።",
   },
   business: {
     backToBusinesses: "ሁሉም ትዕዛዝ ደረጃዎች",

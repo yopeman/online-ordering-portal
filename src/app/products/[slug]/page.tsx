@@ -123,6 +123,14 @@ export default async function ProductPage({
     currentUser &&
     (currentUser.id === business.owner?.toString() || currentUser.role === "admin");
 
+  const businessIsActive =
+    (business.status ? business.status === "visible" : true) &&
+    business.isActive !== false;
+
+  if (!businessIsActive && !isOwner) {
+    notFound();
+  }
+
   const details = readCatalogDetails(raw?.details);
   const businessDetails = readDetails(business.details);
 
@@ -245,7 +253,6 @@ export default async function ProductPage({
     (typeof businessDetails.image === "string" ? businessDetails.image : "");
   const businessCategory = String(businessDetails.category ?? "");
   const businessDescription = String(businessDetails.description ?? "");
-  const businessIsActive = business.isActive !== false;
 
   // Business Location handling
   const rawLocation =

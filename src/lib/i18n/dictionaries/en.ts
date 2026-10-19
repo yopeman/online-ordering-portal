@@ -211,6 +211,10 @@ export const en = {
     you: "you",
     active: "Active",
     inactive: "Inactive",
+    visible: "Visible",
+    hide: "Hide",
+    statusVisibleHint: "Store is active and visible in the public marketplace.",
+    statusHideHint: "Store is hidden from the public marketplace.",
   },
   business: {
     backToBusinesses: "All businesses",

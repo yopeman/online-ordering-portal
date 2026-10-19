@@ -137,7 +137,7 @@ export async function deleteUserAction(formData: FormData): Promise<void> {
 
   await Promise.all([
     User.deleteOne({ _id: userId }),
-    Business.updateMany({ owner: userId }, { $set: { isActive: false } }),
+    Business.updateMany({ owner: userId }, { $set: { isActive: false, status: "hide" } }),
   ]);
 
   revalidatePath("/admin");

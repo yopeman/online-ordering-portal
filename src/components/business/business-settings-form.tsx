@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { updateBusinessAction } from "@/app/actions/businesses";
 import {
@@ -24,7 +25,8 @@ export interface BusinessFormValues {
   contacts: { phone: string }[];
   files: UploadRow[];
   image: string;
-  isActive: boolean;
+  status?: "visible" | "hide";
+  isActive?: boolean;
 }
 
 const ORDER_FORM_TYPES: OrderFormField["type"][] = [
@@ -48,17 +50,38 @@ export function BusinessSettingsForm({
   businessId: string;
   values: BusinessFormValues;
 }) {
+  const router = useRouter();
   const { t } = useApp();
+  const [name, setName] = useState(values.name);
   const [details, setDetails] = useState<DetailRow[]>(values.details);
   const [orderForms, setOrderForms] = useState(values.orderForms);
   const [contacts, setContacts] = useState(values.contacts);
   const [files, setFiles] = useState<UploadRow[]>(values.files);
-  const [isActive, setIsActive] = useState(values.isActive);
+  const initialStatus: "visible" | "hide" =
+    values.status ?? (values.isActive !== false ? "visible" : "hide");
+  const [status, setStatus] = useState<"visible" | "hide">(initialStatus);
 
   const [state, formAction] = useActionState<ActionState, FormData>(
     updateBusinessAction,
     { ok: false },
   );
+
+  // Sync internal form state when updated values arrive from the server
+  useEffect(() => {
+    setName(values.name);
+    setDetails(values.details);
+    setOrderForms(values.orderForms);
+    setContacts(values.contacts);
+    setFiles(values.files);
+    setStatus(values.status ?? (values.isActive !== false ? "visible" : "hide"));
+  }, [values.name, values.status, values.isActive, values.image]);
+
+  // Refresh server components (e.g. business layout header & badge) when save succeeds
+  useEffect(() => {
+    if (state.ok) {
+      router.refresh();
+    }
+  }, [state.ok, router]);
 
   const image = files.find((file) => file.type === "image")?.url ?? values.image;
 
@@ -80,7 +103,8 @@ export function BusinessSettingsForm({
       />
       <input type="hidden" name="files" value={JSON.stringify(files)} readOnly />
       <input type="hidden" name="image" value={image} readOnly />
-      <input type="hidden" name="isActive" value={String(isActive)} readOnly />
+      <input type="hidden" name="status" value={status} readOnly />
+      <input type="hidden" name="isActive" value={String(status === "visible")} readOnly />
 
       {state.error ? (
         <p
@@ -105,15 +129,32 @@ export function BusinessSettingsForm({
             id="business-name"
             name="name"
             required
-            defaultValue={values.name}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
             placeholder={t("dashboard.businessNamePlaceholder")}
           />
         </Field>
-        <Checkbox
-          checked={isActive}
-          onChange={(event) => setIsActive(event.target.checked)}
-          label={t("catalog.active")}
-        />
+
+        <Field
+          label={t("common.status")}
+          htmlFor="business-status"
+          hint={
+            status === "visible"
+              ? t("dashboard.statusVisibleHint")
+              : t("dashboard.statusHideHint")
+          }
+        >
+          <div className="pt-1">
+            <Checkbox
+              id="business-status"
+              checked={status === "visible"}
+              onChange={(event) =>
+                setStatus(event.target.checked ? "visible" : "hide")
+              }
+              label={t("dashboard.visible")}
+            />
+          </div>
+        </Field>
       </FormSection>
 
       <FormSection title={t("dashboard.details")} description={t("dashboard.detailsHint")}>

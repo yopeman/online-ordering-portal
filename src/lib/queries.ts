@@ -34,6 +34,7 @@ export interface BusinessListItem {
   location: string;
   image: string;
   contactPhones: string[];
+  status: "visible" | "hide";
   isActive: boolean;
   productCount: number;
   ownerId: string;
@@ -52,7 +53,10 @@ export async function listBusinesses(options: {
   const page = Math.max(1, options.page ?? 1);
   const perPage = Math.min(48, Math.max(1, options.perPage ?? 12));
 
-  const filter: QueryFilter<BusinessDoc> = { isActive: true };
+  const filter: QueryFilter<BusinessDoc> = {
+    status: { $ne: "hide" },
+    isActive: { $ne: false },
+  };
 
   if (options.search) {
     const escaped = options.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -123,6 +127,9 @@ export function toBusinessListItem(
   productCount = 0,
 ): BusinessListItem {
   const details = readDetails(business.details);
+  const status: "visible" | "hide" =
+    (business.status as "visible" | "hide") ||
+    (business.isActive !== false ? "visible" : "hide");
   return {
     id: business._id.toString(),
     name: business.name,
@@ -132,7 +139,8 @@ export function toBusinessListItem(
     location: String(details.location ?? ""),
     image: business.image ?? "",
     contactPhones: business.contactPhones ?? [],
-    isActive: business.isActive ?? true,
+    status,
+    isActive: status === "visible" && business.isActive !== false,
     productCount,
     ownerId:
       typeof business.owner === "object" && business.owner && "_id" in business.owner
@@ -222,7 +230,9 @@ export async function getBusinessBySlug(
   includeInactive = false,
 ): Promise<BusinessDoc | null> {
   await connectDB();
-  const filter = includeInactive ? { slug } : { slug, isActive: { $ne: false } };
+  const filter = includeInactive
+    ? { slug }
+    : { slug, status: { $ne: "hide" }, isActive: { $ne: false } };
   const business = await Business.findOne(filter).lean();
   return (business as BusinessDoc | null) ?? null;
 }
@@ -230,7 +240,7 @@ export async function getBusinessBySlug(
 export async function listBusinessCategories(): Promise<string[]> {
   await connectDB();
   const rows = await Business.aggregate<{ _id: string }>([
-    { $match: { isActive: { $ne: false } } },
+    { $match: { status: { $ne: "hide" }, isActive: { $ne: false } } },
     { $project: { category: "$details.category" } },
     { $match: { category: { $type: "string", $ne: "" } } },
     { $group: { _id: "$category" } },
@@ -301,7 +311,15 @@ export async function listProducts(options: {
   const perPage = Math.min(60, Math.max(1, options.perPage ?? 24));
 
   const filter: QueryFilter<CatalogDoc> = {};
-  if (options.businessId) filter.business = options.businessId;
+  if (options.businessId) {
+    filter.business = options.businessId;
+  } else if (!options.includeInactive) {
+    const visibleBusinesses = await Business.find(
+      { status: { $ne: "hide" }, isActive: { $ne: false } },
+      { _id: 1 },
+    ).lean();
+    filter.business = { $in: visibleBusinesses.map((b) => b._id) };
+  }
   if (!options.includeInactive) filter.isActive = true;
   if (options.category) filter.category = options.category;
 

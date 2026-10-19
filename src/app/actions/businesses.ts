@@ -191,6 +191,7 @@ export async function createBusinessAction(
     contactPhones,
     details,
     orderFormTemplates,
+    status: "visible",
     isActive: true,
   });
 
@@ -226,7 +227,13 @@ export async function updateBusinessAction(
   const orderFormTemplates = parseOrderFormTemplates(str(formData.get("orderForms")));
   const contactPhones = parseContacts(str(formData.get("contacts")));
   const files = parseFiles(str(formData.get("files")));
-  const isActive = formData.get("isActive") !== "off";
+  const statusInput = str(formData.get("status"));
+  const isActiveInput = str(formData.get("isActive"));
+  const status: "visible" | "hide" =
+    statusInput === "hide" || isActiveInput === "false" || isActiveInput === "off"
+      ? "hide"
+      : "visible";
+  const isActive = status === "visible";
 
   if (name.length < 2) return { ok: false, error: t("errors.validation") };
 
@@ -246,6 +253,7 @@ export async function updateBusinessAction(
   business.contactPhones = contactPhones;
   business.details = details;
   business.orderFormTemplates = orderFormTemplates;
+  business.status = status;
   business.isActive = isActive;
   await business.save();
 
@@ -261,6 +269,7 @@ export async function updateBusinessAction(
     isRead: true,
   });
 
+  revalidatePath(`/businesses/${businessId}`, "layout");
   revalidatePath(`/businesses/${businessId}/settings`);
   revalidatePath(`/businesses/${businessId}`);
   revalidatePath("/businesses");

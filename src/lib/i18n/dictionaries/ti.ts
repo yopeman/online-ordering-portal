@@ -212,6 +212,10 @@ export const ti: Dictionary = {
     you: "እርስዎ",
     active: "ንቁ",
     inactive: "አልተነቃም",
+    visible: "ዝርአ",
+    hide: "ሕቡእ",
+    statusVisibleHint: "እቲ ድኳን ኣብ ዕዳጋ ዝርአን ንቁሕን እዩ።",
+    statusHideHint: "እቲ ድኳን ካብ ህዝባዊ ዕዳጋ ሕቡእ እዩ።",
   },
   business: {
     backToBusinesses: "ሁሉም ትዕዛዝ ደረጃዎች",
