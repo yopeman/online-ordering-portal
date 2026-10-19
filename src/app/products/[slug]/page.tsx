@@ -28,6 +28,7 @@ import { StoreAttachments } from "@/components/business/store-attachments";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getCurrentUser } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db";
 import {
   Business,
@@ -107,6 +108,8 @@ export default async function ProductPage({
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
+  const currentUser = await getCurrentUser();
+
   await connectDB();
   const [raw, business] = await Promise.all([
     Catalog.findOne({ slug }).lean(),
@@ -114,6 +117,11 @@ export default async function ProductPage({
   ]);
 
   if (!business) notFound();
+
+  const businessId = business._id.toString();
+  const isOwner =
+    currentUser &&
+    (currentUser.id === business.owner?.toString() || currentUser.role === "admin");
 
   const details = readCatalogDetails(raw?.details);
   const businessDetails = readDetails(business.details);
@@ -379,6 +387,26 @@ export default async function ProductPage({
           <span className="truncate max-w-50 sm:max-w-xs text-foreground font-medium">
             {product.name}
           </span>
+        </div>
+
+        <div className="flex items-center justify-end gap-2">
+          {isOwner ? (
+            <Link
+              href={`/businesses/${businessId}/catalog`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-surface-muted hover:border-primary-border"
+            >
+              <Store className="h-3.5 w-3.5 text-primary" />
+              <span>{t("businessPublic.viewDashboard")}</span>
+            </Link>
+          ) : null}
+
+          <ShareBusinessButton
+            businessName={`${product.name} · ${business.name}`}
+            description={shortDescription || product.name}
+            label={t("common.share")}
+            copiedLabel={t("common.copied")}
+            size="sm"
+          />
         </div>
       </div>
 
