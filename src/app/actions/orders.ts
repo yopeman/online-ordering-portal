@@ -16,6 +16,7 @@ import {
 } from "@/lib/models";
 import { DEFAULT_ORDER_FORM_FIELDS } from "@/lib/models";
 import { getTranslator } from "@/lib/i18n-server";
+import { dispatchOrderNotification } from "@/lib/notifications";
 
 import type { ActionState } from "./businesses";
 
@@ -98,6 +99,22 @@ export async function placeOrderAction(
       `${answers.phone ? ` (${answers.phone})` : ""}` +
       `${contactPhone ? ` — ${t("product.contactNumber")}: ${contactPhone}` : ""}` +
       ` — ${t("common.total")} ${price * quantity} ${product.currency ?? "ETB"}.`,
+  });
+
+  // Asynchronously dispatch notifications (Telegram via neogram, and logger for other channels)
+  dispatchOrderNotification(contacts, {
+    businessName: business.name,
+    productName: product.name,
+    quantity,
+    price,
+    currency: product.currency ?? "ETB",
+    customerName: answers.customerName,
+    customerPhone: answers.phone,
+    note: answers.note,
+    custom,
+    contactPhone,
+  }).catch((err) => {
+    console.error("[Notifications] Failed to dispatch order notification:", err);
   });
 
   revalidatePath(`/businesses/${product.business.toString()}/orders`);

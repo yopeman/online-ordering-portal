@@ -13,6 +13,7 @@
     "jose": "^6.2.12",
     "lucide-react": "^1.58.0",
     "mongoose": "^9.11.2",
+    "neogram": "^10.0.2",
     "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0",
