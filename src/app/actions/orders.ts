@@ -10,6 +10,7 @@ import {
   Business,
   Catalog,
   Order,
+  readContacts,
   readOrderFormTemplates,
   type OrderFormField,
 } from "@/lib/models";
@@ -51,12 +52,11 @@ export async function placeOrderAction(
   const answers: Record<string, string> = {};
   const custom: Record<string, string> = {};
 
-  // Which of the business contact numbers should handle this order.
+  // Which of the business contact channels should handle this order.
+  const contacts = readContacts(business.contactPhones);
   const requestedContact = str(formData.get("contactPhone"));
-  const contactPhone =
-    (business.contactPhones ?? []).includes(requestedContact)
-      ? requestedContact
-      : (business.contactPhones ?? [])[0] ?? "";
+  const matched = contacts.find((c) => c.target === requestedContact);
+  const contactPhone = matched ? matched.target : contacts[0]?.target ?? "";
 
   for (const field of fields) {
     const value = str(formData.get(`field_${field.key}`));

@@ -8,7 +8,9 @@ import {
   Globe,
   Mail,
   MapPin,
+  MessageCircle,
   Phone,
+  Send,
   ShieldCheck,
   ShoppingBag,
   Store,
@@ -34,9 +36,13 @@ import {
   Business,
   Catalog,
   DEFAULT_ORDER_FORM_FIELDS,
+  getContactDisplayLabel,
+  getContactHref,
   readCatalogDetails,
+  readContacts,
   readDetails,
   readOrderFormTemplates,
+  type BusinessContact,
 } from "@/lib/models";
 import { getFormatters, getTranslator } from "@/lib/i18n-server";
 import {
@@ -134,10 +140,8 @@ export default async function ProductPage({
   const details = readCatalogDetails(raw?.details);
   const businessDetails = readDetails(business.details);
 
-  // Business order form templates & contact phones drive the order form
-  const contactPhones: string[] = Array.isArray(business.contactPhones)
-    ? (business.contactPhones as string[])
-    : [];
+  // Business order form templates & contact channels drive the order form
+  const contactPhones: BusinessContact[] = readContacts(business.contactPhones);
   const templates = readOrderFormTemplates(business.orderFormTemplates);
 
   const fields: OrderFormFieldDTO[] = (
@@ -677,22 +681,37 @@ export default async function ProductPage({
                   </div>
                 ) : null}
 
-                {/* Phone Numbers */}
+                {/* Contact Channels */}
                 {contactPhones.length > 0 ? (
                   <div className="flex items-start gap-2.5 rounded-lg border border-border bg-surface-muted/40 p-3">
                     <Phone className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                    <div className="min-w-0 space-y-1">
-                      <p className="text-xs font-semibold text-muted-foreground">Phone Contact</p>
+                    <div className="min-w-0 space-y-1.5">
+                      <p className="text-xs font-semibold text-muted-foreground">Contacts</p>
                       <div className="flex flex-wrap gap-2">
-                        {contactPhones.map((phone) => (
-                          <a
-                            key={phone}
-                            href={`tel:${phone}`}
-                            className="font-medium text-primary hover:underline"
-                          >
-                            {phone}
-                          </a>
-                        ))}
+                        {contactPhones.map((contact, idx) => {
+                          const href = getContactHref(contact);
+                          const isExternal = contact.type === "telegram" || contact.type === "wa";
+                          return (
+                            <a
+                              key={`${contact.type}-${contact.target}-${idx}`}
+                              href={href}
+                              target={isExternal ? "_blank" : undefined}
+                              rel={isExternal ? "noopener noreferrer" : undefined}
+                              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-surface-muted hover:border-primary-border"
+                            >
+                              {contact.type === "telegram" ? (
+                                <Send className="h-3.5 w-3.5 text-sky-500" />
+                              ) : contact.type === "wa" ? (
+                                <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
+                              ) : contact.type === "email" ? (
+                                <Mail className="h-3.5 w-3.5 text-amber-500" />
+                              ) : (
+                                <Phone className="h-3.5 w-3.5 text-primary" />
+                              )}
+                              <span>{getContactDisplayLabel(contact)}</span>
+                            </a>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>

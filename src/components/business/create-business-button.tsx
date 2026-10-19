@@ -13,12 +13,12 @@ import {
 } from "@/components/business/form-blocks";
 import { Alert } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Field, Input } from "@/components/ui/form";
+import { Field, Input, Select } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { useApp } from "@/components/providers/app-provider";
 import type { ActionState } from "@/app/actions/businesses";
-import type { OrderFormField } from "@/lib/models";
+import type { BusinessContact, BusinessContactType, OrderFormField } from "@/lib/models";
 
 const ORDER_FORM_TYPES: OrderFormField["type"][] = [
   "text",
@@ -49,7 +49,7 @@ export function CreateBusinessButton({
   const [orderForms, setOrderForms] = useState<
     { name: string; type: OrderFormField["type"] }[]
   >([]);
-  const [contacts, setContacts] = useState([{ phone: "" }]);
+  const [contacts, setContacts] = useState<BusinessContact[]>([{ type: "sms", target: "" }]);
   const [files, setFiles] = useState<UploadRow[]>([]);
 
   const [state, formAction] = useActionState<ActionState, FormData>(
@@ -176,13 +176,37 @@ export function CreateBusinessButton({
             <SimpleRowsEditor
               rows={contacts}
               onChange={setContacts}
-              create={() => ({ phone: "" as string })}
+              create={() => ({ type: "sms", target: "" })}
               renderRow={(row, update) => (
-                <Input
-                  placeholder={t("dashboard.phonePlaceholder")}
-                  value={row.phone}
-                  onChange={(event) => update({ phone: event.target.value })}
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-2">
+                  <Select
+                    value={row.type || "sms"}
+                    onChange={(event) =>
+                      update({
+                        ...row,
+                        type: event.target.value as BusinessContactType,
+                      })
+                    }
+                  >
+                    <option value="sms">{t("dashboard.contactTypeSms") || "SMS / Phone"}</option>
+                    <option value="telegram">{t("dashboard.contactTypeTelegram") || "Telegram"}</option>
+                    <option value="wa">{t("dashboard.contactTypeWhatsApp") || "WhatsApp"}</option>
+                    <option value="email">{t("dashboard.contactTypeEmail") || "Email"}</option>
+                  </Select>
+                  <Input
+                    placeholder={
+                      row.type === "email"
+                        ? "name@example.com"
+                        : row.type === "telegram"
+                          ? "@channel or link"
+                          : row.type === "wa"
+                            ? "+251... or link"
+                            : t("dashboard.phonePlaceholder")
+                    }
+                    value={row.target}
+                    onChange={(event) => update({ ...row, target: event.target.value })}
+                  />
+                </div>
               )}
             />
           </FormSection>

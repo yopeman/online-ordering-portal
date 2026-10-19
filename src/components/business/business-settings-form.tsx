@@ -16,13 +16,13 @@ import { Checkbox, Field, Input, Select } from "@/components/ui/form";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { useApp } from "@/components/providers/app-provider";
 import type { ActionState } from "@/app/actions/businesses";
-import type { OrderFormField } from "@/lib/models";
+import type { BusinessContact, BusinessContactType, OrderFormField } from "@/lib/models";
 
 export interface BusinessFormValues {
   name: string;
   details: DetailRow[];
   orderForms: { name: string; type: OrderFormField["type"] }[];
-  contacts: { phone: string }[];
+  contacts: BusinessContact[];
   files: UploadRow[];
   image: string;
   status?: "visible" | "hide";
@@ -67,6 +67,7 @@ export function BusinessSettingsForm({
   );
 
   // Sync internal form state when updated values arrive from the server
+  /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
   useEffect(() => {
     setName(values.name);
     setDetails(values.details);
@@ -75,6 +76,7 @@ export function BusinessSettingsForm({
     setFiles(values.files);
     setStatus(values.status ?? (values.isActive !== false ? "visible" : "hide"));
   }, [values.name, values.status, values.isActive, values.image]);
+  /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
   // Refresh server components (e.g. business layout header & badge) when save succeeds
   useEffect(() => {
@@ -203,13 +205,34 @@ export function BusinessSettingsForm({
         <SimpleRowsEditor
           rows={contacts}
           onChange={setContacts}
-          create={() => ({ phone: "" as string })}
+          create={() => ({ type: "sms", target: "" })}
           renderRow={(row, update) => (
-            <Input
-              placeholder={t("dashboard.phonePlaceholder")}
-              value={row.phone}
-              onChange={(event) => update({ phone: event.target.value })}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-2">
+              <Select
+                value={row.type || "sms"}
+                onChange={(event) =>
+                  update({ ...row, type: event.target.value as BusinessContactType })
+                }
+              >
+                <option value="sms">{t("dashboard.contactTypeSms") || "SMS / Phone"}</option>
+                <option value="telegram">{t("dashboard.contactTypeTelegram") || "Telegram"}</option>
+                <option value="wa">{t("dashboard.contactTypeWhatsApp") || "WhatsApp"}</option>
+                <option value="email">{t("dashboard.contactTypeEmail") || "Email"}</option>
+              </Select>
+              <Input
+                placeholder={
+                  row.type === "email"
+                    ? "name@example.com"
+                    : row.type === "telegram"
+                      ? "@channel or link"
+                      : row.type === "wa"
+                        ? "+251... or link"
+                        : t("dashboard.phonePlaceholder")
+                }
+                value={row.target}
+                onChange={(event) => update({ ...row, target: event.target.value })}
+              />
+            </div>
           )}
         />
       </FormSection>

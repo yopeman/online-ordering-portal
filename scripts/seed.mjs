@@ -31,7 +31,10 @@ const businesses = [
     category: "Restaurant",
     location: "Addis Ababa, Piazza",
     description: "Traditional Ethiopian dishes served on a shared platter.",
-    phones: ["+251911000003"],
+    phones: [
+      { type: "sms", target: "+251911000003" },
+      { type: "telegram", target: "habeshakitchen" },
+    ],
     products: [
       { name: "Injera with Doro Wat", category: "Mains", price: 480, description: "Chicken stew with berbere." },
       { name: "Kitfo", category: "Mains", price: 320, description: "Minced beef with ayib cheese." },
@@ -45,7 +48,10 @@ const businesses = [
     category: "Drinks",
     location: "Addis Ababa, Merkato",
     description: "Fresh pressed juice, smoothies and iced coffee.",
-    phones: ["+251911000004", "+251911000005"],
+    phones: [
+      { type: "sms", target: "+251911000004" },
+      { type: "wa", target: "+251911000005" },
+    ],
     products: [
       { name: "Mango Juice", category: "Juices", price: 150, description: "250ml, no sugar added." },
       { name: "Papaya Juice", category: "Juices", price: 140 },
@@ -90,7 +96,7 @@ function collectionSchema() {
       owner: { type: Schema.Types.ObjectId, ref: "User" },
       details: { type: Schema.Types.Mixed, default: {} },
       orderFormTemplates: { type: [Schema.Types.Mixed], default: [] },
-      contactPhones: { type: [String], default: [] },
+      contactPhones: { type: Schema.Types.Mixed, default: [] },
       image: { type: String, default: "" },
       status: { type: String, enum: ["visible", "hide"], default: "visible" },
       isActive: { type: Boolean, default: true },

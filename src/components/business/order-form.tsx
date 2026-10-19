@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { CheckCircle2, Phone, ShoppingCart } from "lucide-react";
+import { CheckCircle2, ShoppingCart } from "lucide-react";
 
 import { placeOrderAction } from "@/app/actions/orders";
 import { Alert } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { useApp } from "@/components/providers/app-provider";
 import { formatPrice } from "@/lib/i18n/config";
-import type { OrderFormField } from "@/lib/models";
+import type { BusinessContact, OrderFormField } from "@/lib/models";
 
 export interface OrderFormFieldDTO {
   key: string;
@@ -30,7 +30,7 @@ export function OrderForm({
   slug: string;
   fields: OrderFormFieldDTO[];
   /** `contactPhones` of the business (schema: Businesses.contact phones). */
-  contactPhones: string[];
+  contactPhones?: BusinessContact[] | string[];
   price: number;
   currency: string;
 }) {

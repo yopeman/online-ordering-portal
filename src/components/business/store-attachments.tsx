@@ -51,18 +51,11 @@ export function StoreAttachments({
     : [];
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"photos" | "files">(() =>
-    images.length > 0 ? "photos" : "files",
-  );
+  const [userTab, setUserTab] = useState<"photos" | "files" | null>(null);
+  const activeTab: "photos" | "files" =
+    userTab ?? (images.length > 0 ? "photos" : "files");
+  const setActiveTab = setUserTab;
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
-
-  useEffect(() => {
-    if (images.length === 0 && files.length > 0) {
-      setActiveTab("files");
-    } else if (images.length > 0 && files.length === 0) {
-      setActiveTab("photos");
-    }
-  }, [images.length, files.length]);
 
   useEffect(() => {
     if (!modalOpen || activeTab !== "photos") return;

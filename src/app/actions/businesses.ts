@@ -6,8 +6,8 @@ import { redirect } from "next/navigation";
 import { logActivity } from "@/lib/activity";
 import { requireUser } from "@/lib/auth/guards";
 import { connectDB } from "@/lib/db";
-import { Activity, Attachment, Business, Catalog, Order } from "@/lib/models";
-import type { BusinessDetails, OrderFormField } from "@/lib/models";
+import { Activity, Attachment, Business, Catalog, Order, readContacts } from "@/lib/models";
+import type { BusinessContact, BusinessDetails, OrderFormField } from "@/lib/models";
 import { countBusinesses } from "@/lib/queries";
 import { uniqueSlug } from "@/lib/slug";
 import { getTranslator } from "@/lib/i18n-server";
@@ -46,20 +46,10 @@ function parseDetails(value: string): BusinessDetails {
   return details;
 }
 
-/** `[{ phone }]` rows from the Contact Persons table. */
-function parseContacts(value: string): string[] {
+/** `[{ type, target }]` rows from the Contact Channels table. */
+function parseContacts(value: string): BusinessContact[] {
   const rows = parseJson(value);
-  if (!Array.isArray(rows)) return [];
-
-  return rows
-    .map((row) =>
-      typeof row === "string"
-        ? row
-        : String((row as Record<string, unknown>)?.phone ?? ""),
-    )
-    .map((phone) => phone.trim())
-    .filter(Boolean)
-    .slice(0, 10);
+  return readContacts(rows).slice(0, 20);
 }
 
 export interface UploadedRow {

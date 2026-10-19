@@ -8,8 +8,10 @@ import {
   ImageOff,
   Mail,
   MapPin,
+  MessageCircle,
   Package,
   Phone,
+  Send,
   Share2,
   Store,
   Tag,
@@ -24,7 +26,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentUser } from "@/lib/auth/session";
-import { readDetails } from "@/lib/models";
+import {
+  getContactDisplayLabel,
+  getContactHref,
+  readContacts,
+  readDetails,
+} from "@/lib/models";
 import { getFormatters, getTranslator } from "@/lib/i18n-server";
 import {
   getBusinessBySlug,
@@ -141,7 +148,7 @@ export default async function StorefrontPage({
   // Core metadata
   const category = String(details.category ?? "");
   const description = String(details.description ?? "");
-  const contactPhones = business.contactPhones ?? [];
+  const contactPhones = readContacts(business.contactPhones);
 
   // Location handling
   const rawLocation = typeof details.location === "string" ? details.location.trim() : "";
@@ -412,19 +419,33 @@ export default async function StorefrontPage({
               </div>
             </div>
 
-            {/* Quick Call Action Buttons */}
+            {/* Quick Contact Action Buttons */}
             {contactPhones.length > 0 ? (
               <div className="flex flex-wrap gap-2 sm:flex-col sm:items-end">
-                {contactPhones.map((phone) => (
-                  <a
-                    key={phone}
-                    href={`tel:${phone}`}
-                    className="inline-flex h-10 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-surface-muted hover:border-primary-border"
-                  >
-                    <Phone className="h-4 w-4 text-primary" />
-                    <span>{phone}</span>
-                  </a>
-                ))}
+                {contactPhones.map((contact, index) => {
+                  const href = getContactHref(contact);
+                  const isExternal = contact.type === "telegram" || contact.type === "wa";
+                  return (
+                    <a
+                      key={`${contact.type}-${contact.target}-${index}`}
+                      href={href}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noopener noreferrer" : undefined}
+                      className="inline-flex h-10 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-surface-muted hover:border-primary-border"
+                    >
+                      {contact.type === "telegram" ? (
+                        <Send className="h-4 w-4 text-sky-500" />
+                      ) : contact.type === "wa" ? (
+                        <MessageCircle className="h-4 w-4 text-emerald-500" />
+                      ) : contact.type === "email" ? (
+                        <Mail className="h-4 w-4 text-amber-500" />
+                      ) : (
+                        <Phone className="h-4 w-4 text-primary" />
+                      )}
+                      <span>{getContactDisplayLabel(contact)}</span>
+                    </a>
+                  );
+                })}
               </div>
             ) : null}
           </div>

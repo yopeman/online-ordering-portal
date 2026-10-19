@@ -3,11 +3,17 @@ export type { UserDTO, UserRole, UserStatus } from "./user";
 
 export {
   Business,
+  BUSINESS_CONTACT_TYPES,
   DEFAULT_ORDER_FORM_FIELDS,
+  getContactDisplayLabel,
+  getContactHref,
+  readContacts,
   readDetails,
   readOrderFormTemplates,
 } from "./business";
 export type {
+  BusinessContact,
+  BusinessContactType,
   BusinessDetails,
   BusinessDoc,
   BusinessStatus,

@@ -24,6 +24,20 @@ export interface BusinessDetails {
   [key: string]: unknown;
 }
 
+export type BusinessContactType = "sms" | "telegram" | "wa" | "email";
+
+export interface BusinessContact {
+  type: BusinessContactType | string;
+  target: string;
+}
+
+export const BUSINESS_CONTACT_TYPES: { value: BusinessContactType; label: string }[] = [
+  { value: "sms", label: "SMS / Phone" },
+  { value: "telegram", label: "Telegram" },
+  { value: "wa", label: "WhatsApp" },
+  { value: "email", label: "Email" },
+];
+
 export type BusinessStatus = "visible" | "hide";
 
 const BusinessSchema = new Schema(
@@ -41,7 +55,10 @@ const BusinessSchema = new Schema(
       type: [Schema.Types.Mixed],
       default: () => [] as OrderFormField[],
     },
-    contactPhones: { type: [String], default: [] },
+    contactPhones: {
+      type: Schema.Types.Mixed,
+      default: () => [] as BusinessContact[],
+    },
     /** Logo / cover image URL shown on the public storefront. */
     image: { type: String, default: "" },
     status: {
@@ -68,6 +85,10 @@ BusinessSchema.pre("save", function () {
 export type BusinessDoc = InferSchemaType<typeof BusinessSchema> & {
   _id: mongoose.Types.ObjectId;
 };
+
+if (process.env.NODE_ENV !== "production" && mongoose.models.Business) {
+  delete mongoose.models.Business;
+}
 
 export const Business =
   mongoose.models.Business ?? mongoose.model("Business", BusinessSchema);
@@ -102,3 +123,62 @@ export const DEFAULT_ORDER_FORM_FIELDS: OrderFormField[] = [
     placeholder: "Anything the business should know?",
   },
 ];
+
+/** Normalises the `Mixed` contact phones into typed contact channels. */
+export function readContacts(raw: unknown): BusinessContact[] {
+  if (!Array.isArray(raw)) return [];
+  const contacts: BusinessContact[] = [];
+
+  for (const item of raw) {
+    if (!item) continue;
+    if (typeof item === "string") {
+      const trimmed = item.trim();
+      if (trimmed) {
+        contacts.push({ type: "sms", target: trimmed });
+      }
+    } else if (typeof item === "object") {
+      const row = item as Record<string, unknown>;
+      const rawType = typeof row.type === "string" ? row.type.trim() : "";
+      const type = rawType || "sms";
+      const target =
+        typeof row.target === "string"
+          ? row.target.trim()
+          : typeof row.phone === "string"
+            ? row.phone.trim()
+            : "";
+      if (target) {
+        contacts.push({ type, target });
+      }
+    }
+  }
+
+  return contacts;
+}
+
+export function getContactHref(contact: BusinessContact): string {
+  const type = contact.type || "sms";
+  const target = (contact.target || "").trim();
+  if (type === "email") {
+    return `mailto:${target}`;
+  }
+  if (type === "telegram") {
+    return target.startsWith("http")
+      ? target
+      : `https://t.me/${target.replace(/^@/, "")}`;
+  }
+  if (type === "wa") {
+    return target.startsWith("http")
+      ? target
+      : `https://wa.me/${target.replace(/[^0-9]/g, "")}`;
+  }
+  return `tel:${target}`;
+}
+
+export function getContactDisplayLabel(contact: BusinessContact): string {
+  const type = contact.type || "sms";
+  const target = (contact.target || "").trim();
+  if (type === "telegram" && target.startsWith("http")) {
+    return "Telegram";
+  }
+  return target;
+}

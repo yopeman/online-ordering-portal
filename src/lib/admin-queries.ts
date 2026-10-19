@@ -4,8 +4,8 @@ import type { QueryFilter } from "mongoose";
 import { Types } from "mongoose";
 
 import { connectDB } from "@/lib/db";
-import { Business, User, toUserDTO } from "@/lib/models";
-import type { UserDTO } from "@/lib/models";
+import { Business, User, readContacts, toUserDTO } from "@/lib/models";
+import type { BusinessContact, UserDTO } from "@/lib/models";
 
 export interface UserListItem extends UserDTO {
   businessCount: number;
@@ -61,7 +61,7 @@ export interface AdminBusinessItem {
   location: string;
   status: "visible" | "hide";
   isActive: boolean;
-  contactPhones: string[];
+  contactPhones: BusinessContact[];
   ownerName: string;
   ownerEmail: string;
   productCount: number;
@@ -149,7 +149,7 @@ export async function listAllBusinesses(options: {
           (business.status as "visible" | "hide") ||
           (business.isActive !== false ? "visible" : "hide"),
         isActive: business.isActive !== false && business.status !== "hide",
-        contactPhones: business.contactPhones ?? [],
+        contactPhones: readContacts(business.contactPhones),
         ownerName: owner?.name ?? "",
         ownerEmail: owner?.email ?? "",
         productCount: products.get(business._id.toString()) ?? 0,

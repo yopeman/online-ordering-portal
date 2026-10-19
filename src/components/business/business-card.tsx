@@ -131,7 +131,9 @@ export function BusinessCard({
           {business.contactPhones[0] ? (
             <span className="inline-flex items-center gap-1">
               <Phone className="h-3.5 w-3.5" />
-              {business.contactPhones[0]}
+              {typeof business.contactPhones[0] === "string"
+                ? business.contactPhones[0]
+                : business.contactPhones[0].target}
             </span>
           ) : null}
           <span className="ml-auto">
@@ -263,7 +265,11 @@ export function BusinessOwnerCard({
           {business.contactPhones[0] ? (
             <span className="inline-flex items-center gap-1">
               <Phone className="h-3.5 w-3.5 shrink-0" />
-              <span>{business.contactPhones[0]}</span>
+              <span>
+                {typeof business.contactPhones[0] === "string"
+                  ? business.contactPhones[0]
+                  : business.contactPhones[0].target}
+              </span>
             </span>
           ) : null}
           <span className="inline-flex items-center gap-1 font-medium text-foreground">

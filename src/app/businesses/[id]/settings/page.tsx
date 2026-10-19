@@ -4,7 +4,7 @@ import { BusinessSettingsForm } from "@/components/business/business-settings-fo
 import { DeleteBusinessCard } from "@/components/business/delete-business-card";
 import { PageHeader } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth/guards";
-import { readDetails, readOrderFormTemplates } from "@/lib/models";
+import { readContacts, readDetails, readOrderFormTemplates } from "@/lib/models";
 import { getTranslator } from "@/lib/i18n-server";
 import { getBusinessForOwner, listAttachments } from "@/lib/queries";
 
@@ -50,7 +50,7 @@ export default async function SettingsTabPage({
             name: field.label,
             type: field.type,
           })),
-          contacts: (business.contactPhones ?? []).map((phone) => ({ phone })),
+          contacts: readContacts(business.contactPhones),
           files: attachments.map((attachment) => ({
             url: attachment.url,
             name: attachment.alt || attachment.url.split("/").pop() || "",

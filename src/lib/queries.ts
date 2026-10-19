@@ -11,11 +11,13 @@ import {
   Catalog,
   Order,
   readCatalogDetails,
+  readContacts,
   readDetails,
 } from "@/lib/models";
 import type {
   ActivityDoc,
   AttachmentDoc,
+  BusinessContact,
   BusinessDoc,
   CatalogDoc,
   OrderDoc,
@@ -33,7 +35,7 @@ export interface BusinessListItem {
   category: string;
   location: string;
   image: string;
-  contactPhones: string[];
+  contactPhones: BusinessContact[];
   status: "visible" | "hide";
   isActive: boolean;
   productCount: number;
@@ -138,7 +140,7 @@ export function toBusinessListItem(
     category: String(details.category ?? ""),
     location: String(details.location ?? ""),
     image: business.image ?? "",
-    contactPhones: business.contactPhones ?? [],
+    contactPhones: readContacts(business.contactPhones),
     status,
     isActive: status === "visible" && business.isActive !== false,
     productCount,
