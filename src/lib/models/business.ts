@@ -102,13 +102,22 @@ export function readDetails(raw: unknown): BusinessDetails {
 /** Normalises the `Mixed` order form templates into typed fields. */
 export function readOrderFormTemplates(raw: unknown): OrderFormField[] {
   if (!Array.isArray(raw)) return [];
-  return raw.filter(
-    (field): field is OrderFormField =>
-      Boolean(field) &&
-      typeof field === "object" &&
-      typeof (field as OrderFormField).key === "string" &&
-      typeof (field as OrderFormField).label === "string",
-  );
+  return raw
+    .filter(
+      (field): field is OrderFormField =>
+        Boolean(field) &&
+        typeof field === "object" &&
+        typeof (field as OrderFormField).key === "string" &&
+        typeof (field as OrderFormField).label === "string",
+    )
+    .map((field) => ({
+      ...field,
+      options: Array.isArray(field.options)
+        ? field.options
+            .map((opt) => (typeof opt === "string" ? opt.trim() : ""))
+            .filter((opt) => opt.length > 0)
+        : [],
+    }));
 }
 
 /** Default fields used when a business has not customised its order form. */

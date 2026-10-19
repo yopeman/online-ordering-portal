@@ -115,7 +115,20 @@ function parseOrderFormTemplates(value: string): OrderFormField[] {
       while (usedKeys.has(key)) key = `${baseKey}_${suffix++}`;
       usedKeys.add(key);
 
-      return { key, label, type, required: index < 2 } satisfies OrderFormField;
+      const options =
+        type === "select" && Array.isArray(raw.options)
+          ? raw.options
+              .map((opt) => (typeof opt === "string" ? opt.trim() : ""))
+              .filter((opt) => opt.length > 0)
+          : [];
+
+      return {
+        key,
+        label,
+        type,
+        options,
+        required: index < 2,
+      } satisfies OrderFormField;
     })
     .filter((field) => field.label.length > 0)
     .slice(0, 20);

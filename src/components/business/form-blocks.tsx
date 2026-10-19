@@ -295,6 +295,84 @@ export function FileDropZone({
   );
 }
 
+/** Single select field options editor: accepts options with an option input and "+ Add" button */
+export function SelectOptionsEditor({
+  options = [],
+  onChange,
+}: {
+  options?: string[];
+  onChange: (options: string[]) => void;
+}) {
+  const { t } = useApp();
+  const list = options && options.length > 0 ? options : [""];
+
+  const updateOption = (index: number, val: string) => {
+    const next = [...list];
+    next[index] = val;
+    onChange(next);
+  };
+
+  const addOption = () => {
+    onChange([...list, ""]);
+  };
+
+  const removeOption = (index: number) => {
+    const next = list.filter((_, i) => i !== index);
+    onChange(next.length > 0 ? next : [""]);
+  };
+
+  return (
+    <div className="mt-2 space-y-2 rounded-lg border border-dashed border-border bg-surface-muted/40 p-2.5">
+      <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
+        <span>{t("settings.fieldOptions")}</span>
+      </div>
+
+      <div className="space-y-2">
+        {list.map((option, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <Input
+              placeholder={`Option ${index + 1}`}
+              value={option}
+              onChange={(e) => updateOption(index, e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addOption();
+                }
+              }}
+              className="h-8 text-xs flex-1"
+            />
+            {index === list.length - 1 ? (
+              <Button
+                type="button"
+                variant="subtle"
+                size="sm"
+                onClick={addOption}
+                className="h-8 px-2.5 text-xs shrink-0"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                {t("common.add")}
+              </Button>
+            ) : null}
+            {list.length > 1 ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeOption(index)}
+                className="h-8 w-8 text-muted-foreground hover:text-danger shrink-0"
+                title={t("common.remove")}
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Section shell shared by the business and product forms. */
 export function FormSection({
   title,

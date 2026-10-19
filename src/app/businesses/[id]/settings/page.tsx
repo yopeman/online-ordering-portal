@@ -49,6 +49,7 @@ export default async function SettingsTabPage({
           orderForms: templates.map((field) => ({
             name: field.label,
             type: field.type,
+            options: field.options ?? [],
           })),
           contacts: readContacts(business.contactPhones),
           files: attachments.map((attachment) => ({

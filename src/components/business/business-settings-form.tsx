@@ -8,6 +8,7 @@ import {
   DetailRowsEditor,
   FileDropZone,
   FormSection,
+  SelectOptionsEditor,
   SimpleRowsEditor,
   type DetailRow,
   type UploadRow,
@@ -18,10 +19,16 @@ import { useApp } from "@/components/providers/app-provider";
 import type { ActionState } from "@/app/actions/businesses";
 import type { BusinessContact, BusinessContactType, OrderFormField } from "@/lib/models";
 
+export interface OrderFormRow {
+  name: string;
+  type: OrderFormField["type"];
+  options?: string[];
+}
+
 export interface BusinessFormValues {
   name: string;
   details: DetailRow[];
-  orderForms: { name: string; type: OrderFormField["type"] }[];
+  orderForms: OrderFormRow[];
   contacts: BusinessContact[];
   files: UploadRow[];
   image: string;
@@ -170,29 +177,44 @@ export function BusinessSettingsForm({
         <SimpleRowsEditor
           rows={orderForms}
           onChange={setOrderForms}
-          create={() => ({ name: "", type: "text" as const })}
+          create={() => ({ name: "", type: "text" as const, options: [] })}
           renderRow={(row, update) => (
-            <div className="grid grid-cols-2 gap-2">
-              <Input
-                placeholder={t("settings.fieldLabel")}
-                value={row.name}
-                onChange={(event) => update({ ...row, name: event.target.value })}
-              />
-              <Select
-                value={row.type}
-                onChange={(event) =>
-                  update({
-                    ...row,
-                    type: event.target.value as typeof row.type,
-                  })
-                }
-              >
-                {ORDER_FORM_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  placeholder={t("settings.fieldLabel")}
+                  value={row.name}
+                  onChange={(event) => update({ ...row, name: event.target.value })}
+                />
+                <Select
+                  value={row.type}
+                  onChange={(event) => {
+                    const nextType = event.target.value as typeof row.type;
+                    update({
+                      ...row,
+                      type: nextType,
+                      options:
+                        nextType === "select"
+                          ? row.options && row.options.length > 0
+                            ? row.options
+                            : [""]
+                          : row.options,
+                    });
+                  }}
+                >
+                  {ORDER_FORM_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              {row.type === "select" ? (
+                <SelectOptionsEditor
+                  options={row.options}
+                  onChange={(options) => update({ ...row, options })}
+                />
+              ) : null}
             </div>
           )}
         />
