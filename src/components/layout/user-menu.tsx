@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Store, UserCircle2 } from "lucide-react";
+import { LogOut, Store, ShieldCheck, ShoppingCart, ChartNoAxesCombined, UserCircle2 } from "lucide-react";
 
 import { Dropdown } from "@/components/ui/dropdown";
 import { Avatar } from "@/components/ui/avatar";
@@ -39,7 +39,7 @@ export function UserMenu({ name, email, image, isAdmin }: UserMenuData) {
         {
           key: "businesses",
           label: t("nav.myBusinesses"),
-          icon: Store,
+          icon: ChartNoAxesCombined,
           href: "/businesses",
         },
         ...(isAdmin
@@ -47,11 +47,17 @@ export function UserMenu({ name, email, image, isAdmin }: UserMenuData) {
               {
                 key: "admin",
                 label: t("nav.admin"),
-                icon: Store,
+                icon: ShieldCheck,
                 href: "/admin",
               },
             ]
           : []),
+        {
+          key: "marketplace",
+          label: t("nav.marketplace"),
+          icon: ShoppingCart,
+          href: "/marketplace",
+        },
         {
           key: "logout",
           label: t("nav.logout"),
