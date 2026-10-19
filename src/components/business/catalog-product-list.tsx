@@ -46,12 +46,14 @@ export type SubmitFn = (
 export function CatalogProductList({
   businessId,
   products,
+  categories = [],
   createAction,
   updateAction,
   limitReached,
 }: {
   businessId: string;
   products: CatalogRow[];
+  categories?: string[];
   createAction: SubmitFn;
   updateAction: SubmitFn;
   limitReached: boolean;
@@ -61,6 +63,13 @@ export function CatalogProductList({
   const [editing, setEditing] = useState<CatalogRow | null>(null);
   const [error, setError] = useState<string | undefined>();
   const [pending, startTransition] = useTransition();
+
+  const availableCategories = Array.from(
+    new Set([
+      ...categories,
+      ...products.map((p) => p.category?.trim()).filter(Boolean),
+    ]),
+  ).sort((a, b) => a.localeCompare(b));
 
   function openCreate() {
     setEditing(null);
@@ -381,6 +390,7 @@ export function CatalogProductList({
           onClose={() => setOpen(false)}
           onSubmit={submit}
           values={values}
+          categories={availableCategories}
           busy={pending}
           error={error}
         />

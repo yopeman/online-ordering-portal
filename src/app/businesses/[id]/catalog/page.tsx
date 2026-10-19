@@ -101,6 +101,7 @@ export default async function CatalogTabPage({
       <CatalogProductList
         businessId={id}
         products={rows}
+        categories={categories}
         createAction={createProductAction}
         updateAction={updateProductAction}
         limitReached={products.length >= maxCatalogs}

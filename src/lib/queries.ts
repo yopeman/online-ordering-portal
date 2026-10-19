@@ -392,8 +392,11 @@ export async function countProducts(businessId: string): Promise<number> {
 
 export async function listProductCategories(businessId: string): Promise<string[]> {
   await connectDB();
+  const matchBusiness = Types.ObjectId.isValid(businessId)
+    ? { $in: [businessId, new Types.ObjectId(businessId)] }
+    : businessId;
   const rows = await Catalog.aggregate<{ _id: string }>([
-    { $match: { business: businessId as unknown as Types.ObjectId, category: { $ne: "" } } },
+    { $match: { business: matchBusiness, category: { $type: "string", $ne: "" } } },
     { $group: { _id: "$category" } },
     { $sort: { _id: 1 } },
   ]);

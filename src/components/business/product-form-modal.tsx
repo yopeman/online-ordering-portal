@@ -11,7 +11,7 @@ import {
   type UploadRow,
 } from "@/components/business/form-blocks";
 import { Button } from "@/components/ui/button";
-import { Field, Input } from "@/components/ui/form";
+import { Field, Input, Select } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { useApp } from "@/components/providers/app-provider";
@@ -50,6 +50,7 @@ export function ProductFormModal(props: {
   onClose: () => void;
   onSubmit: (formData: FormData) => void;
   values: ProductFormValues;
+  categories?: string[];
   busy?: boolean;
   error?: string;
 }) {
@@ -63,6 +64,7 @@ function ProductFormDialog({
   onClose,
   onSubmit,
   values,
+  categories = [],
   busy,
   error,
 }: {
@@ -70,10 +72,30 @@ function ProductFormDialog({
   onClose: () => void;
   onSubmit: (formData: FormData) => void;
   values: ProductFormValues;
+  categories?: string[];
   busy?: boolean;
   error?: string;
 }) {
   const { t } = useApp();
+  const isInitialCustom =
+    Boolean(values.category) && !categories.includes(values.category);
+  const initialMode =
+    categories.length === 0
+      ? "__new__"
+      : isInitialCustom
+        ? "__new__"
+        : values.category || "";
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialMode);
+  const [customCategory, setCustomCategory] = useState<string>(
+    isInitialCustom ? values.category : "",
+  );
+  const isCreatingNew =
+    selectedCategory === "__new__" || categories.length === 0;
+  const finalCategory = isCreatingNew
+    ? customCategory.trim()
+    : selectedCategory.trim();
+
   const [details, setDetails] = useState<DetailRow[]>(values.details);
   const [files, setFiles] = useState<UploadRow[]>(values.files);
   const [isActive, setIsActive] = useState(values.isActive);
@@ -99,6 +121,7 @@ function ProductFormDialog({
     >
       <form id="product-form" action={onSubmit} className="space-y-4">
         {values.id ? <input type="hidden" name="productId" value={values.id} /> : null}
+        <input type="hidden" name="category" value={finalCategory} />
         <input type="hidden" name="details" value={JSON.stringify(details)} readOnly />
         <input type="hidden" name="files" value={JSON.stringify(files)} readOnly />
         <input type="hidden" name="image" value={image} readOnly />
@@ -124,14 +147,50 @@ function ProductFormDialog({
 
         <FormSection title={t("catalog.category")}>
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="sm:col-span-2">
-              <Field label={t("catalog.category")} htmlFor="product-category">
-                <Input
-                  id="product-category"
-                  name="category"
-                  defaultValue={values.category}
-                  placeholder={t("catalog.categoryPlaceholder")}
-                />
+            <div className="space-y-2 sm:col-span-2">
+              <Field
+                label={t("catalog.category")}
+                htmlFor={
+                  categories.length > 0
+                    ? "product-category-select"
+                    : "product-custom-category"
+                }
+              >
+                {categories.length > 0 ? (
+                  <Select
+                    id="product-category-select"
+                    value={selectedCategory}
+                    onChange={(event) => setSelectedCategory(event.target.value)}
+                  >
+                    <option value="">{t("catalog.selectCategory")}</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                    <option value="__new__">{t("catalog.createNewCategory")}</option>
+                  </Select>
+                ) : null}
+
+                {isCreatingNew ? (
+                  <div className={categories.length > 0 ? "pt-2" : ""}>
+                    {categories.length > 0 ? (
+                      <label
+                        htmlFor="product-custom-category"
+                        className="mb-1 block text-xs font-medium text-muted-foreground"
+                      >
+                        {t("catalog.newCategoryLabel")}
+                      </label>
+                    ) : null}
+                    <Input
+                      id="product-custom-category"
+                      value={customCategory}
+                      onChange={(event) => setCustomCategory(event.target.value)}
+                      placeholder={t("catalog.categoryPlaceholder")}
+                      autoFocus={selectedCategory === "__new__" && categories.length > 0}
+                    />
+                  </div>
+                ) : null}
               </Field>
             </div>
 
@@ -161,7 +220,7 @@ function ProductFormDialog({
                   type="checkbox"
                   checked={isActive}
                   onChange={(event) => setIsActive(event.target.checked)}
-                  className="h-4 w-4 rounded border-border accent-[var(--primary)]"
+                  className="h-4 w-4 rounded border-border accent-primary"
                 />
                 {t("catalog.active")}
               </label>
