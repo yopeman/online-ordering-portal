@@ -534,7 +534,7 @@ export async function listAttachments(
 ): Promise<AttachmentDoc[]> {
   await connectDB();
   return Attachment.find({ parentEntity, parentId })
-    .sort({ order: 1, createdAt: 1 })
+    .sort({ order: -1, createdAt: 1 })
     .lean() as unknown as Promise<AttachmentDoc[]>;
 }
 
