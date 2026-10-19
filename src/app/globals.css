@@ -110,7 +110,7 @@
   }
 }
 
-/* "night" — OLED friendly, higher contrast, cool tinted. */
+/* "night", OLED friendly, higher contrast, cool tinted. */
 [data-theme="night"] {
   color-scheme: dark;
 

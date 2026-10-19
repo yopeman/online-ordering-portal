@@ -28,13 +28,13 @@ const notoEthiopic = Noto_Sans_Ethiopic({
 
 export const metadata: Metadata = {
   title: {
-    default: "Yope Order — Online Ordering Portal",
+    default: "Yope Order, Online Ordering Portal",
     template: "%s · Yope Order",
   },
   description:
     "Yope Order is an online ordering portal for businesses: publish your catalog, receive orders and keep customers coming back.",
   openGraph: {
-    title: "Yope Order — Online Ordering Portal",
+    title: "Yope Order, Online Ordering Portal",
     description: "Online ordering portal for businesses.",
     type: "website",
   },

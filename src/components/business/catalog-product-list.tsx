@@ -30,12 +30,12 @@ import type { ActionState } from "@/app/actions/businesses";
 
 export interface CatalogRow extends ProductListItem {
   files: { url: string; name: string; size: number; type: string }[];
-  /** Formatted on the server — functions cannot cross the RSC boundary. */
+  /** Formatted on the server, functions cannot cross the RSC boundary. */
   priceLabel: string;
 }
 
 /**
- * A server action reference passed straight from a server component — it must
+ * A server action reference passed straight from a server component, it must
  * not be wrapped, otherwise it cannot cross the RSC boundary.
  */
 export type SubmitFn = (
@@ -101,16 +101,16 @@ export function CatalogProductList({
 
   const values: ProductFormValues = editing
     ? {
-        id: editing.id,
-        name: editing.name,
-        category: editing.category,
-        details: editing.description ? [{ key: "description", value: editing.description }] : [],
-        files: editing.files,
-        image: editing.image,
-        price: String(editing.price),
-        currency: editing.currency,
-        isActive: editing.isActive,
-      }
+      id: editing.id,
+      name: editing.name,
+      category: editing.category,
+      details: editing.description ? [{ key: "description", value: editing.description }] : [],
+      files: editing.files,
+      image: editing.image,
+      price: String(editing.price),
+      currency: editing.currency,
+      isActive: editing.isActive,
+    }
     : EMPTY_PRODUCT;
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -125,11 +125,10 @@ export function CatalogProductList({
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
-                className={`inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors cursor-pointer ${
-                  viewMode === "grid"
+                className={`inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors cursor-pointer ${viewMode === "grid"
                     ? "bg-surface-muted text-foreground font-medium shadow-2xs"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
                 aria-label="Grid view"
                 title="Grid view"
               >
@@ -138,11 +137,10 @@ export function CatalogProductList({
               <button
                 type="button"
                 onClick={() => setViewMode("list")}
-                className={`inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors cursor-pointer ${
-                  viewMode === "list"
+                className={`inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors cursor-pointer ${viewMode === "list"
                     ? "bg-surface-muted text-foreground font-medium shadow-2xs"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
                 aria-label="List view"
                 title="List view"
               >
@@ -172,7 +170,7 @@ export function CatalogProductList({
                 key={product.id}
                 className="group flex flex-col overflow-hidden transition-all duration-200 hover:border-primary-border hover:shadow-md"
               >
-                  
+
                 <Link
                   href={`/products/${product.slug}`}
                   className="cursor-pointer"

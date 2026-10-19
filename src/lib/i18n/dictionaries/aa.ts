@@ -8,7 +8,7 @@ import type { Dictionary } from "./en";
  * the entries we can stand behind. Every other key falls back to English
  * through the deep merge in `../index.ts`.
  *
- * TODO(native-speaker): fill in the remaining sections here — the merge makes
+ * TODO(native-speaker): fill in the remaining sections here, the merge makes
  * it safe to add keys progressively.
  */
 export const aa: DeepPartial<Dictionary> = {

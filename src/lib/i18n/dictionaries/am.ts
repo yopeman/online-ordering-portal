@@ -85,7 +85,7 @@ export const am: Dictionary = {
     heroBadge: "በመስመር ላይ የተመሠረተ ንግድ ማዕከል",
     heroTitle: "ትዕዛዝ ይቀበሉ። ንግድዎን ያስፋፉ።",
     heroSubtitle:
-      "Yope Order ለሁሉም ትዕዛዝ ደረጃዎች የዲጂታል ስቲሮፍራን ይሰጣል — ካታሎግዎን ይወጡ፣ ትዕዛዝ ይቀበሉ፣ ደንበኛዎችንም ይያዙ።",
+      "Yope Order ለሁሉም ትዕዛዝ ደረጃዎች የዲጂታል ስቲሮፍራን ይሰጣል, ካታሎግዎን ይወጡ፣ ትዕዛዝ ይቀበሉ፣ ደንበኛዎችንም ይያዙ።",
     ctaPrimary: "መሸጣት ጀምር",
     ctaSecondary: "ገበያ ቦታውን ይመልከቱ",
     featuresTitle: "ትዕዛዝ ለመተዳደር የሚያስፈልጉ ሁሉም ነገሮች",
@@ -100,13 +100,13 @@ export const am: Dictionary = {
       "ትዕዛዝ ሲደርስ በቴሌግራም፣ በSMS፣ በዋትስአፕ ወይም በኢሜይል ፈጣን ማሳወቂያዎችን በቀጥታ ያግኙ።",
     featureInsightsTitle: "የእንቅስቃሴ ታሪክ",
     featureInsightsBody:
-      "ምን መታወቅ እና መቼ እንዳለ ያወቁ — ለእርስዎም ለቡድናዎም የሚያስችል ታሪክ።",
+      "ምን መታወቅ እና መቼ እንዳለ ያወቁ, ለእርስዎም ለቡድናዎም የሚያስችል ታሪክ።",
     featurePublicTitle: "የህዝብ ስቲሮፍራን",
     featurePublicBody:
-      "አንድ ሊንክ ያጋሩ — ደንበኛዎች ምናሌዎን በጥቂት ጊዜ ማየትና ትዕዛዝ መስጠት ይችላሉ።",
+      "አንድ ሊንክ ያጋሩ, ደንበኛዎች ምናሌዎን በጥቂት ጊዜ ማየትና ትዕዛዝ መስጠት ይችላሉ።",
     featureLimitsTitle: "ለእድገት የተዘጋጀ",
     featureLimitsBody:
-      "እያንዳንዱ መለያ የተወሰኑ የትዕዛዝ ደረጃ እና የካታሎግ ገደቦች አለው — በማንኛውም ጊዜ ሊስተካከሉ ይችላሉ።",
+      "እያንዳንዱ መለያ የተወሰኑ የትዕዛዝ ደረጃ እና የካታሎግ ገደቦች አለው, በማንኛውም ጊዜ ሊስተካከሉ ይችላሉ።",
     stepsTitle: "እንዴት ይሰራል",
     stepOneTitle: "የትዕዛዝ ደረጃዎን ፍጠር",
     stepOneBody:
@@ -114,11 +114,11 @@ export const am: Dictionary = {
     stepTwoTitle: "ካታሎግዎን ወጣ",
     stepTwoBody: "ምርቶችን አንድ በአንድ ይጨምሩ፣ በምድቦች ያደምጉ።",
     stepThreeTitle: "ትዕዛዝ ይቀበሉ",
-    stepThreeBody: "ትዕዛዞች ወዲያውኑ ይታያሉ — አንድን አስተናግደው በኋላ እንደተነበበ ይምረጡ።",
+    stepThreeBody: "ትዕዛዞች ወዲያውኑ ይታያሉ, አንድን አስተናግደው በኋላ እንደተነበበ ይምረጡ።",
     statsBusinesses: "ትዕዛዝ ደረጃዎች",
     statsProducts: "ምርቶች",
     statsOrders: "ትዕዛዝዎች",
-    footerNote: "Yope Order — ለትዕዛዝ ደረጃዎች የመስመር ላይ አስተዳደር መድረክ።",
+    footerNote: "Yope Order, ለትዕዛዝ ደረጃዎች የመስመር ላይ አስተዳደር መድረክ።",
   },
   login: {
     title: "እንደምን ደህና መጡ",
@@ -171,7 +171,7 @@ export const am: Dictionary = {
     phone: "የስልክ ቁጥር",
     email: "ኢሜይል",
     orderNote: "ለትዕዛዝ ደረጃው ማስታወሻ",
-    orderNoteHint: "አማራጭ — የመድረሻ መመሪያ፣ የምግብ አስጋገጭነት…",
+    orderNoteHint: "አማራጭ, የመድረሻ መመሪያ፣ የምግብ አስጋገጭነት…",
     contactNumber: "የንግግር ቁጥር",
     contactHint: "እንደእኛ ለመደወል ትዕዛዝ ደረጃው የትዕዛዝ ደረጃውን አድራሻ ቁጥር ይምረጡ።",
     callBusiness: "ትዕዛዝ ደረጃውን ደውል",

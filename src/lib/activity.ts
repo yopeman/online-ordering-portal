@@ -12,7 +12,7 @@ export interface LogActivityInput {
 }
 
 /**
- * Best effort activity logging — a failure here must never break the write
+ * Best effort activity logging, a failure here must never break the write
  * that triggered it, so errors are swallowed on purpose.
  */
 export async function logActivity(input: LogActivityInput): Promise<void> {

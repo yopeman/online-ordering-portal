@@ -62,7 +62,7 @@ export async function placeOrderAction(
   for (const field of fields) {
     const value = str(formData.get(`field_${field.key}`));
     if (field.required && !value) {
-      return { ok: false, error: `${field.label} — ${t("common.required")}` };
+      return { ok: false, error: `${field.label}, ${t("common.required")}` };
     }
     if (["customerName", "phone", "email", "note"].includes(field.key)) {
       answers[field.key] = value;
@@ -97,8 +97,8 @@ export async function placeOrderAction(
     detail:
       `New order for **${product.name}** ×${quantity} from **${answers.customerName || t("orders.unknownCustomer")}**` +
       `${answers.phone ? ` (${answers.phone})` : ""}` +
-      `${contactPhone ? ` — ${t("product.contactNumber")}: ${contactPhone}` : ""}` +
-      ` — ${t("common.total")} ${price * quantity} ${product.currency ?? "ETB"}.`,
+      `${contactPhone ? `, ${t("product.contactNumber")}: ${contactPhone}` : ""}` +
+      `, ${t("common.total")} ${price * quantity} ${product.currency ?? "ETB"}.`,
   });
 
   // Asynchronously dispatch notifications (Telegram via neogram, and logger for other channels)

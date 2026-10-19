@@ -85,7 +85,7 @@ export const om: Dictionary = {
     heroBadge: "Daldalaa on-line fudhattee",
     heroTitle: "Ajaja fudhadhu. Daldalaan kee guddofadhu.",
     heroSubtitle:
-      "Yope Order daldalaa hundaaf bakka daldalaa dijitaalaa kennuu — katalogii kee galmaalii, ajaja fudhadhu, gibbiraa kee qopheeffadhu.",
+      "Yope Order daldalaa hundaaf bakka daldalaa dijitaalaa kennuu, katalogii kee galmaalii, ajaja fudhadhu, gibbiraa kee qopheeffadhu.",
     ctaPrimary: "Bifaanaanii",
     ctaSecondary: "Gabaa gabaa ilali",
     featuresTitle: "Wan ajaja itti fufuuf barbaachisan hunda",
@@ -100,13 +100,13 @@ export const om: Dictionary = {
       "Ajaja haaraa irratti Telegram, SMS, WhatsApp yookiin Imeeyiliin beeksisa battalaa argadhaa.",
     featureInsightsTitle: "Taariiffa hojii",
     featureInsightsBody:
-      "Maaltii maaltuu qaqqabe erga — taariiffa siif qaqqabsiif.",
+      "Maaltii maaltuu qaqqabe erga, taariiffa siif qaqqabsiif.",
     featurePublicTitle: "Bakka dhimmammoo",
     featurePublicBody:
       "Lakkka isaa tokkoon kutaa daldalaa kootiin ilaluu, ajaja hunda kennuun.",
     featureLimitsTitle: "Kabadhaaf",
     featureLimitsBody:
-      "Akeekkachiisaan hunda kamaa daldalaa fi katalogii qabu — yeroo kamiyyuu fooyyaa'i.",
+      "Akeekkachiisaan hunda kamaa daldalaa fi katalogii qabu, yeroo kamiyyuu fooyyaa'i.",
     stepsTitle: "Akkaata hojjeti",
     stepOneTitle: "Daldalaan kee uumamaa",
     stepOneBody: "Maqaa, bilisaa, gaanni hojjechuuf barattoo daldalaa kaa dhaabu.",
@@ -114,11 +114,11 @@ export const om: Dictionary = {
     stepTwoBody: "Meeshaa dhaaluun kaatee ofiinsa irratti qabu.",
     stepThreeTitle: "Ajaja fudhadhu",
     stepThreeBody:
-      "Ajajjeen yeroo daqiiqa'aa dhaffa'u — yoo xumurtee dhugifadhu.",
+      "Ajajjeen yeroo daqiiqa'aa dhaffa'u, yoo xumurtee dhugifadhu.",
     statsBusinesses: "Daldalaa",
     statsProducts: "Meeshaa",
     statsOrders: "Ajaja",
-    footerNote: "Yope Order — daldalaaf daldalaa on-line bulchu.",
+    footerNote: "Yope Order, daldalaaf daldalaa on-line bulchu.",
   },
   login: {
     title: "Belti deebi'uu",
@@ -172,7 +172,7 @@ export const om: Dictionary = {
     phone: "Lakkka bilisaa",
     email: "Iimayilii",
     orderNote: "Barbaalee daldalaa kanaa",
-    orderNoteHint: "Dirqama qaba — qofa geedumsa, dhukkubaa...",
+    orderNoteHint: "Dirqama qaba, qofa geedumsa, dhukkubaa...",
     contactNumber: "Lakkka bilisaa",
     contactHint: "Lakkka daldalaa siif affin akkumaati.",
     callBusiness: "Daldalaa bilisaa",

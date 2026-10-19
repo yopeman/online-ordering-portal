@@ -1,6 +1,6 @@
 import mongoose, { Schema, type InferSchemaType } from "mongoose";
 
-/** Well known activity actions — free form strings are also allowed. */
+/** Well known activity actions, free form strings are also allowed. */
 export const ACTIVITY_ACTIONS = [
   "business.created",
   "business.updated",

@@ -83,7 +83,7 @@ export const en = {
     heroBadge: "Online ordering, simplified",
     heroTitle: "Accept orders. Grow your business.",
     heroSubtitle:
-      "Yope Order gives every business a digital storefront — publish your catalog, receive orders and keep customers coming back.",
+      "Yope Order gives every business a digital storefront, publish your catalog, receive orders and keep customers coming back.",
     ctaPrimary: "Start selling",
     ctaSecondary: "Browse marketplace",
     featuresTitle: "Everything you need to run orders",
@@ -98,7 +98,7 @@ export const en = {
       "Receive real-time order alerts across Telegram, SMS, WhatsApp, and Email so you never miss a sale.",
     featureInsightsTitle: "Activity timeline",
     featureInsightsBody:
-      "Know what changed and when — a readable history for you and your team.",
+      "Know what changed and when, a readable history for you and your team.",
     featurePublicTitle: "Public storefront",
     featurePublicBody:
       "Share one link and customers can browse your menu and order in a few taps.",
@@ -115,7 +115,7 @@ export const en = {
     statsBusinesses: "Businesses",
     statsProducts: "Products",
     statsOrders: "Orders",
-    footerNote: "Yope Order — online ordering portal for businesses.",
+    footerNote: "Yope Order, online ordering portal for businesses.",
   },
   login: {
     title: "Welcome back",
@@ -169,7 +169,7 @@ export const en = {
     phone: "Phone number",
     email: "Email",
     orderNote: "Note for the business",
-    orderNoteHint: "Optional — delivery instructions, allergies, ...",
+    orderNoteHint: "Optional, delivery instructions, allergies, ...",
     contactNumber: "Contact number",
     contactHint: "Which number should the business use to reach you?",
     callBusiness: "Call the business",

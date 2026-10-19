@@ -20,7 +20,7 @@ const CatalogSchema = new Schema(
     },
     category: { type: String, default: "", trim: true, index: true },
     details: { type: Schema.Types.Mixed, default: () => ({}) },
-    /** Price is an additive extension of schema.md — ordering needs it. */
+    /** Price is an additive extension of schema.md, ordering needs it. */
     price: { type: Number, default: 0, min: 0 },
     currency: { type: String, default: "ETB", trim: true },
     image: { type: String, default: "" },
