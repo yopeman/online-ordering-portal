@@ -450,8 +450,8 @@ export function MarketplaceSidebar({
   return (
     <>
       {/* Desktop Sticky Sidebar */}
-      <aside className="hidden lg:block w-72 xl:w-80 shrink-0">
-        <div className="sticky top-24 rounded-2xl border border-border bg-surface p-5 shadow-xs">
+      <aside className="hidden lg:block w-72 xl:w-80 shrink-0 sticky top-24 self-start">
+        <div className="max-h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar overscroll-contain rounded-2xl border border-border bg-surface p-5 shadow-xs">
           {sidebarContent}
         </div>
       </aside>
