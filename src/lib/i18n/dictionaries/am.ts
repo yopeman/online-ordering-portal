@@ -51,6 +51,7 @@ export const am: Dictionary = {
     dismiss: "ዝጋ",
     copy: "ቅዳ",
     copied: "ተቀድቷል",
+    share: "አጋራ",
     select: "ይምረጡ",
     filter: "አጣራ",
     sort: "ደምቅ",

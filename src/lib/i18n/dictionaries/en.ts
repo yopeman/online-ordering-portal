@@ -49,6 +49,7 @@ export const en = {
     dismiss: "Dismiss",
     copy: "Copy",
     copied: "Copied",
+    share: "Share",
     select: "Select",
     filter: "Filter",
     sort: "Sort",

@@ -51,6 +51,7 @@ export const ti: Dictionary = {
     dismiss: "ዝጋ",
     copy: "ቅዳ",
     copied: "ተቀድቷል",
+    share: "ኣካፍል",
     select: "ይምረጡ",
     filter: "አጣራ",
     sort: "ደምቅ",

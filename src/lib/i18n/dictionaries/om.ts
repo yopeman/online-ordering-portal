@@ -51,6 +51,7 @@ export const om: Dictionary = {
     dismiss: "Cufi",
     copy: "Garagalchi",
     copied: "Garagalame",
+    share: "Qoodi",
     select: "Filadhu",
     filter: "Calaadhu",
     sort: "Qabxii",

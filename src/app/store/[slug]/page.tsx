@@ -311,7 +311,7 @@ export default async function StorefrontPage({
           <ShareBusinessButton
             businessName={business.name}
             description={description}
-            label={t("common.copy")}
+            label={t("common.share")}
             copiedLabel={t("common.copied")}
             size="sm"
           />
