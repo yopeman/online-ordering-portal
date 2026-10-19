@@ -114,21 +114,19 @@ export default async function MarketplacePage({
       <div className="flex items-center gap-2 border-b border-border text-sm">
         <Link
           href={search ? `/marketplace?q=${encodeURIComponent(search)}` : "/marketplace"}
-          className={`-mb-px border-b-2 px-3 py-2 font-medium ${
-            view === "businesses"
+          className={`-mb-px border-b-2 px-3 py-2 font-medium ${view === "businesses"
               ? "border-primary text-primary"
               : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
+            }`}
         >
           {t("marketplace.businesses")} ({number(businesses.total)})
         </Link>
         <Link
           href={`/marketplace?view=products${search ? `&q=${encodeURIComponent(search)}` : ""}`}
-          className={`-mb-px border-b-2 px-3 py-2 font-medium ${
-            view === "products"
+          className={`-mb-px border-b-2 px-3 py-2 font-medium ${view === "products"
               ? "border-primary text-primary"
               : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
+            }`}
         >
           {t("marketplace.products")}
         </Link>

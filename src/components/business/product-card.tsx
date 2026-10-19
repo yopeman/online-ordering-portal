@@ -23,7 +23,7 @@ export function ProductCard({
       href={`/products/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-primary-border"
     >
-      <div className="relative flex h-40 items-center justify-center overflow-hidden bg-surface-muted">
+      <div className="relative flex h-64 items-center justify-center overflow-hidden bg-surface-muted">
         {product.image ? (
           <Image
             src={product.image}

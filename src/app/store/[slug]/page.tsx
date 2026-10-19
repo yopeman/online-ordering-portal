@@ -431,7 +431,7 @@ export default async function StorefrontPage({
                       href={href}
                       target={isExternal ? "_blank" : undefined}
                       rel={isExternal ? "noopener noreferrer" : undefined}
-                      className="inline-flex ml-1.5 h-10 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-surface-muted hover:border-primary-border"
+                      className="inline-flex ml-1.5 my-1 h-10 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-surface-muted hover:border-primary-border"
                     >
                       {contact.type === "telegram" ? (
                         <Send className="h-4 w-4 text-sky-500" />

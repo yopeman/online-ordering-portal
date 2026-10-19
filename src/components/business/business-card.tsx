@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   Activity,
@@ -95,13 +96,15 @@ export function BusinessCard({
       href={`/store/${business.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-primary-border"
     >
-      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-surface-muted">
+      <div className="relative flex h-64 items-center justify-center overflow-hidden bg-surface-muted">
         {business.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={business.image}
             alt={business.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fill
+            sizes="(max-width: 640px) 100vw, 320px"
+            unoptimized={business.image.startsWith("data:") || business.image.startsWith("http://")}
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <Store className="h-10 w-10 text-subtle-foreground" />
@@ -192,11 +195,13 @@ export function BusinessOwnerCard({
           aria-hidden="true"
         >
           {business.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={business.image}
               alt={business.name}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              fill
+              sizes="(max-width: 640px) 100vw, 360px"
+              unoptimized={business.image.startsWith("data:") || business.image.startsWith("http://")}
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-surface-muted via-surface to-surface-muted/60">
