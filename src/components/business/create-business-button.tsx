@@ -115,7 +115,7 @@ export function CreateBusinessButton({
             </p>
           ) : null}
 
-          <FormSection title={t("dashboard.businessName")}>
+          <FormSection title={""}>
             <Field label={t("dashboard.businessName")} htmlFor="new-business-name" required>
               <Input
                 id="new-business-name"

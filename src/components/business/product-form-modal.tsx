@@ -133,7 +133,7 @@ function ProductFormDialog({
           </p>
         ) : null}
 
-        <FormSection title={t("catalog.productName")}>
+        <FormSection title={""}>
           <Field label={t("catalog.productName")} htmlFor="product-name" required>
             <Input
               id="product-name"
