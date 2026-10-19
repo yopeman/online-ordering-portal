@@ -172,52 +172,60 @@ export function CatalogProductList({
                 key={product.id}
                 className="group flex flex-col overflow-hidden transition-all duration-200 hover:border-primary-border hover:shadow-md"
               >
-                {/* Cover Image (Index 0 image) */}
-                <div className="relative aspect-4/3 w-full overflow-hidden bg-surface-muted">
-                  {coverImage ? (
-                    <Image
-                      src={coverImage}
-                      alt={product.name}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      unoptimized={coverImage.startsWith("http://") || coverImage.startsWith("data:") || coverImage.startsWith("/uploads/")}
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full flex-col items-center justify-center text-muted-foreground/50">
-                      <ImageOff className="h-9 w-9 stroke-[1.5]" />
-                      <span className="mt-1 text-xs">No image</span>
-                    </div>
-                  )}
-
-                  {/* Overlaid Badges */}
-                  <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2 pointer-events-none">
-                    <div className="flex flex-wrap gap-1">
-                      {product.category ? (
-                        <Badge tone="neutral" className="bg-surface/90 backdrop-blur-xs font-medium shadow-xs">
-                          {product.category}
-                        </Badge>
-                      ) : <span />}
-                    </div>
-                    {!product.isActive ? (
-                      <Badge tone="warning" className="backdrop-blur-xs font-medium shadow-xs">
-                        {t("dashboard.inactive")}
-                      </Badge>
+                  
+                <Link
+                  href={`/products/${product.slug}`}
+                  className="cursor-pointer"
+                  aria-label={t("common.view")}
+                  title={t("common.view")}
+                >
+                  {/* Cover Image (Index 0 image) */}
+                  <div className="relative aspect-4/3 w-full overflow-hidden bg-surface-muted">
+                    {coverImage ? (
+                      <Image
+                        src={coverImage}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        unoptimized={coverImage.startsWith("http://") || coverImage.startsWith("data:") || coverImage.startsWith("/uploads/")}
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
                     ) : (
-                      <Badge tone="success" className="backdrop-blur-xs font-medium shadow-xs">
-                        {t("catalog.active")}
-                      </Badge>
+                      <div className="flex h-full w-full flex-col items-center justify-center text-muted-foreground/50">
+                        <ImageOff className="h-9 w-9 stroke-[1.5]" />
+                        <span className="mt-1 text-xs">No image</span>
+                      </div>
                     )}
-                  </div>
 
-                  {/* Additional files counter */}
-                  {product.files.length > 1 ? (
-                    <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1 rounded-md bg-black/65 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-xs">
-                      <Paperclip className="h-3 w-3" />
-                      <span>{product.files.length}</span>
+                    {/* Overlaid Badges */}
+                    <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2 pointer-events-none">
+                      <div className="flex flex-wrap gap-1">
+                        {product.category ? (
+                          <Badge tone="neutral" className="bg-surface/90 backdrop-blur-xs font-medium shadow-xs">
+                            {product.category}
+                          </Badge>
+                        ) : <span />}
+                      </div>
+                      {!product.isActive ? (
+                        <Badge tone="warning" className="backdrop-blur-xs font-medium shadow-xs">
+                          {t("dashboard.inactive")}
+                        </Badge>
+                      ) : (
+                        <Badge tone="success" className="backdrop-blur-xs font-medium shadow-xs">
+                          {t("catalog.active")}
+                        </Badge>
+                      )}
                     </div>
-                  ) : null}
-                </div>
+
+                    {/* Additional files counter */}
+                    {product.files.length > 1 ? (
+                      <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1 rounded-md bg-black/65 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-xs">
+                        <Paperclip className="h-3 w-3" />
+                        <span>{product.files.length}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                </Link>
 
                 {/* Card Content */}
                 <div className="flex flex-1 flex-col p-4">
