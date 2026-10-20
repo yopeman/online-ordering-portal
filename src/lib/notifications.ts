@@ -3,9 +3,7 @@ import "server-only";
 import { Bot } from "neogram";
 import type { BusinessContact, BusinessContactType } from "@/lib/models";
 
-const TELEGRAM_BOT_TOKEN =
-  process.env.TELEGRAM_BOT_TOKEN ||
-  "8794816879:AAG6ddrnVUo_hG4EDq4Nu7yKGkwA13g1tcg";
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
 let botInstance: Bot | null = null;
 
