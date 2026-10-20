@@ -84,18 +84,22 @@ export async function GET(request: NextRequest) {
         email: profile.email.toLowerCase(),
         name: profile.name ?? profile.email.split("@")[0],
         image: profile.picture ?? "",
-        ...(isFirstUser ? { role: "admin" } : {}),
+        // 🚀 Cleaned: 'role' removed from here completely to prevent Mongo conflict errors
       },
       $setOnInsert: {
         provider: "google",
         providerId: profile.sub,
         status: "active",
-        role: isFirstUser ? "admin" : "business_owner",
+        role: isFirstUser ? "admin" : "business_owner", // 🚀 Works perfectly on creation
         maxBusinesses: isFirstUser ? 1000 : 3,
         maxCatalogs: isFirstUser ? 1000 : 50,
       },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { 
+      upsert: true, 
+      returnDocument: 'after', // 🚀 Fixes the Mongoose deprecation warning!
+      setDefaultsOnInsert: true 
+    },
   ).lean();
 
   if (!user) return fail("google_failed");
