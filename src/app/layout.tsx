@@ -38,6 +38,11 @@ export const metadata: Metadata = {
     description: "Online ordering portal for businesses.",
     type: "website",
   },
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default async function RootLayout({
