@@ -37,7 +37,7 @@ export default async function LoginPage({
   const next = params.next?.startsWith("/") ? params.next : "/businesses";
   if (user) redirect(next);
 
-  const googleReady = googleIsConfigured();
+  const googleReady = false; // googleIsConfigured();
   const telegramReady = telegramIsConfigured();
   const botUsername = getTelegramBotUsername();
   const telegramAuthUrl = getTelegramCallbackUrl(undefined, next);
