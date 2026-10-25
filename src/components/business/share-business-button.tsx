@@ -19,6 +19,7 @@ export interface ShareBusinessButtonProps {
   type?: "business" | "product";
   productName?: string;
   priceFormatted?: string;
+  isOwner?: boolean;
 }
 
 export function ShareBusinessButton({
@@ -33,6 +34,7 @@ export function ShareBusinessButton({
   type = "business",
   productName,
   priceFormatted,
+  isOwner = false,
 }: ShareBusinessButtonProps) {
   const [open, setOpen] = useState(false);
 
@@ -62,6 +64,7 @@ export function ShareBusinessButton({
         priceFormatted={priceFormatted}
         imageUrl={imageUrl}
         url={url}
+        isOwner={isOwner}
       />
     </>
   );

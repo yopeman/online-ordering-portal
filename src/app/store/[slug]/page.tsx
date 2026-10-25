@@ -103,11 +103,12 @@ export default async function StorefrontPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ category?: string }>;
+  searchParams?: Promise<{ category?: string; remark?: string }>;
 }) {
   const { slug } = await params;
   const sp = searchParams ? await searchParams : undefined;
   const selectedCategory = sp?.category?.trim() || "";
+  const currentRemark = sp?.remark?.trim() || "";
 
   const t = await getTranslator();
   const { locale } = await getFormatters();
@@ -333,6 +334,7 @@ export default async function StorefrontPage({
             businessName={business.name}
             description={description}
             imageUrl={storeGalleryImages[0]?.url}
+            isOwner={Boolean(isOwner)}
             label={t("common.share")}
             size="sm"
           />
@@ -658,6 +660,11 @@ export default async function StorefrontPage({
                 product={product}
                 locale={locale}
                 altLabel={t("product.imageOf")}
+                href={
+                  currentRemark
+                    ? `/products/${product.slug}?remark=${encodeURIComponent(currentRemark)}`
+                    : undefined
+                }
               />
             ))}
           </div>

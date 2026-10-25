@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import {
   Check,
@@ -10,6 +10,7 @@ import {
   QrCode,
   Share2,
   Store,
+  Tag,
   X,
 } from "lucide-react";
 
@@ -27,6 +28,7 @@ export interface ShareModalProps {
   url?: string;
   priceFormatted?: string;
   imageUrl?: string;
+  isOwner?: boolean;
 }
 
 function subscribeToUrl(callback: () => void) {
@@ -56,11 +58,38 @@ function ShareModalDialog({
   url: initialUrl,
   priceFormatted,
   imageUrl,
+  isOwner = false,
 }: ShareModalProps) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [showQr, setShowQr] = useState(false);
-  const currentUrl = useShareUrl(initialUrl);
+  const [remark, setRemark] = useState("");
+  const rawUrl = useShareUrl(initialUrl);
+
+  const currentUrl = useMemo(() => {
+    if (!rawUrl) return "";
+    const trimmed = remark.trim();
+    try {
+      const isAbsolute = rawUrl.startsWith("http://") || rawUrl.startsWith("https://");
+      const base = isAbsolute ? undefined : "https://placeholder.local";
+      const parsed = new URL(rawUrl, base);
+
+      if (trimmed) {
+        parsed.searchParams.set("remark", trimmed);
+      } else {
+        parsed.searchParams.delete("remark");
+      }
+
+      if (isAbsolute) {
+        return parsed.toString();
+      }
+      return parsed.pathname + (parsed.search ? parsed.search : "") + parsed.hash;
+    } catch {
+      if (!trimmed) return rawUrl;
+      const sep = rawUrl.includes("?") ? "&" : "?";
+      return `${rawUrl}${sep}remark=${encodeURIComponent(trimmed)}`;
+    }
+  }, [rawUrl, remark]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -248,6 +277,47 @@ function ShareModalDialog({
               ) : null}
             </div>
           </div>
+
+          {/* Owner Remark Query Input */}
+          {isOwner ? (
+            <div className="space-y-2 rounded-xl border border-primary/20 bg-primary/5 p-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="share-remark-field"
+                  className="flex items-center gap-1.5 text-xs font-semibold text-primary"
+                >
+                  <Tag className="h-3.5 w-3.5" />
+                  <span>{t("common.remark")}</span>
+                </label>
+                <Badge tone="primary" className="text-[10px] px-1.5 py-0.5">
+                  {t("common.ownerOnly")}
+                </Badge>
+              </div>
+              <p className="text-[11px] leading-relaxed text-muted-foreground">
+                {t("common.remarkHint")}
+              </p>
+              <div className="relative flex items-center">
+                <input
+                  id="share-remark-field"
+                  type="text"
+                  value={remark}
+                  onChange={(e) => setRemark(e.target.value)}
+                  placeholder={t("common.remarkPlaceholder")}
+                  className="w-full rounded-lg border border-border bg-surface px-3 py-1.5 pr-8 text-xs text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20"
+                />
+                {remark ? (
+                  <button
+                    type="button"
+                    onClick={() => setRemark("")}
+                    className="absolute right-2.5 text-muted-foreground transition-colors hover:text-foreground"
+                    aria-label="Clear remark"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
 
           {/* Copy Link Input Bar */}
           <div className="space-y-1.5">

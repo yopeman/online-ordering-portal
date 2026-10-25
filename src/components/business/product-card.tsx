@@ -12,15 +12,17 @@ export function ProductCard({
   locale,
   altLabel,
   showBusiness = false,
+  href,
 }: {
   product: ProductListItem;
   locale: Locale;
   altLabel: string;
   showBusiness?: boolean;
+  href?: string;
 }) {
   return (
     <Link
-      href={`/products/${product.slug}`}
+      href={href || `/products/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-primary-border"
     >
       <div className="relative flex h-64 items-center justify-center overflow-hidden bg-surface-muted">

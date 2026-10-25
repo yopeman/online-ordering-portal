@@ -73,6 +73,7 @@ export async function placeOrderAction(
 
   const quantity = Math.min(100, Math.max(1, Number(str(formData.get("quantity"))) || 1));
   const price = product.price ?? 0;
+  const remark = str(formData.get("remark"));
 
   const details = {
     ...answers,
@@ -82,6 +83,7 @@ export async function placeOrderAction(
     unitPrice: price,
     currency: product.currency ?? "ETB",
     total: price * quantity,
+    ...(remark ? { remark } : {}),
   };
 
   await Order.create({
@@ -98,6 +100,7 @@ export async function placeOrderAction(
       `New order for **${product.name}** ×${quantity} from **${answers.customerName || t("orders.unknownCustomer")}**` +
       `${answers.phone ? ` (${answers.phone})` : ""}` +
       `${contactPhone ? `, ${t("product.contactNumber")}: ${contactPhone}` : ""}` +
+      `${remark ? `, Remark: ${remark}` : ""}` +
       `, ${t("common.total")} ${price * quantity} ${product.currency ?? "ETB"}.`,
   });
 

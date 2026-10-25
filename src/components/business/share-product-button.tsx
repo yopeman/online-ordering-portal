@@ -18,6 +18,7 @@ export interface ShareProductButtonProps {
   variant?: "primary" | "secondary" | "ghost" | "subtle";
   size?: "sm" | "md" | "lg";
   className?: string;
+  isOwner?: boolean;
 }
 
 export function ShareProductButton({
@@ -31,6 +32,7 @@ export function ShareProductButton({
   variant = "secondary",
   size = "md",
   className = "",
+  isOwner = false,
 }: ShareProductButtonProps) {
   const [open, setOpen] = useState(false);
 
@@ -58,6 +60,7 @@ export function ShareProductButton({
         priceFormatted={priceFormatted}
         imageUrl={imageUrl}
         url={url}
+        isOwner={isOwner}
       />
     </>
   );

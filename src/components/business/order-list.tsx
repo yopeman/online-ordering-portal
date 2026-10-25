@@ -1,4 +1,4 @@
-import { Mail, MailOpen } from "lucide-react";
+import { Mail, MailOpen, Tag } from "lucide-react";
 
 import { setOrderReadAction } from "@/app/actions/orders";
 import { getFormatters, getTranslator } from "@/lib/i18n-server";
@@ -83,6 +83,13 @@ export async function OrderList({ orders }: { orders: OrderListItem[] }) {
               {details.note ? (
                 <p className="text-sm text-muted-foreground">
                   {t("common.note")}: {String(details.note)}
+                </p>
+              ) : null}
+
+              {details.remark ? (
+                <p className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                  <Tag className="h-3 w-3" />
+                  <span>{t("common.remark")}: {String(details.remark)}</span>
                 </p>
               ) : null}
 

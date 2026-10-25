@@ -26,6 +26,7 @@ export function OrderForm({
   contactPhones,
   price,
   currency,
+  remark,
 }: {
   slug: string;
   fields: OrderFormFieldDTO[];
@@ -33,6 +34,7 @@ export function OrderForm({
   contactPhones?: BusinessContact[] | string[];
   price: number;
   currency: string;
+  remark?: string;
 }) {
   const { t, locale } = useApp();
   const [quantity, setQuantity] = useState(1);
@@ -49,6 +51,7 @@ export function OrderForm({
   return (
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="slug" value={slug} />
+      {remark ? <input type="hidden" name="remark" value={remark} /> : null}
 
       {state.ok ? (
         <Alert tone="success">

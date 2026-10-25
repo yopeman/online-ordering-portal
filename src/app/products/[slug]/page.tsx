@@ -103,10 +103,14 @@ function renderDetailValue(value: unknown): React.ReactNode {
 
 export default async function ProductPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ remark?: string }>;
 }) {
   const { slug } = await params;
+  const sp = searchParams ? await searchParams : undefined;
+  const remark = sp?.remark?.trim() || "";
   const t = await getTranslator();
   const { locale, price: formatPriceAmount } = await getFormatters();
   const imageAltLabel = t("product.imageOf");
@@ -417,6 +421,7 @@ export default async function ProductPage({
             description={shortDescription || product.name}
             imageUrl={galleryImages[0]?.url}
             priceFormatted={formatPriceAmount(price, currency)}
+            isOwner={Boolean(isOwner)}
             label={t("common.share")}
             size="sm"
           />
@@ -814,6 +819,7 @@ export default async function ProductPage({
               contactPhones={contactPhones}
               price={product.price}
               currency={product.currency}
+              remark={remark}
             />
           </Card>
         </aside>
