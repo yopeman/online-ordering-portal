@@ -37,7 +37,7 @@ export default async function LoginPage({
   const next = params.next?.startsWith("/") ? params.next : "/businesses";
   if (user) redirect(next);
 
-  const googleReady = false; // googleIsConfigured();
+  const googleReady = googleIsConfigured();
   const telegramReady = telegramIsConfigured();
   const botUsername = getTelegramBotUsername();
   const telegramAuthUrl = getTelegramCallbackUrl(undefined, next);
@@ -60,7 +60,7 @@ export default async function LoginPage({
         ) : null}
 
         <div className="mt-6 space-y-4">
-          {googleReady ? (
+          {/* {googleReady ? (
             <a
               href={`/api/auth/google?next=${encodeURIComponent(next)}`}
               className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
@@ -87,7 +87,7 @@ export default async function LoginPage({
                 {t("login.or")}
               </span>
             </div>
-          ) : null}
+          ) : null} */}
 
           {telegramReady ? (
             <div className="flex w-full justify-center">
