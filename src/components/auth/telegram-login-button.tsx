@@ -41,7 +41,12 @@ export function TelegramLoginButton({
         }).Telegram
       : undefined;
 
-    const initData = tg?.WebApp?.initData;
+    // Check both WebApp initData and hash fallback (tgWebAppData)
+    let initData = tg?.WebApp?.initData;
+    if (!initData && typeof window !== "undefined" && window.location.hash) {
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      initData = hashParams.get("tgWebAppData") || "";
+    }
 
     if (initData && initData.length > 0) {
       setTimeout(() => {
@@ -56,6 +61,7 @@ export function TelegramLoginButton({
 
       fetch("/api/auth/telegram/webapp", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ initData, next }),
       })
@@ -66,8 +72,19 @@ export function TelegramLoginButton({
           }
           return res.json();
         })
-        .then((data) => {
-          window.location.href = data.redirectUrl || next || "/businesses";
+        .then((data: { ok: boolean; token?: string; redirectUrl?: string }) => {
+          if (data.token) {
+            try {
+              sessionStorage.setItem("yope_session", data.token);
+              localStorage.setItem("yope_session", data.token);
+            } catch {}
+          }
+          const dest = data.redirectUrl || next || "/businesses";
+          const sep = dest.includes("?") ? "&" : "?";
+          const finalUrl = data.token
+            ? `${dest}${sep}tg_session=${encodeURIComponent(data.token)}`
+            : dest;
+          window.location.replace(finalUrl);
         })
         .catch((err: unknown) => {
           if (!isMounted) return;

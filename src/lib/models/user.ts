@@ -22,6 +22,7 @@ const UserSchema = new Schema(
     },
     provider: { type: String, required: true, default: "google", trim: true },
     providerId: { type: String, required: true, trim: true, index: true },
+    telegramChatId: { type: String, default: "", trim: true, index: true },
     status: {
       type: String,
       enum: USER_STATUSES,
@@ -46,6 +47,7 @@ export function toUserDTO(doc: {
   email: string;
   provider: string;
   providerId: string;
+  telegramChatId?: string | null;
   status?: UserStatus | null;
   role?: UserRole | null;
   maxBusinesses?: number | null;
@@ -64,6 +66,7 @@ export function toUserDTO(doc: {
     email: doc.email,
     provider: doc.provider ?? "unknown",
     providerId: doc.providerId ?? "",
+    telegramChatId: doc.telegramChatId ?? "",
     status: doc.status ?? "active",
     role: doc.role ?? "business_owner",
     maxBusinesses,

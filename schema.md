@@ -4,6 +4,7 @@
 - email: string
 - provider: string
 - provider id: string
+- telegramChatId: string
 - status: active, inactive
 - role: admin, business_owner
 - max businesses allowed: number - max 1000

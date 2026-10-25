@@ -23,8 +23,10 @@ export async function GET(request: NextRequest) {
     return fail("telegram_failed");
   }
 
+  let token: string | undefined;
   try {
-    await findOrCreateTelegramUser(user);
+    const authResult = await findOrCreateTelegramUser(user);
+    token = authResult.token;
   } catch (err: unknown) {
     console.error("[Telegram Auth] Failed to establish session:", err);
     const msg = err instanceof Error ? err.message : "";
@@ -36,5 +38,16 @@ export async function GET(request: NextRequest) {
 
   const next = searchParams.get("next");
   const target = next && next.startsWith("/") ? next : "/businesses";
-  return NextResponse.redirect(new URL(target, origin));
+  const redirectResponse = NextResponse.redirect(new URL(target, origin));
+  if (token) {
+    redirectResponse.cookies.set("yope_session", token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      partitioned: true,
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  }
+  return redirectResponse;
 }

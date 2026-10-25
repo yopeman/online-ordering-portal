@@ -23,14 +23,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await findOrCreateTelegramUser(user);
+    const { token } = await findOrCreateTelegramUser(user);
 
     const next =
       typeof body.next === "string" && body.next.startsWith("/")
         ? body.next
         : "/businesses";
 
-    return NextResponse.json({ ok: true, redirectUrl: next });
+    const response = NextResponse.json({ ok: true, token, redirectUrl: next });
+    response.cookies.set("yope_session", token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      partitioned: true,
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+
+    return response;
   } catch (err: unknown) {
     console.error("[Telegram Auth] Mini App error:", err);
     const msg = err instanceof Error ? err.message : "Internal error";

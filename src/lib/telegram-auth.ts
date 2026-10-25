@@ -171,7 +171,9 @@ export function verifyTelegramWebAppData(
     if (authDateStr) {
       const authDate = Number(authDateStr);
       const now = Math.floor(Date.now() / 1000);
-      if (now - authDate > 86400 || authDate - now > 300) {
+      const maxAge = 86400 * 30; // 30 days tolerance for cached WebApp sessions
+      const maxFuture = 86400; // 1 day clock skew tolerance
+      if (now - authDate > maxAge || authDate - now > maxFuture) {
         return { valid: false, reason: "auth_date_expired" };
       }
     }
@@ -224,7 +226,9 @@ export function verifyTelegramWebAppData(
 /**
  * Finds or creates a user account from Telegram auth, establishes a session cookie.
  */
-export async function findOrCreateTelegramUser(profile: TelegramUser): Promise<UserDTO> {
+export async function findOrCreateTelegramUser(
+  profile: TelegramUser,
+): Promise<{ user: UserDTO; token: string }> {
   await connectDB();
 
   const providerId = String(profile.id);
@@ -257,6 +261,7 @@ export async function findOrCreateTelegramUser(profile: TelegramUser): Promise<U
       $set: {
         name: displayName,
         image: photo || (existingUser?.image ?? ""),
+        telegramChatId: providerId,
       },
       $setOnInsert: {
         email: emailToUse.toLowerCase(),
@@ -283,7 +288,7 @@ export async function findOrCreateTelegramUser(profile: TelegramUser): Promise<U
     throw new Error("account_inactive");
   }
 
-  await setSessionCookie({
+  const token = await setSessionCookie({
     sub: user._id.toString(),
     email: user.email,
     name: user.name,
@@ -291,5 +296,5 @@ export async function findOrCreateTelegramUser(profile: TelegramUser): Promise<U
     image: user.image,
   });
 
-  return toUserDTO(user);
+  return { user: toUserDTO(user), token };
 }

@@ -54,16 +54,20 @@ export async function verifySessionToken(
   }
 }
 
-export async function setSessionCookie(payload: SessionPayload): Promise<void> {
+export const SESSION_COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: "none" as const,
+  secure: true,
+  partitioned: true,
+  path: "/",
+  maxAge: SESSION_MAX_AGE,
+};
+
+export async function setSessionCookie(payload: SessionPayload): Promise<string> {
   const token = await createSessionToken(payload);
   const store = await cookies();
-  store.set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: SESSION_MAX_AGE,
-  });
+  store.set(SESSION_COOKIE, token, SESSION_COOKIE_OPTIONS);
+  return token;
 }
 
 export async function clearSessionCookie(): Promise<void> {

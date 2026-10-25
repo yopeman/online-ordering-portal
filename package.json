@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "node --env-file-if-exists=.env.local scripts/seed.mjs",
-    "bot": "node --env-file-if-exists=.env.local --env-file-if-exists=.env scripts/bot.mjs"
+    "seed": "node --env-file-if-exists=.env.local scripts/seed.mjs"
   },
   "dependencies": {
     "cloudinary": "^2.11.0",
