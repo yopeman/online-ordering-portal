@@ -1,88 +1,70 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Share2 } from "lucide-react";
+import { Share2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ShareModal } from "@/components/ui/share-modal";
 
 export interface ShareBusinessButtonProps {
   businessName: string;
   description?: string;
+  url?: string;
+  imageUrl?: string;
   label?: string;
   copiedLabel?: string;
   variant?: "primary" | "secondary" | "ghost" | "subtle";
   size?: "sm" | "md" | "lg";
   className?: string;
+  type?: "business" | "product";
+  productName?: string;
+  priceFormatted?: string;
 }
 
 export function ShareBusinessButton({
   businessName,
   description = "",
-  label = "Share business",
-  copiedLabel = "Copied link!",
+  url,
+  imageUrl,
+  label = "Share",
   variant = "secondary",
   size = "md",
   className = "",
+  type = "business",
+  productName,
+  priceFormatted,
 }: ShareBusinessButtonProps) {
-  const [copied, setCopied] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const handleShare = async () => {
-    const url = typeof window !== "undefined" ? window.location.href : "";
-
-    // Prefer native Web Share API on mobile / supporting devices
-    if (
-      typeof navigator !== "undefined" &&
-      typeof navigator.share === "function" &&
-      /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
-    ) {
-      try {
-        await navigator.share({
-          title: businessName,
-          text: description || businessName,
-          url,
-        });
-        return;
-      } catch (error) {
-        // Fallback to clipboard if user dismissed or share failed
-        if ((error as DOMException)?.name === "AbortError") return;
-      }
-    }
-
-    // Fallback to clipboard copy
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      try {
-        await navigator.clipboard.writeText(url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2500);
-      } catch {
-        // Fallback: prompt copy
-        window.prompt("Copy store link:", url);
-      }
-    }
-  };
+  const isProduct = type === "product" || Boolean(productName);
 
   return (
-    <Button
-      type="button"
-      variant={copied ? "subtle" : variant}
-      size={size}
-      onClick={handleShare}
-      className={`transition-all duration-200 ${
-        copied ? "border-success/40 text-success" : ""
-      } ${className}`}
-      aria-label={copied ? copiedLabel : label}
-    >
-      {copied ? (
-        <>
-          <Check className="h-4 w-4 text-success transition-transform duration-200 scale-110" />
-          <span>{copiedLabel}</span>
-        </>
-      ) : (
-        <>
-          <Share2 className="h-4 w-4" />
-          <span>{label}</span>
-        </>
-      )}
-    </Button>
+    <>
+      <Button
+        type="button"
+        variant={variant}
+        size={size}
+        onClick={() => setOpen(true)}
+        className={`gap-1.5 transition-all ${className}`}
+        aria-label={label}
+      >
+        <Share2 className="h-4 w-4 text-primary" />
+        <span>{label}</span>
+      </Button>
+
+      <ShareModal
+        open={open}
+        onClose={() => setOpen(false)}
+        type={isProduct ? "product" : "business"}
+        title={productName || businessName}
+        subtitle={productName ? businessName : undefined}
+        description={description}
+        priceFormatted={priceFormatted}
+        imageUrl={imageUrl}
+        url={url}
+      />
+    </>
   );
 }
+
+export { ShareProductButton } from "./share-product-button";

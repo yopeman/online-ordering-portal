@@ -332,8 +332,8 @@ export default async function StorefrontPage({
           <ShareBusinessButton
             businessName={business.name}
             description={description}
+            imageUrl={storeGalleryImages[0]?.url}
             label={t("common.share")}
-            copiedLabel={t("common.copied")}
             size="sm"
           />
         </div>

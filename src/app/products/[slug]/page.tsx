@@ -25,7 +25,7 @@ import {
 } from "@/components/business/order-form";
 import { ProductCard } from "@/components/business/product-card";
 import { ProductGallery } from "@/components/business/product-gallery";
-import { ShareBusinessButton } from "@/components/business/share-business-button";
+import { ShareProductButton } from "@/components/business/share-product-button";
 import { StoreAttachments } from "@/components/business/store-attachments";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -411,11 +411,13 @@ export default async function ProductPage({
             </Link>
           ) : null}
 
-          <ShareBusinessButton
-            businessName={`${product.name} · ${business.name}`}
+          <ShareProductButton
+            productName={product.name}
+            businessName={business.name}
             description={shortDescription || product.name}
+            imageUrl={galleryImages[0]?.url}
+            priceFormatted={formatPriceAmount(price, currency)}
             label={t("common.share")}
-            copiedLabel={t("common.copied")}
             size="sm"
           />
         </div>
