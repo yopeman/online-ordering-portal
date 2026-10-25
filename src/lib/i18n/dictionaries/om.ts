@@ -133,6 +133,13 @@ export const om: Dictionary = {
     signedInAs: "Seenii",
     continue: "Itti fufi",
     googleFailed: "Seenaa Google hin guutumme. Irra deebi'i.",
+    telegram: "Telegram kanaan itti fufi",
+    telegramFailed: "Seenaa Telegram hin guutumme. Irra deebi'i.",
+    telegramNotConfigured: "Seenaa Telegram hin qabne yoo aan taane",
+    telegramConfigureHint:
+      "TELEGRAM_BOT_TOKEN fi TELEGRAM_BOT_USERNAME .env keessatti dabalii.",
+    telegramAuthenticating: "Telegram kanaan seenamaa jira...",
+    or: "yookaan",
     sessionExpired: "Karoofonni kee xumurame. Seenaa irra deebi'i.",
   },
   marketplace: {

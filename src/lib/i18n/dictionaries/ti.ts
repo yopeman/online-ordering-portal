@@ -133,6 +133,13 @@ export const ti: Dictionary = {
     signedInAs: "የገባቱ",
     continue: "ቀጥል",
     googleFailed: "የGoogle ግባት አልተሳካም። እንደገና ይሞክሩ።",
+    telegram: "ብTelegram ቀጽል",
+    telegramFailed: "ናይ Telegram ምእታው ኣይተዓወተን። ደጊምኩም ፈትኑ።",
+    telegramNotConfigured: "ናይ Telegram ምእታው ገና ኣይተዳለወን",
+    telegramConfigureHint:
+      "TELEGRAM_BOT_TOKENን TELEGRAM_BOT_USERNAMEን ኣብ .env የእትዉ።",
+    telegramAuthenticating: "ብTelegram ይኣቱ ኣሎ...",
+    or: "ወይ",
     sessionExpired: "የክልስዎ ጊዜ አልፏል። እንደገና ይግቡ።",
   },
   marketplace: {

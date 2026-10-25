@@ -7,6 +7,8 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { getDictionary } from "@/lib/i18n";
 import { getLocale, getTheme } from "@/lib/preferences";
 
+import Script from "next/script";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -53,6 +55,12 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} data-theme={theme} suppressHydrationWarning>
+      <head>
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoEthiopic.variable} flex min-h-screen flex-col font-sans antialiased`}
       >

@@ -130,6 +130,13 @@ export const en = {
     signedInAs: "Signed in as",
     continue: "Continue",
     googleFailed: "Google sign-in failed. Please try again.",
+    telegram: "Continue with Telegram",
+    telegramFailed: "Telegram sign-in failed. Please try again.",
+    telegramNotConfigured: "Telegram sign-in is not configured yet",
+    telegramConfigureHint:
+      "Add TELEGRAM_BOT_TOKEN and TELEGRAM_BOT_USERNAME to .env to enable it.",
+    telegramAuthenticating: "Signing in with Telegram...",
+    or: "or",
     sessionExpired: "Your session expired. Please sign in again.",
   },
   marketplace: {

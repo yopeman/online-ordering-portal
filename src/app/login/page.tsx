@@ -6,6 +6,12 @@ import { Alert } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/auth/session";
 import { googleIsConfigured } from "@/lib/google-auth";
+import {
+  getTelegramBotUsername,
+  getTelegramCallbackUrl,
+  telegramIsConfigured,
+} from "@/lib/telegram-auth";
+import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { getTranslator } from "@/lib/i18n-server";
 import { devAccountsEnabled, listDevAccounts } from "@/lib/dev-accounts";
 
@@ -14,6 +20,7 @@ export const metadata = { title: "Sign in" };
 const ERROR_KEYS: Record<string, string> = {
   google_failed: "login.googleFailed",
   state_mismatch: "login.googleFailed",
+  telegram_failed: "login.telegramFailed",
   account_inactive: "login.sessionExpired",
   not_configured: "login.googleNotConfigured",
 };
@@ -31,6 +38,9 @@ export default async function LoginPage({
   if (user) redirect(next);
 
   const googleReady = googleIsConfigured();
+  const telegramReady = telegramIsConfigured();
+  const botUsername = getTelegramBotUsername();
+  const telegramAuthUrl = getTelegramCallbackUrl(undefined, next);
   const devAccounts = devAccountsEnabled() ? await listDevAccounts() : [];
 
   return (
@@ -49,7 +59,7 @@ export default async function LoginPage({
           </Alert>
         ) : null}
 
-        <div className="mt-6 space-y-3">
+        <div className="mt-6 space-y-4">
           {googleReady ? (
             <a
               href={`/api/auth/google?next=${encodeURIComponent(next)}`}
@@ -65,6 +75,42 @@ export default async function LoginPage({
                 {t("login.googleNotConfigured")}
               </div>
               <p className="text-xs text-muted-foreground">{t("login.configureHint")}</p>
+            </div>
+          )}
+
+          {googleReady && telegramReady ? (
+            <div className="relative flex items-center justify-center py-0.5">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
+              </div>
+              <span className="relative bg-card px-2.5 text-xs uppercase tracking-wider text-muted-foreground">
+                {t("login.or")}
+              </span>
+            </div>
+          ) : null}
+
+          {telegramReady ? (
+            <div className="flex w-full justify-center">
+              <TelegramLoginButton
+                botUsername={botUsername}
+                authUrl={telegramAuthUrl}
+                next={next}
+                labels={{
+                  authenticating: t("login.telegramAuthenticating"),
+                  errorPrefix: t("errors.generic"),
+                  retry: t("common.retry"),
+                }}
+              />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-dashed border-border text-sm text-muted-foreground">
+                <AlertCircle className="h-4 w-4" />
+                {t("login.telegramNotConfigured")}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {t("login.telegramConfigureHint")}
+              </p>
             </div>
           )}
 
