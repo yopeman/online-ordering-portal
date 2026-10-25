@@ -12,5 +12,5 @@ export async function logoutAction(): Promise<void> {
   } catch {
     // ignore revalidate errors
   }
-  redirect("/login");
+  redirect("/");
 }

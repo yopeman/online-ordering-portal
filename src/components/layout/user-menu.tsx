@@ -5,7 +5,6 @@ import { LogOut, ShieldCheck, ShoppingCart, ChartNoAxesCombined, UserCircle2 } f
 import { Dropdown } from "@/components/ui/dropdown";
 import { Avatar } from "@/components/ui/avatar";
 import { useApp } from "@/components/providers/app-provider";
-import { logoutAction } from "@/app/actions/auth";
 
 export interface UserMenuData {
   name: string;
@@ -63,12 +62,15 @@ export function UserMenu({ name, email, image, isAdmin }: UserMenuData) {
           label: t("nav.logout"),
           icon: LogOut,
           href: "/api/auth/logout",
-          onSelect: async () => {
+          onSelect: () => {
             try {
-              await logoutAction();
-            } catch {
-              // ignore redirect exception
-            }
+              localStorage.removeItem("yope_session");
+              sessionStorage.removeItem("yope_session");
+              document.cookie =
+                "yope_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0";
+              document.cookie =
+                "yope_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Secure; SameSite=None; Partitioned";
+            } catch {}
             window.location.replace("/api/auth/logout");
           },
         },

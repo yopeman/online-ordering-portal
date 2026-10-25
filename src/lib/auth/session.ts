@@ -72,23 +72,11 @@ export async function setSessionCookie(payload: SessionPayload): Promise<string>
 
 export async function clearSessionCookie(): Promise<void> {
   const store = await cookies();
-  // Clear partitioned cookie with identical attributes
   store.set(SESSION_COOKIE, "", {
     ...SESSION_COOKIE_OPTIONS,
     maxAge: 0,
     expires: new Date(0),
   });
-  // Clear standard/unpartitioned cookie
-  store.set(SESSION_COOKIE, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 0,
-    expires: new Date(0),
-  });
-  // Standard Next.js delete
-  store.delete(SESSION_COOKIE);
 }
 
 /** Reads + verifies the session cookie. `null` when signed out. */

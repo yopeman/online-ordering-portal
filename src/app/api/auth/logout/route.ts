@@ -1,49 +1,57 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
-import { clearSessionCookie, SESSION_COOKIE, SESSION_COOKIE_OPTIONS } from "@/lib/auth/session";
+import { SESSION_COOKIE } from "@/lib/auth/session";
 
-async function handleLogout(request: NextRequest) {
-  await clearSessionCookie();
+async function handleLogout() {
   try {
     revalidatePath("/", "layout");
   } catch {
     // ignore revalidate errors if any
   }
 
-  const response = NextResponse.redirect(new URL("/login", request.nextUrl.origin), {
+  const expiredStamp = "Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0";
+
+  const response = new NextResponse(null, {
     status: 303,
+    headers: {
+      Location: "/",
+      "Clear-Site-Data": '"cookies", "cache", "storage"',
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    },
   });
 
-  // Explicitly set expired cookies in the redirect response
-  response.cookies.set(SESSION_COOKIE, "", {
-    ...SESSION_COOKIE_OPTIONS,
-    maxAge: 0,
-    expires: new Date(0),
-  });
-  response.cookies.set(SESSION_COOKIE, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 0,
-    expires: new Date(0),
-  });
-  response.cookies.delete(SESSION_COOKIE);
-
-  // Prevent caching of authenticated pages after logout
-  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-  response.headers.set("Pragma", "no-cache");
-  response.headers.set("Expires", "0");
-  response.headers.set("Clear-Site-Data", '"cache"');
+  // Explicitly append all variations of Set-Cookie deletion headers
+  response.headers.append(
+    "Set-Cookie",
+    `${SESSION_COOKIE}=; Path=/; ${expiredStamp}; HttpOnly; Secure; SameSite=None; Partitioned`
+  );
+  response.headers.append(
+    "Set-Cookie",
+    `${SESSION_COOKIE}=; Path=/; ${expiredStamp}; HttpOnly; Secure; SameSite=None`
+  );
+  response.headers.append(
+    "Set-Cookie",
+    `${SESSION_COOKIE}=; Path=/; ${expiredStamp}; HttpOnly; Secure; SameSite=Lax`
+  );
+  response.headers.append(
+    "Set-Cookie",
+    `${SESSION_COOKIE}=; Path=/; ${expiredStamp}; HttpOnly; Path=/`
+  );
+  response.headers.append(
+    "Set-Cookie",
+    `${SESSION_COOKIE}=; Path=/; ${expiredStamp}`
+  );
 
   return response;
 }
 
-export async function GET(request: NextRequest) {
-  return handleLogout(request);
+export async function GET() {
+  return handleLogout();
 }
 
-export async function POST(request: NextRequest) {
-  return handleLogout(request);
+export async function POST() {
+  return handleLogout();
 }
