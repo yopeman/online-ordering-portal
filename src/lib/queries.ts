@@ -527,17 +527,24 @@ export async function listOrders(options: {
   filter?: "all" | "read" | "unread";
   page?: number;
   perPage?: number;
-}): Promise<{ items: OrderListItem[]; total: number; page: number; totalPages: number }> {
+}): Promise<{
+  items: OrderListItem[];
+  total: number;
+  page: number;
+  totalPages: number;
+  perPage: number;
+  unreadCount: number;
+}> {
   await connectDB();
   const page = Math.max(1, options.page ?? 1);
-  const perPage = Math.min(50, Math.max(1, options.perPage ?? 20));
+  const perPage = Math.min(100, Math.max(1, options.perPage ?? 20));
 
   const filter: QueryFilter<OrderDoc> = {};
   if (options.businessId) filter.business = options.businessId;
   if (options.filter === "read") filter.isRead = true;
   if (options.filter === "unread") filter.isRead = false;
 
-  const [orders, total] = await Promise.all([
+  const [orders, total, unreadCount] = await Promise.all([
     Order.find(filter)
       .populate("product", "name slug price currency")
       .populate("business", "name")
@@ -546,6 +553,9 @@ export async function listOrders(options: {
       .limit(perPage)
       .lean(),
     Order.countDocuments(filter),
+    options.businessId
+      ? Order.countDocuments({ business: options.businessId, isRead: false })
+      : Order.countDocuments({ isRead: false }),
   ]);
 
   return {
@@ -586,7 +596,14 @@ export async function listOrders(options: {
     total,
     page,
     totalPages: Math.max(1, Math.ceil(total / perPage)),
+    perPage,
+    unreadCount,
   };
+}
+
+export async function countUnreadOrders(businessId: string): Promise<number> {
+  await connectDB();
+  return Order.countDocuments({ business: businessId, isRead: false });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -606,12 +623,19 @@ export async function listActivities(options: {
   businessId: string;
   page?: number;
   perPage?: number;
-}): Promise<{ items: ActivityListItem[]; total: number; page: number; totalPages: number }> {
+}): Promise<{
+  items: ActivityListItem[];
+  total: number;
+  page: number;
+  totalPages: number;
+  perPage: number;
+  unreadCount: number;
+}> {
   await connectDB();
   const page = Math.max(1, options.page ?? 1);
-  const perPage = Math.min(50, Math.max(1, options.perPage ?? 20));
+  const perPage = Math.min(100, Math.max(1, options.perPage ?? 20));
 
-  const [activities, total] = await Promise.all([
+  const [activities, total, unreadCount] = await Promise.all([
     Activity.find({ business: options.businessId })
       .populate("actor", "name")
       .sort({ createdAt: -1 })
@@ -619,6 +643,7 @@ export async function listActivities(options: {
       .limit(perPage)
       .lean(),
     Activity.countDocuments({ business: options.businessId }),
+    Activity.countDocuments({ business: options.businessId, isRead: false }),
   ]);
 
   return {
@@ -638,6 +663,8 @@ export async function listActivities(options: {
     total,
     page,
     totalPages: Math.max(1, Math.ceil(total / perPage)),
+    perPage,
+    unreadCount,
   };
 }
 

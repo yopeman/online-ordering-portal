@@ -19,7 +19,7 @@ export default async function ActivitiesTabPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; limit?: string; perPage?: string }>;
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
   const user = await requireUser(`/businesses/${id}/activities`);
@@ -30,12 +30,17 @@ export default async function ActivitiesTabPage({
   if (!business) notFound();
 
   const page = Math.max(1, Number(query.page) || 1);
-  const activities = await listActivities({ businessId: id, page });
-  const hasUnread = activities.items.some((item) => !item.isRead);
+  const perPage = Math.min(100, Math.max(5, Number(query.limit || query.perPage) || 20));
+  const activities = await listActivities({ businessId: id, page, perPage });
+  const hasUnread = activities.unreadCount > 0;
 
-  const buildHref = (nextPage: number) => {
-    const queryString = nextPage > 1 ? `?page=${nextPage}` : "";
-    return `/businesses/${id}/activities${queryString}`;
+  const buildHref = (nextPage: number, nextPerPage?: number) => {
+    const search = new URLSearchParams();
+    const effectivePerPage = nextPerPage ?? perPage;
+    if (nextPage > 1) search.set("page", String(nextPage));
+    if (effectivePerPage !== 20) search.set("perPage", String(effectivePerPage));
+    const queryString = search.toString();
+    return queryString ? `/businesses/${id}/activities?${queryString}` : `/businesses/${id}/activities`;
   };
 
   return (
@@ -44,27 +49,44 @@ export default async function ActivitiesTabPage({
         title={t("activities.title")}
         description={t("activities.subtitle")}
         action={
-          hasUnread ? (
-            <form action={markAllActivitiesReadAction}>
-              <input type="hidden" name="businessId" value={id} />
-              <button
-                type="submit"
-                className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm text-foreground transition-colors hover:bg-surface-muted"
-              >
-                <CheckCheck className="h-4 w-4" />
-                {t("common.markAllRead")}
-              </button>
-            </form>
-          ) : null
+          <div className="flex flex-wrap items-center gap-2">
+            {activities.unreadCount > 0 ? (
+              <Badge tone="primary">
+                {activities.unreadCount} {t("common.unread")}
+              </Badge>
+            ) : null}
+            {hasUnread ? (
+              <form action={markAllActivitiesReadAction}>
+                <input type="hidden" name="businessId" value={id} />
+                <button
+                  type="submit"
+                  className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm text-foreground transition-colors hover:bg-surface-muted"
+                >
+                  <CheckCheck className="h-4 w-4" />
+                  {t("common.markAllRead")}
+                </button>
+              </form>
+            ) : null}
+          </div>
         }
       />
 
-      {activities.items.length === 0 ? (
+      {activities.total === 0 ? (
         <EmptyState
           icon={<ActivityIcon className="h-8 w-8" />}
           title={t("activities.empty")}
           description={t("activities.emptyHint")}
         />
+      ) : activities.items.length === 0 ? (
+        <Card className="p-8 text-center">
+          <p className="text-sm text-muted-foreground">{t("common.empty")}</p>
+          <Link
+            href={buildHref(1)}
+            className="mt-3 inline-flex text-sm font-medium text-primary hover:underline"
+          >
+            {t("common.back")} ({t("common.page")} 1)
+          </Link>
+        </Card>
       ) : (
         <Card className="overflow-hidden">
           <ol className="divide-y divide-border">
@@ -73,8 +95,8 @@ export default async function ActivitiesTabPage({
               return (
                 <li
                   key={item.id}
-                  className={`flex flex-wrap items-start gap-3 px-4 py-3 ${
-                    item.isRead ? "" : "bg-primary-soft/40"
+                  className={`flex flex-wrap items-start gap-3 px-4 py-3 transition-colors ${
+                    item.isRead ? "hover:bg-surface-muted/50" : "bg-primary-soft/40 hover:bg-primary-soft/60"
                   }`}
                 >
                   <div className="min-w-0 flex-1 space-y-1">
@@ -100,11 +122,20 @@ export default async function ActivitiesTabPage({
       <Pagination
         page={activities.page}
         totalPages={activities.totalPages}
+        totalItems={activities.total}
+        perPage={activities.perPage}
+        perPageOptions={[10, 20, 50]}
         buildHref={buildHref}
         labels={{
           previous: t("common.previous"),
           next: t("common.next"),
           page: t("common.page"),
+          first: t("common.first"),
+          last: t("common.last"),
+          showing: t("common.showing"),
+          showingRange: t("common.showingRange"),
+          perPage: t("common.perPage"),
+          itemsPerPage: t("common.itemsPerPage"),
         }}
       />
 

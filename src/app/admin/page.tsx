@@ -134,11 +134,16 @@ export default async function AdminUsersPage({
       <Pagination
         page={users.page}
         totalPages={users.totalPages}
+        totalItems={users.total}
         buildHref={buildHref}
         labels={{
           previous: t("common.previous"),
           next: t("common.next"),
           page: t("common.page"),
+          first: t("common.first"),
+          last: t("common.last"),
+          showing: t("common.showing"),
+          showingRange: t("common.showingRange"),
         }}
       />
     </div>
