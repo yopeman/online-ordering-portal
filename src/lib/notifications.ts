@@ -1,8 +1,15 @@
 import "server-only";
 
 import { Bot } from "neogram";
+import { connectDB } from "@/lib/db";
+import {
+  Business,
+  readContacts,
+  User,
+  type BusinessContact,
+  type BusinessContactType,
+} from "@/lib/models";
 import { getTelegramBot } from "@/lib/telegram-bot";
-import type { BusinessContact, BusinessContactType } from "@/lib/models";
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
@@ -204,4 +211,104 @@ export async function dispatchOrderNotification(
       sendChannelMessage(contact.type, contact.target, message),
     ),
   );
+}
+
+/**
+ * Formats a clean, readable Telegram notification for a business activity.
+ */
+export function formatActivityNotification(
+  businessName: string,
+  action: string,
+  detail: string,
+): string {
+  const cleanDetail = detail ? detail.replace(/\*\*/g, "") : "";
+  const header = (() => {
+    switch (action) {
+      case "order.received":
+        return "🛒 New Order Received!";
+      case "order.read":
+        return "📬 Order Marked as Read";
+      case "product.viewed":
+        return "👀 Product Viewed";
+      case "store.viewed":
+      case "business.viewed":
+        return "🏪 Store Visited";
+      case "catalog.created":
+        return "📦 Product Added";
+      case "catalog.updated":
+        return "✏️ Product Updated";
+      case "catalog.deleted":
+        return "🗑️ Product Deleted";
+      case "business.created":
+        return "🎉 Business Created";
+      case "business.updated":
+        return "🏢 Business Updated";
+      default:
+        return "🔔 Business Notification";
+    }
+  })();
+
+  const lines = [header, ``, `Business: ${businessName}`];
+  if (cleanDetail) {
+    lines.push(cleanDetail);
+  }
+  return lines.join("\n");
+}
+
+/**
+ * Dispatches an activity notification to the business owner's stored Telegram bot chat ID
+ * (and any configured telegram contacts).
+ */
+export async function dispatchActivityNotification(input: {
+  businessId: string;
+  action: string;
+  detail?: string;
+}): Promise<void> {
+  try {
+    if (!input.businessId) return;
+
+    await connectDB();
+    const business = await Business.findById(input.businessId)
+      .select("name owner contactPhones")
+      .lean();
+    if (!business) return;
+
+    const owner = business.owner
+      ? await User.findById(business.owner).select("telegramChatId name").lean()
+      : null;
+
+    const chatIds = new Set<string>();
+
+    // 1. Primary: Use stored telegram bot chat ID of the business owner
+    if (owner?.telegramChatId && String(owner.telegramChatId).trim()) {
+      chatIds.add(String(owner.telegramChatId).trim());
+    }
+
+    // 2. Also include any telegram contact configured in business contacts
+    const contacts = readContacts(business.contactPhones);
+    for (const c of contacts) {
+      if ((c.type || "").toLowerCase() === "telegram" && c.target?.trim()) {
+        chatIds.add(c.target.trim());
+      }
+    }
+
+    if (chatIds.size === 0) {
+      console.log(
+        `[Activity Notification] No stored Telegram chat ID found for business "${business.name}" (${input.businessId}).`,
+      );
+      return;
+    }
+
+    const message = formatActivityNotification(
+      business.name,
+      input.action,
+      input.detail ?? "",
+    );
+
+    await Promise.allSettled(
+      Array.from(chatIds).map((chatId) => sendTelegramMessage(chatId, message)),
+    );
+  } catch (error) {
+    console.error("[Activity Notification] Failed to dispatch activity notification:", error);
+  }
 }
