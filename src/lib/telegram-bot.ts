@@ -1,14 +1,42 @@
-import { Bot } from "neogram";
+import { Bot, type TelegramMessage } from "neogram";
 
 const globalForTelegramBot = globalThis as unknown as {
   __yopeTelegramBot?: Bot | null;
   __yopeTelegramPollingActive?: boolean;
 };
 
+function isCommandMatch(msg: TelegramMessage): boolean {
+  const text = (msg?.text || "").trim();
+  if (!text) return false;
+
+  // Handles /start, /chatid, /chat_id, /id with optional @botusername and arguments
+  if (/^\/(start|chatid|chat_id|id)(?:@\w+)?(?:\s.*)?$/i.test(text)) {
+    return true;
+  }
+
+  const lower = text.toLowerCase();
+  if (lower === "start" || lower === "chatid" || lower === "chat_id" || lower === "id") {
+    return true;
+  }
+
+  const entities = (msg as { entities?: { type: string; offset: number; length: number }[] }).entities;
+  if (Array.isArray(entities)) {
+    const cmdEntity = entities.find((e) => e.type === "bot_command" && e.offset === 0);
+    if (cmdEntity) {
+      const cmd = text.slice(0, cmdEntity.length).toLowerCase().split("@")[0];
+      if (cmd === "/start" || cmd === "/chatid" || cmd === "/chat_id" || cmd === "/id") {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 /**
  * Initializes and starts infinity polling for the Telegram bot.
  */
-export async function startTelegramBot(token?: string): Promise<Bot | null> {
+export function startTelegramBot(token?: string): Bot | null {
   if (process.env.TELEGRAM_BOT_ENABLED === "false") {
     console.log("[Telegram] Bot polling is disabled (TELEGRAM_BOT_ENABLED=false)");
     return null;
@@ -29,33 +57,24 @@ export async function startTelegramBot(token?: string): Promise<Bot | null> {
   globalForTelegramBot.__yopeTelegramBot = bot;
 
   bot.onMessage(async (msg) => {
-    console.log("[Telegram] Received message:", JSON.stringify(msg, null, 2));
-    const text = (msg.text || "").trim();
-    if (text === "/start" || text.startsWith("/start")) {
-      const chatId = msg.chat.id;
+    console.log(msg);
+    if (isCommandMatch(msg)) {
+      const chatId = msg.chat?.id || msg.from?.id;
+      if (!chatId) return;
       console.log("Chat ID:", chatId);
       try {
         await bot.sendMessage({
           chat_id: chatId,
           text: `Your chat ID is: ${chatId}`,
         });
-        console.log(`[Telegram] Successfully sent chat ID to ${chatId}`);
       } catch (err: unknown) {
-        const error = err as Error;
-        console.error(`[Telegram] Failed to send chat ID to ${chatId}:`, error.message);
+        console.error("Failed to send message to chat:", err);
       }
     }
   });
 
-  try {
-    // Delete any active webhook so getUpdates polling doesn't conflict
-    await bot.deleteWebhook({ drop_pending_updates: false });
-  } catch (err: unknown) {
-    const error = err as Error;
-    console.warn("[Telegram] Could not delete webhook:", error.message);
-  }
-
-  bot.infinityPolling()
+  bot
+    .infinityPolling()
     .catch((err: Error) => {
       console.error("Telegram bot polling failed:", err.message);
       console.log(

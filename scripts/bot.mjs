@@ -9,20 +9,47 @@ if (!telegramBotToken) {
 
 const bot = new Bot(telegramBotToken);
 
+function isCommandMatch(msg) {
+  const text = (msg?.text || msg?.caption || "").trim();
+  if (!text) return false;
+
+  // Handles /start, /chatid, /chat_id, /id with optional @botusername and arguments
+  if (/^\/(start|chatid|chat_id|id)(?:@\w+)?(?:\s.*)?$/i.test(text)) {
+    return true;
+  }
+
+  const lower = text.toLowerCase();
+  if (lower === "start" || lower === "chatid" || lower === "chat_id" || lower === "id") {
+    return true;
+  }
+
+  if (Array.isArray(msg?.entities)) {
+    const cmdEntity = msg.entities.find((e) => e.type === "bot_command" && e.offset === 0);
+    if (cmdEntity) {
+      const cmd = text.slice(0, cmdEntity.length).toLowerCase().split("@")[0];
+      if (cmd === "/start" || cmd === "/chatid" || cmd === "/chat_id" || cmd === "/id") {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 bot.onMessage(async (msg) => {
-  console.log("[Telegram] Received message:", JSON.stringify(msg, null, 2));
-  const text = (msg.text || "").trim();
-  if (text === "/start" || text.startsWith("/start")) {
-    const chatId = msg.chat.id;
+  console.log(msg);
+  if (isCommandMatch(msg)) {
+    const chatId = msg.chat?.id || msg.from?.id;
+    if (!chatId) return;
     console.log("Chat ID:", chatId);
     try {
       await bot.sendMessage({
         chat_id: chatId,
         text: `Your chat ID is: ${chatId}`,
       });
-      console.log(`[Telegram] Successfully sent chat ID to ${chatId}`);
+      console.log(`[Telegram] Sent chat ID to ${chatId}`);
     } catch (err) {
-      console.error(`[Telegram] Failed to send chat ID to ${chatId}:`, err.message);
+      console.error(`[Telegram] Failed to send chat ID to ${chatId}:`, err.message || err);
     }
   }
 });

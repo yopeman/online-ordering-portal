@@ -40,10 +40,12 @@ declare module "neogram" {
       filters?: Record<string, unknown>,
     ): unknown;
     infinityPolling(options?: Record<string, unknown>): Promise<void>;
+    polling(options?: Record<string, unknown>): Promise<void>;
     stopPolling(): void;
     deleteWebhook(options?: {
       drop_pending_updates?: boolean;
     }): Promise<boolean>;
+    getWebhookInfo(): Promise<unknown>;
     [key: string]: unknown;
   }
 }
