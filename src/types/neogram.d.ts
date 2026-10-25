@@ -41,6 +41,9 @@ declare module "neogram" {
     ): unknown;
     infinityPolling(options?: Record<string, unknown>): Promise<void>;
     stopPolling(): void;
+    deleteWebhook(options?: {
+      drop_pending_updates?: boolean;
+    }): Promise<boolean>;
     [key: string]: unknown;
   }
 }

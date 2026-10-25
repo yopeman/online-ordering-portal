@@ -8,7 +8,7 @@ const globalForTelegramBot = globalThis as unknown as {
 /**
  * Initializes and starts infinity polling for the Telegram bot.
  */
-export function startTelegramBot(token?: string): Bot | null {
+export async function startTelegramBot(token?: string): Promise<Bot | null> {
   if (process.env.TELEGRAM_BOT_ENABLED === "false") {
     console.log("[Telegram] Bot polling is disabled (TELEGRAM_BOT_ENABLED=false)");
     return null;
@@ -29,16 +29,31 @@ export function startTelegramBot(token?: string): Bot | null {
   globalForTelegramBot.__yopeTelegramBot = bot;
 
   bot.onMessage(async (msg) => {
-    console.log(msg);
-    if (msg.text === "/start") {
+    console.log("[Telegram] Received message:", JSON.stringify(msg, null, 2));
+    const text = (msg.text || "").trim();
+    if (text === "/start" || text.startsWith("/start")) {
       const chatId = msg.chat.id;
       console.log("Chat ID:", chatId);
-      await bot.sendMessage({
-        chat_id: chatId,
-        text: `Your chat ID is: ${chatId}`,
-      });
+      try {
+        await bot.sendMessage({
+          chat_id: chatId,
+          text: `Your chat ID is: ${chatId}`,
+        });
+        console.log(`[Telegram] Successfully sent chat ID to ${chatId}`);
+      } catch (err: unknown) {
+        const error = err as Error;
+        console.error(`[Telegram] Failed to send chat ID to ${chatId}:`, error.message);
+      }
     }
   });
+
+  try {
+    // Delete any active webhook so getUpdates polling doesn't conflict
+    await bot.deleteWebhook({ drop_pending_updates: false });
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.warn("[Telegram] Could not delete webhook:", error.message);
+  }
 
   bot.infinityPolling()
     .catch((err: Error) => {

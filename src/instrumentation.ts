@@ -8,7 +8,7 @@ export async function register() {
 
     if (!isBuild) {
       const { startTelegramBot } = await import("@/lib/telegram-bot");
-      startTelegramBot();
+      await startTelegramBot();
     }
   }
 }

@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
-  serverExternalPackages: ["mongoose", "cloudinary"],
+  serverExternalPackages: ["mongoose", "cloudinary", "neogram"],
   turbopack: {
     rules: {
       "*.css": {

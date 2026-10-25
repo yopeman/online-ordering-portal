@@ -10,16 +10,28 @@ if (!telegramBotToken) {
 const bot = new Bot(telegramBotToken);
 
 bot.onMessage(async (msg) => {
-  console.log(msg);
-  if (msg.text === "/start") {
+  console.log("[Telegram] Received message:", JSON.stringify(msg, null, 2));
+  const text = (msg.text || "").trim();
+  if (text === "/start" || text.startsWith("/start")) {
     const chatId = msg.chat.id;
     console.log("Chat ID:", chatId);
-    await bot.sendMessage({
-      chat_id: chatId,
-      text: `Your chat ID is: ${chatId}`,
-    });
+    try {
+      await bot.sendMessage({
+        chat_id: chatId,
+        text: `Your chat ID is: ${chatId}`,
+      });
+      console.log(`[Telegram] Successfully sent chat ID to ${chatId}`);
+    } catch (err) {
+      console.error(`[Telegram] Failed to send chat ID to ${chatId}:`, err.message);
+    }
   }
 });
+
+try {
+  await bot.deleteWebhook({ drop_pending_updates: false });
+} catch (err) {
+  console.warn("Could not delete webhook:", err.message);
+}
 
 bot
   .infinityPolling()
