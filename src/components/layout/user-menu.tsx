@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Store, ShieldCheck, ShoppingCart, ChartNoAxesCombined, UserCircle2 } from "lucide-react";
+import { LogOut, ShieldCheck, ShoppingCart, ChartNoAxesCombined, UserCircle2 } from "lucide-react";
 
 import { Dropdown } from "@/components/ui/dropdown";
 import { Avatar } from "@/components/ui/avatar";
@@ -62,8 +62,14 @@ export function UserMenu({ name, email, image, isAdmin }: UserMenuData) {
           key: "logout",
           label: t("nav.logout"),
           icon: LogOut,
-          onSelect: () => {
-            void logoutAction();
+          href: "/api/auth/logout",
+          onSelect: async () => {
+            try {
+              await logoutAction();
+            } catch {
+              // ignore redirect exception
+            }
+            window.location.replace("/api/auth/logout");
           },
         },
       ]}

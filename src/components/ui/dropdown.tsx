@@ -84,7 +84,16 @@ export function Dropdown({
 
             if (item.href) {
               return (
-                <a key={item.key} href={item.href} className={className} role="menuitem">
+                <a
+                  key={item.key}
+                  href={item.href}
+                  className={className}
+                  role="menuitem"
+                  onClick={() => {
+                    setOpen(false);
+                    item.onSelect?.();
+                  }}
+                >
                   {content}
                 </a>
               );
