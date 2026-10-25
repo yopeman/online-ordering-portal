@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import {
   Clock,
@@ -37,6 +38,7 @@ import {
   listAttachments,
   listProductsForBusiness,
 } from "@/lib/queries";
+import { resolveSourceLocation, withRemark } from "@/lib/remark";
 
 export async function generateMetadata({
   params,
@@ -133,15 +135,19 @@ export default async function StorefrontPage({
   const details = readDetails(business.details);
   const businessId = business._id.toString();
 
+  const h = await headers();
+  const referer = h.get("referer");
+  const sourceLocation = resolveSourceLocation(currentRemark, referer, "direct");
+
   const [products, attachments] = await Promise.all([
     listProductsForBusiness(businessId),
     listAttachments("business", businessId),
     logActivity({
       businessId,
       action: "store.viewed",
-      detail: `Storefront for **${business.name}** was viewed${
-        currentRemark ? ` (Remark: ${currentRemark})` : ""
-      }${selectedCategory ? ` (Category: ${selectedCategory})` : ""}.`,
+      detail: `Storefront for **${business.name}** was viewed (Source: ${sourceLocation})${
+        selectedCategory ? ` (Category: ${selectedCategory})` : ""
+      }.`,
       actorId: currentUser?.id ?? null,
     }),
   ]);
@@ -602,7 +608,7 @@ export default async function StorefrontPage({
           {categories.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
               <Link
-                href={`/store/${business.slug}`}
+                href={withRemark(`/store/${business.slug}`, currentRemark || "storefront")}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   !selectedCategory
                     ? "bg-primary text-primary-foreground shadow-xs"
@@ -617,11 +623,12 @@ export default async function StorefrontPage({
                 return (
                   <Link
                     key={cat}
-                    href={
+                    href={withRemark(
                       isSelected
                         ? `/store/${business.slug}`
-                        : `/store/${business.slug}?category=${encodeURIComponent(cat)}`
-                    }
+                        : `/store/${business.slug}?category=${encodeURIComponent(cat)}`,
+                      currentRemark || "storefront",
+                    )}
                     className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                       isSelected
                         ? "bg-primary text-primary-foreground shadow-xs"
@@ -653,7 +660,7 @@ export default async function StorefrontPage({
             action={
               selectedCategory ? (
                 <Link
-                  href={`/store/${business.slug}`}
+                  href={withRemark(`/store/${business.slug}`, currentRemark || "storefront")}
                   className="inline-flex h-9 items-center rounded-lg border border-border px-3 text-xs font-medium text-foreground hover:bg-surface-muted"
                 >
                   View all products
@@ -669,11 +676,10 @@ export default async function StorefrontPage({
                 product={product}
                 locale={locale}
                 altLabel={t("product.imageOf")}
-                href={
-                  currentRemark
-                    ? `/products/${product.slug}?remark=${encodeURIComponent(currentRemark)}`
-                    : undefined
-                }
+                href={withRemark(
+                  `/products/${product.slug}`,
+                  currentRemark || "storefront",
+                )}
               />
             ))}
           </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -51,6 +52,7 @@ import {
   listAttachments,
   listProductsForBusiness,
 } from "@/lib/queries";
+import { resolveSourceLocation, withRemark } from "@/lib/remark";
 
 export async function generateMetadata({
   params,
@@ -160,15 +162,17 @@ export default async function ProductPage({
     options: field.options ?? [],
   }));
 
+  const h = await headers();
+  const referer = h.get("referer");
+  const sourceLocation = resolveSourceLocation(remark, referer, "direct");
+
   // Fetch product attachments (images and document files) and log activity
   const [attachments] = await Promise.all([
     listAttachments("catalog", product.id),
     logActivity({
       businessId,
       action: "product.viewed",
-      detail: `Product **${product.name}** was viewed${
-        remark ? ` (Remark: ${remark})` : ""
-      }.`,
+      detail: `Product **${product.name}** was viewed (Source: ${sourceLocation}).`,
       actorId: currentUser?.id ?? null,
     }),
   ]);
@@ -403,7 +407,7 @@ export default async function ProductPage({
           </Link>
           <span>/</span>
           <Link
-            href={`/store/${business.slug}`}
+            href={withRemark(`/store/${business.slug}`, "product_page")}
             className="flex items-center gap-1 font-medium transition-colors hover:text-foreground"
           >
             <Store className="h-3.5 w-3.5" />
@@ -638,7 +642,10 @@ export default async function ProductPage({
                   </div>
                 </div>
 
-                <Link href={`/store/${business.slug}`} className="w-full sm:w-auto">
+                <Link
+                  href={withRemark(`/store/${business.slug}`, "product_page")}
+                  className="w-full sm:w-auto"
+                >
                   <Button variant="secondary" className="w-full sm:w-auto justify-center gap-1.5 shadow-xs">
                     <Store className="h-4 w-4 text-primary" />
                     <span>Visit Storefront</span>
@@ -849,7 +856,7 @@ export default async function ProductPage({
               </p>
             </div>
 
-            <Link href={`/store/${business.slug}`}>
+            <Link href={withRemark(`/store/${business.slug}`, "product_page")}>
               <Button variant="ghost" size="sm" className="gap-1 text-primary">
                 <span>View all ({moreStoreProducts.length})</span>
                 <ArrowLeft className="h-3.5 w-3.5 rotate-180" />
@@ -859,7 +866,13 @@ export default async function ProductPage({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
             {otherProducts.map((p) => (
-              <ProductCard key={p.id} product={p} locale={"en"} altLabel={""} />
+              <ProductCard
+                key={p.id}
+                product={p}
+                locale={locale}
+                altLabel={imageAltLabel}
+                href={withRemark(`/products/${p.slug}`, "related_product")}
+              />
             ))}
           </div>
         </section>

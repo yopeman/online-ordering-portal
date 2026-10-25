@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Store } from "lucide-react";
+import { Store } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { TabsNav } from "@/components/ui/tabs-nav";
@@ -10,6 +10,7 @@ import { getTranslator } from "@/lib/i18n-server";
 import { countUnreadActivities, getBusinessForOwner } from "@/lib/queries";
 import { Order } from "@/lib/models";
 import { connectDB } from "@/lib/db";
+import { withRemark } from "@/lib/remark";
 
 export default async function BusinessLayout({
   children,
@@ -67,7 +68,7 @@ export default async function BusinessLayout({
           </div>
 
           <Link
-            href={`/store/${business.slug}`}
+            href={withRemark(`/store/${business.slug}`, "owner_dashboard")}
             className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm text-foreground hover:bg-surface-muted"
           >
             <Store className="h-4 w-4" />

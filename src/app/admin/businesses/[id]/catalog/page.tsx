@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { requireAdmin } from "@/lib/auth/guards";
 import { getFormatters, getTranslator } from "@/lib/i18n-server";
 import { getBusinessById, listProductsForBusiness } from "@/lib/queries";
+import { withRemark } from "@/lib/remark";
 
 export const metadata = { title: "Admin · Catalog" };
 
@@ -63,7 +64,7 @@ export default async function AdminBusinessCatalogPage({
                   {price(product.price, product.currency)}
                 </span>
                 <Link
-                  href={`/products/${product.slug}`}
+                  href={withRemark(`/products/${product.slug}`, "admin_dashboard")}
                   className="text-xs text-muted-foreground hover:text-foreground"
                 >
                   {t("common.view")}

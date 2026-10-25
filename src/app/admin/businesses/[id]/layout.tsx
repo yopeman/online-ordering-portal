@@ -8,6 +8,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { readDetails } from "@/lib/models";
 import { getTranslator } from "@/lib/i18n-server";
 import { getBusinessById } from "@/lib/queries";
+import { withRemark } from "@/lib/remark";
 
 export const metadata = { title: "Admin · Business" };
 
@@ -55,7 +56,7 @@ export default async function AdminBusinessLayout({
           </div>
 
           <Link
-            href={`/store/${business.slug}`}
+            href={withRemark(`/store/${business.slug}`, "admin_dashboard")}
             className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm text-foreground hover:bg-surface-muted"
           >
             <ExternalLink className="h-4 w-4" />

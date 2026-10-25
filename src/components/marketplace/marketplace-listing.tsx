@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import type { BusinessListItem, ProductListItem } from "@/lib/queries";
 import { formatNumber, formatPrice } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
+import { withRemark } from "@/lib/remark";
 import type { MarketplaceLayout, MarketplaceView } from "./types";
 
 interface MarketplaceListingProps {
@@ -56,7 +57,7 @@ export function MarketplaceListing({
             return (
               <Link
                 key={product.id}
-                href={`/products/${product.slug}`}
+                href={withRemark(`/products/${product.slug}`, "marketplace")}
                 style={{ animationDelay: `${delayMs}ms` }}
                 className="group card-lift animate-enter-up flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:border-primary-border"
               >
@@ -123,7 +124,7 @@ export function MarketplaceListing({
           return (
             <Link
               key={product.id}
-              href={`/products/${product.slug}`}
+              href={withRemark(`/products/${product.slug}`, "marketplace")}
               style={{ animationDelay: `${delayMs}ms` }}
               className="group card-lift animate-enter-up flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:border-primary-border"
             >
@@ -211,7 +212,7 @@ export function MarketplaceListing({
           return (
             <Link
               key={business.id}
-              href={`/store/${business.slug}`}
+              href={withRemark(`/store/${business.slug}`, "marketplace")}
               style={{ animationDelay: `${delayMs}ms` }}
               className="group card-lift animate-enter-up flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:border-primary-border"
             >
@@ -294,7 +295,7 @@ export function MarketplaceListing({
         return (
           <Link
             key={business.id}
-            href={`/store/${business.slug}`}
+            href={withRemark(`/store/${business.slug}`, "marketplace")}
             style={{ animationDelay: `${delayMs}ms` }}
             className="group card-lift animate-enter-up flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:border-primary-border"
           >

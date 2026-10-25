@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import type { BusinessListItem } from "@/lib/queries";
 import { formatNumber } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
+import { withRemark } from "@/lib/remark";
 
 /** Small, dependency free renderer for the markdown-ish activity details. */
 export function Markdown({ text }: { text: string }) {
@@ -93,7 +94,7 @@ export function BusinessCard({
   const productCount = formatNumber(business.productCount, locale);
   return (
     <Link
-      href={`/store/${business.slug}`}
+      href={withRemark(`/store/${business.slug}`, "business_card")}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-primary-border"
     >
       <div className="relative flex h-64 items-center justify-center overflow-hidden bg-surface-muted">
@@ -227,7 +228,7 @@ export function BusinessOwnerCard({
           </div>
 
           <Link
-            href={`/store/${business.slug}`}
+            href={withRemark(`/store/${business.slug}`, "dashboard")}
             className="pointer-events-auto inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-surface/90 px-2.5 py-1 text-xs font-medium text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-surface hover:text-primary hover:border-primary-border"
           >
             <Store className="h-3 w-3" />

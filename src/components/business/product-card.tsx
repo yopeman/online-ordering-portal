@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import type { ProductListItem } from "@/lib/queries";
 import { formatPrice } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
+import { withRemark } from "@/lib/remark";
 
 export function ProductCard({
   product,
@@ -22,7 +23,7 @@ export function ProductCard({
 }) {
   return (
     <Link
-      href={href || `/products/${product.slug}`}
+      href={withRemark(href || `/products/${product.slug}`, "product_card")}
       className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-primary-border"
     >
       <div className="relative flex h-64 items-center justify-center overflow-hidden bg-surface-muted">

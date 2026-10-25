@@ -19,6 +19,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { withRemark } from "@/lib/remark";
 import { useApp } from "@/components/providers/app-provider";
 import {
   EMPTY_PRODUCT,
@@ -172,7 +173,7 @@ export function CatalogProductList({
               >
 
                 <Link
-                  href={`/products/${product.slug}`}
+                  href={withRemark(`/products/${product.slug}`, "dashboard")}
                   className="cursor-pointer"
                   aria-label={t("common.view")}
                   title={t("common.view")}
@@ -230,7 +231,7 @@ export function CatalogProductList({
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <Link
-                        href={`/products/${product.slug}`}
+                        href={withRemark(`/products/${product.slug}`, "dashboard")}
                         className="block truncate font-semibold text-foreground transition-colors hover:text-primary"
                         title={product.name}
                       >
@@ -254,7 +255,7 @@ export function CatalogProductList({
                   {/* Actions Bar */}
                   <div className="mt-auto flex items-center justify-end gap-1.5 pt-4 border-t border-border/60">
                     <Link
-                      href={`/products/${product.slug}`}
+                      href={withRemark(`/products/${product.slug}`, "dashboard")}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
                       aria-label={t("common.view")}
                       title={t("common.view")}
@@ -325,7 +326,7 @@ export function CatalogProductList({
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
-                        href={`/products/${product.slug}`}
+                        href={withRemark(`/products/${product.slug}`, "dashboard")}
                         className="truncate font-medium text-foreground hover:text-primary transition-colors"
                       >
                         {product.name}
@@ -344,7 +345,7 @@ export function CatalogProductList({
 
                   <div className="flex items-center gap-2">
                     <Link
-                      href={`/products/${product.slug}`}
+                      href={withRemark(`/products/${product.slug}`, "dashboard")}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-surface-muted hover:text-foreground"
                       aria-label={t("common.view")}
                       title={t("common.view")}

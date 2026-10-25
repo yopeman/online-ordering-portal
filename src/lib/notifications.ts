@@ -4,7 +4,6 @@ import { Bot } from "neogram";
 import { connectDB } from "@/lib/db";
 import {
   Business,
-  readContacts,
   User,
   type BusinessContact,
   type BusinessContactType,
@@ -284,13 +283,13 @@ export async function dispatchActivityNotification(input: {
       chatIds.add(String(owner.telegramChatId).trim());
     }
 
-    // 2. Also include any telegram contact configured in business contacts
-    const contacts = readContacts(business.contactPhones);
-    for (const c of contacts) {
-      if ((c.type || "").toLowerCase() === "telegram" && c.target?.trim()) {
-        chatIds.add(c.target.trim());
-      }
-    }
+    // // 2. Also include any telegram contact configured in business contacts
+    // const contacts = readContacts(business.contactPhones);
+    // for (const c of contacts) {
+    //   if ((c.type || "").toLowerCase() === "telegram" && c.target?.trim()) {
+    //     chatIds.add(c.target.trim());
+    //   }
+    // }
 
     if (chatIds.size === 0) {
       console.log(

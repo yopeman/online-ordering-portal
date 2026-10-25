@@ -17,6 +17,7 @@ import {
 import { useTranslation } from "@/components/providers/app-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { withRemark } from "@/lib/remark";
 
 export interface ShareModalProps {
   open: boolean;
@@ -112,22 +113,25 @@ function ShareModalDialog({
         } on Yope Order!`
       : `Check out ${title} on Yope Order! ${description || ""}`.trim();
 
+  const copyUrl = withRemark(currentUrl || rawUrl, "direct_share");
+
   const handleCopy = async () => {
-    if (!currentUrl) return;
+    if (!copyUrl) return;
     try {
       if (typeof navigator !== "undefined" && navigator.clipboard) {
-        await navigator.clipboard.writeText(currentUrl);
+        await navigator.clipboard.writeText(copyUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       } else {
-        window.prompt(t("common.copyLink"), currentUrl);
+        window.prompt(t("common.copyLink"), copyUrl);
       }
     } catch {
-      window.prompt(t("common.copyLink"), currentUrl);
+      window.prompt(t("common.copyLink"), copyUrl);
     }
   };
 
   const handleNativeShare = async () => {
+    const nativeUrl = withRemark(currentUrl || rawUrl, "native_share");
     if (
       typeof navigator !== "undefined" &&
       typeof navigator.share === "function"
@@ -136,7 +140,7 @@ function ShareModalDialog({
         await navigator.share({
           title,
           text: shareText,
-          url: currentUrl,
+          url: nativeUrl,
         });
       } catch (err: unknown) {
         if ((err as DOMException)?.name === "AbortError") return;
@@ -145,8 +149,9 @@ function ShareModalDialog({
   };
 
   const openTelegramShare = () => {
+    const shareUrl = withRemark(currentUrl || rawUrl, "telegram");
     const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(
-      currentUrl,
+      shareUrl,
     )}&text=${encodeURIComponent(shareText)}`;
     const tg = typeof window !== "undefined"
       ? (window as unknown as { Telegram?: { WebApp?: { openTelegramLink?: (url: string) => void } } }).Telegram
@@ -160,22 +165,25 @@ function ShareModalDialog({
   };
 
   const openWhatsAppShare = () => {
+    const shareUrl = withRemark(currentUrl || rawUrl, "whatsapp");
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-      `${shareText} ${currentUrl}`,
+      `${shareText} ${shareUrl}`,
     )}`;
     window.open(waUrl, "_blank", "noopener,noreferrer");
   };
 
   const openFacebookShare = () => {
+    const shareUrl = withRemark(currentUrl || rawUrl, "facebook");
     const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-      currentUrl,
+      shareUrl,
     )}`;
     window.open(fbUrl, "_blank", "noopener,noreferrer");
   };
 
   const openXShare = () => {
+    const shareUrl = withRemark(currentUrl || rawUrl, "x_twitter");
     const xUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-      currentUrl,
+      shareUrl,
     )}&text=${encodeURIComponent(shareText)}`;
     window.open(xUrl, "_blank", "noopener,noreferrer");
   };
@@ -183,8 +191,9 @@ function ShareModalDialog({
   const hasNativeShare =
     typeof navigator !== "undefined" && typeof navigator.share === "function";
 
+  const qrTargetUrl = withRemark(currentUrl || rawUrl, "qr_code");
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(
-    currentUrl,
+    qrTargetUrl,
   )}&margin=12`;
 
   return (
@@ -328,7 +337,7 @@ function ShareModalDialog({
               <input
                 type="text"
                 readOnly
-                value={currentUrl}
+                value={copyUrl}
                 aria-label="Share URL"
                 className="min-w-0 flex-1 bg-transparent px-2.5 text-xs text-foreground focus:outline-none"
               />
