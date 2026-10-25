@@ -1,6 +1,7 @@
 import "server-only";
 
 import { Bot } from "neogram";
+import { getTelegramBot } from "@/lib/telegram-bot";
 import type { BusinessContact, BusinessContactType } from "@/lib/models";
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -8,6 +9,9 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 let botInstance: Bot | null = null;
 
 function getBot(): Bot | null {
+  const activeBot = getTelegramBot();
+  if (activeBot) return activeBot;
+
   if (!TELEGRAM_BOT_TOKEN) return null;
   if (!botInstance) {
     try {
