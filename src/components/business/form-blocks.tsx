@@ -8,11 +8,12 @@ import {
   type DragEvent,
   type ReactNode,
 } from "react";
-import { FileUp, Paperclip, Plus, Trash2, X } from "lucide-react";
+import { FileUp, Loader2, Paperclip, Plus, Trash2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/form";
 import { useApp } from "@/components/providers/app-provider";
+import { uploadFilesAction } from "@/app/actions/uploads";
 
 export interface DetailRow {
   key: string;
@@ -157,67 +158,7 @@ function AddLabel() {
   return <>{t("common.add")}</>;
 }
 
-/** Reads a File as a base64 data URL */
-function readFileAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") resolve(reader.result);
-      else reject(new Error("Failed to read file as data URL"));
-    };
-    reader.onerror = () => reject(reader.error || new Error("Failed to read file"));
-    reader.readAsDataURL(file);
-  });
-}
-
-/** Resizes and compresses an image file using browser Canvas, returning a Base64 data URL */
-async function compressImageToDataUrl(file: File, maxDim = 1600, quality = 0.85): Promise<string> {
-  if (file.type === "image/svg+xml" || file.type === "image/gif") {
-    return readFileAsDataUrl(file);
-  }
-
-  return new Promise((resolve) => {
-    const img = new Image();
-    const objectUrl = URL.createObjectURL(file);
-
-    img.onload = () => {
-      URL.revokeObjectURL(objectUrl);
-      let { width, height } = img;
-
-      if (width > maxDim || height > maxDim) {
-        if (width > height) {
-          height = Math.round((height * maxDim) / width);
-          width = maxDim;
-        } else {
-          width = Math.round((width * maxDim) / height);
-          height = maxDim;
-        }
-      }
-
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        readFileAsDataUrl(file).then(resolve).catch(() => resolve(""));
-        return;
-      }
-
-      ctx.drawImage(img, 0, 0, width, height);
-      const mime = file.type === "image/png" ? "image/png" : "image/jpeg";
-      resolve(canvas.toDataURL(mime, quality));
-    };
-
-    img.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      readFileAsDataUrl(file).then(resolve).catch(() => resolve(""));
-    };
-
-    img.src = objectUrl;
-  });
-}
-
-/** Drag & drop / paste / click upload area using Base64 data URLs. */
+/** Drag & drop / paste / click upload area with cloud storage support. */
 export function FileDropZone({
   files,
   onChange,
@@ -238,26 +179,26 @@ export function FileDropZone({
     setError(null);
     startUpload(async () => {
       try {
-        const newRows: UploadRow[] = [];
+        const formData = new FormData();
         for (const file of selected.slice(0, 10)) {
           if (file.size > 10 * 1024 * 1024) {
-            throw new Error(`Files must be smaller than 10 MB.`);
+            throw new Error("Files must be smaller than 10 MB.");
           }
-          const isImg = file.type.startsWith("image/");
-          let dataUrl: string;
-          if (isImg) {
-            dataUrl = await compressImageToDataUrl(file);
-          } else {
-            dataUrl = await readFileAsDataUrl(file);
-          }
-          if (!dataUrl) continue;
-          newRows.push({
-            url: dataUrl,
-            name: file.name,
-            size: Math.round((dataUrl.length * 3) / 4),
-            type: isImg ? "image" : "file",
-          });
+          formData.append("files", file);
         }
+
+        const res = await uploadFilesAction(formData);
+        if (!res.ok) {
+          throw new Error(res.error || "Upload failed.");
+        }
+
+        const newRows: UploadRow[] = res.files.map((file) => ({
+          url: file.url,
+          name: file.name,
+          size: file.size,
+          type: file.type === "file" ? "file" : "image",
+        }));
+
         onChange([...files, ...newRows]);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed.");
@@ -323,8 +264,9 @@ export function FileDropZone({
       </div>
 
       {isPending ? (
-        <p className="text-xs font-medium text-primary animate-pulse">
-          Processing files...
+        <p className="flex items-center gap-1.5 text-xs font-medium text-primary animate-pulse">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          Uploading files...
         </p>
       ) : null}
 

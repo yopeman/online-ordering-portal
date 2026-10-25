@@ -1,7 +1,7 @@
 "use server";
 
 import { saveUpload } from "@/lib/uploads";
-import { requireUser } from "@/lib/auth/guards";
+import { getCurrentUser } from "@/lib/auth/session";
 
 export interface UploadResult {
   ok: boolean;
@@ -14,7 +14,10 @@ export interface UploadResult {
  * signed in account; the parent entity is attached when the form is saved.
  */
 export async function uploadFilesAction(formData: FormData): Promise<UploadResult> {
-  await requireUser();
+  const user = await getCurrentUser();
+  if (!user) {
+    return { ok: false, error: "Please sign in to upload files.", files: [] };
+  }
 
   const files = formData
     .getAll("files")

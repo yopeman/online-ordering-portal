@@ -10,6 +10,7 @@
     "seed": "node --env-file-if-exists=.env.local scripts/seed.mjs"
   },
   "dependencies": {
+    "cloudinary": "^2.11.0",
     "jose": "^6.2.12",
     "lucide-react": "^1.58.0",
     "mongoose": "^9.11.2",
