@@ -23,6 +23,7 @@ import { StoreAttachments } from "@/components/business/store-attachments";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { logActivity } from "@/lib/activity";
 import { getCurrentUser } from "@/lib/auth/session";
 import {
   getContactDisplayLabel,
@@ -135,6 +136,14 @@ export default async function StorefrontPage({
   const [products, attachments] = await Promise.all([
     listProductsForBusiness(businessId),
     listAttachments("business", businessId),
+    logActivity({
+      businessId,
+      action: "store.viewed",
+      detail: `Storefront for **${business.name}** was viewed${
+        currentRemark ? ` (Remark: ${currentRemark})` : ""
+      }${selectedCategory ? ` (Category: ${selectedCategory})` : ""}.`,
+      actorId: currentUser?.id ?? null,
+    }),
   ]);
 
   // Visual assets

@@ -372,6 +372,9 @@ export const om: Dictionary = {
     "order.received": "Ajaja haaraa argame",
     "order.read": "Ajaja dubbifame dhugge",
     "user.registered": "Akeekkachiisaa uumame",
+    "store.viewed": "Suuqiin daawwatameera",
+    "business.viewed": "Suuqiin daawwatameera",
+    "product.viewed": "Oomishni daawwatameera",
   },
   settings: {
     general: "Faayyaa daldalaa",

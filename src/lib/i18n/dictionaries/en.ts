@@ -368,6 +368,9 @@ export const en = {
     "order.received": "New order received",
     "order.read": "Order marked as read",
     "user.registered": "Account created",
+    "store.viewed": "Store visited",
+    "business.viewed": "Store visited",
+    "product.viewed": "Product viewed",
   },
   settings: {
     general: "Business details",

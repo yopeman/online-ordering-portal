@@ -368,6 +368,9 @@ export const am: Dictionary = {
     "order.received": "አዲስ ትዕዛዝ ደርሷል",
     "order.read": "ትዕዛዝ እንደተነበበት ተዝልቷል",
     "user.registered": "መለያ ተፈጥሯል",
+    "store.viewed": "ሱቅ ተጎብኝቷል",
+    "business.viewed": "ሱቅ ተጎብኝቷል",
+    "product.viewed": "ምርት ታይቷል",
   },
   settings: {
     general: "የትዕዛዝ ደረጃ ዝርዝር",

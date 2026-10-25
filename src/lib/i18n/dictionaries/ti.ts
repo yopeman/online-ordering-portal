@@ -369,6 +369,9 @@ export const ti: Dictionary = {
     "order.received": "አዲስ ትዕዛዝ ደርሷል",
     "order.read": "ትዕዛዝ እንደተነበበት ተዝልቷል",
     "user.registered": "መለያ ተፈጥሯል",
+    "store.viewed": "ዱኳን ተበጺሑ",
+    "business.viewed": "ዱኳን ተበጺሑ",
+    "product.viewed": "ፍርያት ተራእዩ",
   },
   settings: {
     general: "የትዕዛዝ ደረጃ ዝርዝር",

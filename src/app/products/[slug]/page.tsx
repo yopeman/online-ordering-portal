@@ -30,6 +30,7 @@ import { StoreAttachments } from "@/components/business/store-attachments";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { logActivity } from "@/lib/activity";
 import { getCurrentUser } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db";
 import {
@@ -159,8 +160,18 @@ export default async function ProductPage({
     options: field.options ?? [],
   }));
 
-  // Fetch product attachments (images and document files)
-  const attachments = await listAttachments("catalog", product.id);
+  // Fetch product attachments (images and document files) and log activity
+  const [attachments] = await Promise.all([
+    listAttachments("catalog", product.id),
+    logActivity({
+      businessId,
+      action: "product.viewed",
+      detail: `Product **${product.name}** was viewed${
+        remark ? ` (Remark: ${remark})` : ""
+      }.`,
+      actorId: currentUser?.id ?? null,
+    }),
+  ]);
 
   // Collect and deduplicate all product images
   const rawImageUrls: string[] = [];
