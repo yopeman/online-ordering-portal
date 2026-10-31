@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Store } from "lucide-react";
+import { Store, ShoppingCartPlus } from "lucide-react";
 
 import { LocaleSwitcher, ThemeSwitcher } from "@/components/layout/preference-switchers";
 import { UserMenu } from "@/components/layout/user-menu";
@@ -17,7 +17,7 @@ export async function SiteHeader() {
         <div className="flex items-center gap-6">
           <Link href={generateLink} className="flex items-center gap-2 font-semibold">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
-              Y
+              <ShoppingCartPlus />
             </span>
             <span className="hidden text-foreground sm:inline">Orders Hub</span>
           </Link>
