@@ -11,7 +11,7 @@ Short, bulleted scripts and visual cues for recording explainer / demo videos ac
   - Core feature showcase cards with icons (Instant Storefront, Custom Forms, Telegram Alerts).
   - Theme switcher (Light, Dark, Night, System) and multi-language dropdown.
 - **Voiceover / Key Points:**
-  - Introduce Yope Order as the modern online ordering portal for businesses.
+  - Introduce Orders Hub as the modern online ordering portal for businesses.
   - Explain that merchants can launch a store and take orders in minutes with zero coding.
   - Highlight mobile-friendly browsing and full multi-language support (English, Amharic, Afaan Oromoo, Tigrinya, Afar).
   - Invite viewers to explore the marketplace or create their own business account.

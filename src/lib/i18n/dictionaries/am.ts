@@ -104,7 +104,7 @@ export const am: Dictionary = {
     heroBadge: "በመስመር ላይ የተመሠረተ ንግድ ማዕከል",
     heroTitle: "ትዕዛዝ ይቀበሉ። ንግድዎን ያስፋፉ።",
     heroSubtitle:
-      "Yope Order ለሁሉም ትዕዛዝ ደረጃዎች የዲጂታል ስቲሮፍራን ይሰጣል, ካታሎግዎን ይወጡ፣ ትዕዛዝ ይቀበሉ፣ ደንበኛዎችንም ይያዙ።",
+      "Orders Hub ለሁሉም ትዕዛዝ ደረጃዎች የዲጂታል ስቲሮፍራን ይሰጣል, ካታሎግዎን ይወጡ፣ ትዕዛዝ ይቀበሉ፣ ደንበኛዎችንም ይያዙ።",
     ctaPrimary: "መሸጣት ጀምር",
     ctaSecondary: "ገበያ ቦታውን ይመልከቱ",
     featuresTitle: "ትዕዛዝ ለመተዳደር የሚያስፈልጉ ሁሉም ነገሮች",
@@ -137,7 +137,7 @@ export const am: Dictionary = {
     statsBusinesses: "ትዕዛዝ ደረጃዎች",
     statsProducts: "ምርቶች",
     statsOrders: "ትዕዛዝዎች",
-    footerNote: "Yope Order, ለትዕዛዝ ደረጃዎች የመስመር ላይ አስተዳደር መድረክ።",
+    footerNote: "Orders Hub, ለትዕዛዝ ደረጃዎች የመስመር ላይ አስተዳደር መድረክ።",
   },
   login: {
     title: "እንደምን ደህና መጡ",
@@ -163,7 +163,7 @@ export const am: Dictionary = {
   },
   marketplace: {
     title: "ገበያ ቦታ",
-    subtitle: "በYope Order ላይ ያሉ ሁሉም ትዕዛዝ ደረጃዎች በአንድ ቦታ።",
+    subtitle: "በOrders Hub ላይ ያሉ ሁሉም ትዕዛዝ ደረጃዎች በአንድ ቦታ።",
     searchPlaceholder: "ትዕዛዝ ደረጃ ወይም ምርት ይፈልጉ",
     businesses: "ትዕዛዝ ደረጃዎች",
     products: "ምርቶች",

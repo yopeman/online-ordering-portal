@@ -102,7 +102,7 @@ export const en = {
     heroBadge: "Online ordering, simplified",
     heroTitle: "Accept orders. Grow your business.",
     heroSubtitle:
-      "Yope Order gives every business a digital storefront, publish your catalog, receive orders and keep customers coming back.",
+      "Orders Hub gives every business a digital storefront, publish your catalog, receive orders and keep customers coming back.",
     ctaPrimary: "Start selling",
     ctaSecondary: "Browse marketplace",
     featuresTitle: "Everything you need to run orders",
@@ -134,7 +134,7 @@ export const en = {
     statsBusinesses: "Businesses",
     statsProducts: "Products",
     statsOrders: "Orders",
-    footerNote: "Yope Order, online ordering portal for businesses.",
+    footerNote: "Orders Hub, online ordering portal for businesses.",
   },
   login: {
     title: "Welcome back",
@@ -160,7 +160,7 @@ export const en = {
   },
   marketplace: {
     title: "Marketplace",
-    subtitle: "Every business on Yope Order, in one place.",
+    subtitle: "Every business on Orders Hub, in one place.",
     searchPlaceholder: "Search businesses or products",
     businesses: "Businesses",
     products: "Products",

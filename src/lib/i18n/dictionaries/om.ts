@@ -104,7 +104,7 @@ export const om: Dictionary = {
     heroBadge: "Daldalaa on-line fudhattee",
     heroTitle: "Ajaja fudhadhu. Daldalaan kee guddofadhu.",
     heroSubtitle:
-      "Yope Order daldalaa hundaaf bakka daldalaa dijitaalaa kennuu, katalogii kee galmaalii, ajaja fudhadhu, gibbiraa kee qopheeffadhu.",
+      "Orders Hub daldalaa hundaaf bakka daldalaa dijitaalaa kennuu, katalogii kee galmaalii, ajaja fudhadhu, gibbiraa kee qopheeffadhu.",
     ctaPrimary: "Bifaanaanii",
     ctaSecondary: "Gabaa gabaa ilali",
     featuresTitle: "Wan ajaja itti fufuuf barbaachisan hunda",
@@ -137,7 +137,7 @@ export const om: Dictionary = {
     statsBusinesses: "Daldalaa",
     statsProducts: "Meeshaa",
     statsOrders: "Ajaja",
-    footerNote: "Yope Order, daldalaaf daldalaa on-line bulchu.",
+    footerNote: "Orders Hub, daldalaaf daldalaa on-line bulchu.",
   },
   login: {
     title: "Belti deebi'uu",
@@ -163,7 +163,7 @@ export const om: Dictionary = {
   },
   marketplace: {
     title: "Gabaa gabaa",
-    subtitle: "Daldalaa hunda Yope Order irratti, bakka tokkoon.",
+    subtitle: "Daldalaa hunda Orders Hub irratti, bakka tokkoon.",
     searchPlaceholder: "Daldalaa yookaan meeshaa barbaadi",
     businesses: "Daldalaa",
     products: "Meeshaa",

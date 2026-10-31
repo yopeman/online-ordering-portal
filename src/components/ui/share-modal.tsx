@@ -108,10 +108,9 @@ function ShareModalDialog({
 
   const shareText =
     type === "product"
-      ? `Check out ${title}${subtitle ? ` from ${subtitle}` : ""}${
-          priceFormatted ? ` (${priceFormatted})` : ""
-        } on Yope Order!`
-      : `Check out ${title} on Yope Order! ${description || ""}`.trim();
+      ? `Check out ${title}${subtitle ? ` from ${subtitle}` : ""}${priceFormatted ? ` (${priceFormatted})` : ""
+      } on Orders Hub!`
+      : `Check out ${title} on Orders Hub! ${description || ""}`.trim();
 
   const copyUrl = withRemark(currentUrl || rawUrl, "direct_share");
 
@@ -346,11 +345,10 @@ function ShareModalDialog({
                 size="sm"
                 variant={copied ? "subtle" : "primary"}
                 onClick={handleCopy}
-                className={`shrink-0 transition-all duration-200 ${
-                  copied
+                className={`shrink-0 transition-all duration-200 ${copied
                     ? "border-success/40 bg-success/15 text-success hover:bg-success/20"
                     : ""
-                }`}
+                  }`}
               >
                 {copied ? (
                   <>

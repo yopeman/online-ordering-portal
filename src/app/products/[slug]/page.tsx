@@ -66,7 +66,7 @@ export async function generateMetadata({
     : product?.name ?? "Product";
   return {
     title,
-    description: product?.description || "Product details on Yope Order",
+    description: product?.description || "Product details on Orders Hub",
   };
 }
 

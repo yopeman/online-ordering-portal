@@ -15,7 +15,7 @@ import type { MarketplaceView } from "@/components/marketplace/types";
 export const metadata: Metadata = {
   title: "Marketplace",
   description:
-    "Explore local businesses and diverse product catalogs on Yope Order.",
+    "Explore local businesses and diverse product catalogs on Orders Hub.",
 };
 
 export default async function MarketplacePage({

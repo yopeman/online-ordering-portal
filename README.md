@@ -1,12 +1,12 @@
-# Yope Order — Online Ordering Portal for Businesses
+# Orders Hub — Online Ordering Portal for Businesses
 
 > Turn your products into orders with a fast, modern online storefront designed for businesses of all sizes.
 
-**Yope Order** empowers business owners and merchants to launch their digital catalog, share custom storefront links with customers, take tailored orders effortlessly, and receive instant notifications.
+**Orders Hub** empowers business owners and merchants to launch their digital catalog, share custom storefront links with customers, take tailored orders effortlessly, and receive instant notifications.
 
 ---
 
-## 🌟 Why Yope Order for Your Business?
+## 🌟 Why Orders Hub for Your Business?
 
 - **🚀 Instant Branded Storefront:** Get a clean, fast public store link (`/store/your-business-slug`) and appear in the central marketplace with zero website-building headaches.
 - **📱 Mobile-First & Multilingual:** Built for everyone. Supports **English**, **Amharic (አማርኛ)**, **Afaan Oromoo**, **Tigrinya (ትግርኛ)**, and **Afar (Qafaraf)**, with seamless mobile navigation and custom themes (Light, Dark, Night, and System).
@@ -37,7 +37,7 @@
 
 ### Step 5: Connect Telegram for Instant Alerts
 - Link your Telegram chat ID in your profile settings.
-- Get pinged instantly by the Yope Order Bot whenever a new customer places an order.
+- Get pinged instantly by the Orders Hub Bot whenever a new customer places an order.
 
 ### Step 6: Share & Sell
 - Copy your store link (`/store/[your-slug]`) or individual product links (`/products/[id]`).
@@ -58,7 +58,7 @@
 
 ## 🛠️ For Administrators & Technical Setup
 
-If you are hosting or deploying Yope Order for your organization:
+If you are hosting or deploying Orders Hub for your organization:
 
 ### Tech Stack
 - **Framework:** Next.js (App Router, Turbopack, React 19)

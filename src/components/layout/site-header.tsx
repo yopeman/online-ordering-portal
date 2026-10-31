@@ -19,7 +19,7 @@ export async function SiteHeader() {
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
               Y
             </span>
-            <span className="hidden text-foreground sm:inline">Yope Order</span>
+            <span className="hidden text-foreground sm:inline">Orders Hub</span>
           </Link>
         </div>
 

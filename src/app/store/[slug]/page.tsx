@@ -51,7 +51,7 @@ export async function generateMetadata({
   return {
     title: business?.name ? `${business.name} · Store` : "Business",
     description: business
-      ? String(details.description || details.category || "Online storefront on Yope Order")
+      ? String(details.description || details.category || "Online storefront on Orders Hub")
       : "",
   };
 }
@@ -145,9 +145,8 @@ export default async function StorefrontPage({
     logActivity({
       businessId,
       action: "store.viewed",
-      detail: `Storefront for **${business.name}** was viewed (Source: ${sourceLocation})${
-        selectedCategory ? ` (Category: ${selectedCategory})` : ""
-      }.`,
+      detail: `Storefront for **${business.name}** was viewed (Source: ${sourceLocation})${selectedCategory ? ` (Category: ${selectedCategory})` : ""
+        }.`,
       actorId: currentUser?.id ?? null,
     }),
   ]);
@@ -179,16 +178,16 @@ export default async function StorefrontPage({
   const mapUrl = isMapUrl
     ? rawLocation
     : displayLocation
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayLocation)}`
-    : "";
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayLocation)}`
+      : "";
 
   // Schedule / Hours
   const openingHours =
     typeof details.openingHours === "string"
       ? details.openingHours.trim()
       : typeof details.hours === "string"
-      ? details.hours.trim()
-      : "";
+        ? details.hours.trim()
+        : "";
 
   // Contact & Delivery
   const email = typeof details.email === "string" ? details.email.trim() : "";
@@ -207,8 +206,8 @@ export default async function StorefrontPage({
   const tags: string[] = Array.isArray(details.tags)
     ? details.tags.map(String).filter(Boolean)
     : typeof details.tags === "string"
-    ? details.tags.split(",").map((s) => s.trim()).filter(Boolean)
-    : [];
+      ? details.tags.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
 
   // Social Links
   const socialObj =
@@ -609,11 +608,10 @@ export default async function StorefrontPage({
             <div className="flex flex-wrap gap-1.5">
               <Link
                 href={withRemark(`/store/${business.slug}`, currentRemark || "storefront")}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  !selectedCategory
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${!selectedCategory
                     ? "bg-primary text-primary-foreground shadow-xs"
                     : "border border-border bg-surface text-muted-foreground hover:bg-surface-muted hover:text-foreground"
-                }`}
+                  }`}
               >
                 {t("common.all")} ({products.length})
               </Link>
@@ -629,11 +627,10 @@ export default async function StorefrontPage({
                         : `/store/${business.slug}?category=${encodeURIComponent(cat)}`,
                       currentRemark || "storefront",
                     )}
-                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                      isSelected
+                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${isSelected
                         ? "bg-primary text-primary-foreground shadow-xs"
                         : "border border-border bg-surface text-muted-foreground hover:bg-surface-muted hover:text-foreground"
-                    }`}
+                      }`}
                   >
                     {cat} ({count})
                   </Link>

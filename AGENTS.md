@@ -1,6 +1,6 @@
 # Instruction
 ## Project Description
-- project name: Yope Order
+- project name: Orders Hub
 - project description: online ordering portal for businesses
 
 ## Tech Stack

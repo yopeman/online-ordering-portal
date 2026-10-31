@@ -104,7 +104,7 @@ export const ti: Dictionary = {
     heroBadge: "በመስመር ላይ የተመሠረተ ንግድ መድረክ",
     heroTitle: "ትዕዛዝ ይቀበሉ። ንግድዎን ያስፋፉ።",
     heroSubtitle:
-      "Yope Order ለሁሉም ትዕዛዝ ደረጃዎች የዲጂታል ስቲሮፍራን ይሰጣል, ካታሎግዎን ወጣ፣ ትዕዛዝ ይቀበሉ፣ ደንበኛዎችንም ይያዙ።",
+      "Orders Hub ለሁሉም ትዕዛዝ ደረጃዎች የዲጂታል ስቲሮፍራን ይሰጣል, ካታሎግዎን ወጣ፣ ትዕዛዝ ይቀበሉ፣ ደንበኛዎችንም ይያዙ።",
     ctaPrimary: "መሸጣት ጀምር",
     ctaSecondary: "ገበያ ቦታውን ተመልከት",
     featuresTitle: "ትዕዛዝ ለመተዳደር የሚያስፈልጉ ሁሉም ነገሮች",
@@ -137,7 +137,7 @@ export const ti: Dictionary = {
     statsBusinesses: "ትዕዛዝ ደረጃዎች",
     statsProducts: "ምርቶች",
     statsOrders: "ትዕዛዝዎች",
-    footerNote: "Yope Order, ለትዕዛዝ ደረጃዎች የመስመር ላይ አስተዳደር መድረክ።",
+    footerNote: "Orders Hub, ለትዕዛዝ ደረጃዎች የመስመር ላይ አስተዳደር መድረክ።",
   },
   login: {
     title: "እንደምን ደህና መጡ",
@@ -163,7 +163,7 @@ export const ti: Dictionary = {
   },
   marketplace: {
     title: "ገበያ ቦታ",
-    subtitle: "ኣብ Yope Order ዘለዉ ኩሎም ድኳናት ኣብ ሓደ ቦታ።",
+    subtitle: "ኣብ Orders Hub ዘለዉ ኩሎም ድኳናት ኣብ ሓደ ቦታ።",
     searchPlaceholder: "ድኳን ወይ ፍርያት ድለዩ",
     businesses: "ድኳናት",
     products: "ፍርያት",
