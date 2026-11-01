@@ -2,6 +2,7 @@ import { Store } from "lucide-react";
 
 import { CreateBusinessButton } from "@/components/business/create-business-button";
 import { BusinessOwnerCard } from "@/components/business/business-card";
+import { PageVideoButton } from "@/components/video";
 import { PageHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { requireUser } from "@/lib/auth/guards";
@@ -37,10 +38,13 @@ export default async function BusinessesPage() {
         title={t("dashboard.title")}
         description={t("dashboard.subtitle")}
         action={
-          <CreateBusinessButton
-            canCreate={canCreate}
-            reachedLimit={!canCreate}
-          />
+          <div className="flex items-center gap-2">
+            <PageVideoButton videoKey="businessOverview" size="sm" />
+            <CreateBusinessButton
+              canCreate={canCreate}
+              reachedLimit={!canCreate}
+            />
+          </div>
         }
       />
 

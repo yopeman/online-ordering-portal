@@ -14,6 +14,7 @@ import {
 import { TelegramLoginButton } from "@/components/auth/telegram-login-button";
 import { getTranslator } from "@/lib/i18n-server";
 import { devAccountsEnabled, listDevAccounts } from "@/lib/dev-accounts";
+import { PageVideoButton } from "@/components/video";
 
 export const metadata = { title: "Sign in" };
 
@@ -47,9 +48,12 @@ export default async function LoginPage({
     <div className="container-page flex min-h-[70vh] items-center justify-center py-12">
       <Card className="w-full max-w-md p-6 sm:p-8">
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            {t("login.title")}
-          </h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t("login.title")}
+            </h1>
+            <PageVideoButton videoKey="login" size="sm" />
+          </div>
           <p className="text-sm text-muted-foreground">{t("login.subtitle")}</p>
         </div>
 

@@ -171,6 +171,13 @@ export function resolveVideoKeyFromPathname(pathname: string): PlatformVideoKey 
 }
 
 /**
+ * Returns video item metadata for a specific key.
+ */
+export function getVideoItem(key: PlatformVideoKey): PlatformVideoItem {
+  return platformDescriptionVideos[key] ?? platformDescriptionVideos.landingPage;
+}
+
+/**
  * Returns list of all platform videos for browsing or playlist navigation.
  */
 export function getAllVideos(): PlatformVideoItem[] {

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { TabsNav } from "@/components/ui/tabs-nav";
+import { PageVideoButton } from "@/components/video";
 import { requireAdmin } from "@/lib/auth/guards";
 import { getTranslator } from "@/lib/i18n-server";
 
@@ -23,6 +24,7 @@ export default async function AdminLayout({
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {t("admin.title")}
             </h1>
+            <PageVideoButton size="sm" />
           </div>
           <p className="text-sm text-muted-foreground">{t("admin.subtitle")}</p>
         </div>

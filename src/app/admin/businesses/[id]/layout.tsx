@@ -4,6 +4,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { TabsNav } from "@/components/ui/tabs-nav";
+import { PageVideoButton } from "@/components/video";
 import { requireAdmin } from "@/lib/auth/guards";
 import { readDetails } from "@/lib/models";
 import { getTranslator } from "@/lib/i18n-server";
@@ -55,13 +56,16 @@ export default async function AdminBusinessLayout({
             <p className="text-sm text-muted-foreground">/{business.slug}</p>
           </div>
 
-          <Link
-            href={withRemark(`/store/${business.slug}`, "admin_dashboard")}
-            className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm text-foreground hover:bg-surface-muted"
-          >
-            <ExternalLink className="h-4 w-4" />
-            {t("common.view")}
-          </Link>
+          <div className="flex items-center gap-2">
+            <PageVideoButton size="sm" />
+            <Link
+              href={withRemark(`/store/${business.slug}`, "admin_dashboard")}
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm text-foreground hover:bg-surface-muted"
+            >
+              <ExternalLink className="h-4 w-4" />
+              {t("common.view")}
+            </Link>
+          </div>
         </div>
       </div>
 

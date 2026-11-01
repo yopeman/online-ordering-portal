@@ -28,6 +28,7 @@ import { ProductCard } from "@/components/business/product-card";
 import { ProductGallery } from "@/components/business/product-gallery";
 import { ShareProductButton } from "@/components/business/share-product-button";
 import { StoreAttachments } from "@/components/business/store-attachments";
+import { PageVideoButton } from "@/components/video";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -429,6 +430,8 @@ export default async function ProductPage({
               <span>{t("businessPublic.viewDashboard")}</span>
             </Link>
           ) : null}
+
+          <PageVideoButton videoKey="productDetail" size="sm" />
 
           <ShareProductButton
             productName={product.name}

@@ -21,6 +21,7 @@ import { ProductCard } from "@/components/business/product-card";
 import { ProductGallery } from "@/components/business/product-gallery";
 import { ShareBusinessButton } from "@/components/business/share-business-button";
 import { StoreAttachments } from "@/components/business/store-attachments";
+import { PageVideoButton } from "@/components/video";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -343,6 +344,8 @@ export default async function StorefrontPage({
               <span>{t("businessPublic.viewDashboard")}</span>
             </Link>
           ) : null}
+
+          <PageVideoButton videoKey="businessFront" size="sm" />
 
           <ShareBusinessButton
             businessName={business.name}
