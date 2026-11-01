@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Store, ShoppingCartPlus } from "lucide-react";
 
 import { LocaleSwitcher, ThemeSwitcher } from "@/components/layout/preference-switchers";
+import { HeaderVideoButton } from "@/components/video";
 import { UserMenu } from "@/components/layout/user-menu";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser, isAdmin } from "@/lib/auth/session";
@@ -24,6 +25,7 @@ export async function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
+          <HeaderVideoButton />
           <LocaleSwitcher />
           <ThemeSwitcher />
 

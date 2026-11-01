@@ -12,6 +12,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { PageVideoButton } from "@/components/video";
 import { getCurrentUser, isAdmin } from "@/lib/auth/session";
 import { MissingMongoUriError } from "@/lib/db";
 import { getTranslator } from "@/lib/i18n-server";
@@ -108,6 +109,12 @@ export default async function LandingPage() {
             >
               {t("landing.ctaSecondary")}
             </Link>
+            <PageVideoButton
+              videoKey="landingPage"
+              variant="hero"
+              label="Watch Demo"
+              className="w-full sm:w-auto"
+            />
           </div>
 
           <dl className="mt-6 grid w-full max-w-2xl grid-cols-1 divide-y sm:grid-cols-3 sm:divide-y-0 sm:divide-x divide-border rounded-xl border border-border bg-surface">
