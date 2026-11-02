@@ -23,8 +23,8 @@ export const platformDescriptionVideos: Record<
   PlatformVideoItem
 > = {
   landingPage: {
-    desktop: "https://www.youtube.com/watch?v=umP2-lG2x7Y",
-    mobile: "https://www.youtube.com/watch?v=umP2-lG2x7Y",
+    desktop: "https://www.youtube.com/watch?v=tpM0fV213R4",
+    mobile: "https://www.youtube.com/watch?v=tpM0fV213R4",
   },
   marketplace: {
     desktop: "https://www.youtube.com/watch?v=MH1_wtNhJ28",
