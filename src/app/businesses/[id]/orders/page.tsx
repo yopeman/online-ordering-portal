@@ -5,6 +5,7 @@ import { ClipboardList } from "lucide-react";
 import { OrderList } from "@/components/business/order-list";
 import { Card, PageHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageVideoButton } from "@/components/video";
 import { Pagination } from "@/components/ui/pagination";
 import { requireUser } from "@/lib/auth/guards";
 import { getTranslator } from "@/lib/i18n-server";
@@ -67,6 +68,7 @@ export default async function OrdersTabPage({
         description={t("orders.subtitle")}
         action={
           <div className="flex flex-wrap items-center gap-2">
+            <PageVideoButton size="sm" />
             <div className="flex flex-wrap gap-1 rounded-xl border border-border bg-surface p-1 shadow-xs">
               {FILTERS.map((item) => (
                 <Link

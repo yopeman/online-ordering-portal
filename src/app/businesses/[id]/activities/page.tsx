@@ -7,6 +7,7 @@ import { markAllActivitiesReadAction } from "@/app/actions/orders";
 import { Badge } from "@/components/ui/badge";
 import { Card, PageHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageVideoButton } from "@/components/video";
 import { Pagination } from "@/components/ui/pagination";
 import { requireUser } from "@/lib/auth/guards";
 import { getFormatters, getTranslator } from "@/lib/i18n-server";
@@ -50,6 +51,7 @@ export default async function ActivitiesTabPage({
         description={t("activities.subtitle")}
         action={
           <div className="flex flex-wrap items-center gap-2">
+            <PageVideoButton size="sm" />
             {activities.unreadCount > 0 ? (
               <Badge tone="primary">
                 {activities.unreadCount} {t("common.unread")}

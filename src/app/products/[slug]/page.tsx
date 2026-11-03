@@ -421,6 +421,8 @@ export default async function ProductPage({
         </div>
 
         <div className="flex items-center justify-end gap-2">
+          <PageVideoButton videoKey="productDetail" size="sm" />
+          
           {isOwner ? (
             <Link
               href={`/businesses/${businessId}/catalog`}
@@ -430,8 +432,6 @@ export default async function ProductPage({
               <span>{t("businessPublic.viewDashboard")}</span>
             </Link>
           ) : null}
-
-          <PageVideoButton videoKey="productDetail" size="sm" />
 
           <ShareProductButton
             productName={product.name}

@@ -335,6 +335,8 @@ export default async function StorefrontPage({
         </div>
 
         <div className="flex items-center justify-end gap-2">
+          <PageVideoButton videoKey="businessFront" size="sm" />
+          
           {isOwner ? (
             <Link
               href={`/businesses/${businessId}/catalog`}
@@ -344,8 +346,6 @@ export default async function StorefrontPage({
               <span>{t("businessPublic.viewDashboard")}</span>
             </Link>
           ) : null}
-
-          <PageVideoButton videoKey="businessFront" size="sm" />
 
           <ShareBusinessButton
             businessName={business.name}

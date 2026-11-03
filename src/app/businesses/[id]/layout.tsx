@@ -69,7 +69,7 @@ export default async function BusinessLayout({
           </div>
 
           <div className="flex items-center gap-2">
-            <PageVideoButton size="sm" />
+            <PageVideoButton videoKey="businessWorkspace" size="sm" />
             <Link
               href={withRemark(`/store/${business.slug}`, "owner_dashboard")}
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm text-foreground hover:bg-surface-muted"

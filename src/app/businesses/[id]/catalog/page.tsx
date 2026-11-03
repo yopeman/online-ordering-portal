@@ -4,6 +4,7 @@ import { LayoutGrid } from "lucide-react";
 import { CatalogProductList, type CatalogRow } from "@/components/business/catalog-product-list";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/card";
+import { PageVideoButton } from "@/components/video";
 import { EmptyState } from "@/components/ui/empty-state";
 import { createProductAction, updateProductAction } from "@/app/actions/catalog";
 import { requireUser } from "@/lib/auth/guards";
@@ -90,9 +91,12 @@ export default async function CatalogTabPage({
         title={t("business.catalogTitle")}
         description={t("business.catalogSubtitle")}
         action={
-          <Badge tone="neutral">
-            {t("business.productsCount", { count: products.length })} / {maxCatalogs}
-          </Badge>
+          <>
+            <PageVideoButton size="sm" />
+            <Badge tone="neutral">
+              {t("business.productsCount", { count: products.length })} / {maxCatalogs}
+            </Badge>
+          </>
         }
       />
 

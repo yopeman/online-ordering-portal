@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { BusinessSettingsForm } from "@/components/business/business-settings-form";
 import { DeleteBusinessCard } from "@/components/business/delete-business-card";
 import { PageHeader } from "@/components/ui/card";
+import { PageVideoButton } from "@/components/video";
 import { requireUser } from "@/lib/auth/guards";
 import { readContacts, readDetails, readOrderFormTemplates } from "@/lib/models";
 import { getTranslator } from "@/lib/i18n-server";
@@ -31,6 +32,7 @@ export default async function SettingsTabPage({
       <PageHeader
         title={t("business.settingsTitle")}
         description={t("business.settingsSubtitle")}
+        action={<PageVideoButton size="sm" />}
       />
 
       <BusinessSettingsForm
