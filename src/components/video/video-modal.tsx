@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import {
   getDetectedDeviceMode,
@@ -43,12 +44,13 @@ export function VideoModal({ open, onClose, videoKey }: VideoModalProps) {
   }, [open, videoKey]);
 
   if (!open) return null;
+  if (typeof document === "undefined") return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6"
     >
       {/* Backdrop */}
       <button
@@ -87,6 +89,7 @@ export function VideoModal({ open, onClose, videoKey }: VideoModalProps) {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
