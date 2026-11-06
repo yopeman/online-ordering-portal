@@ -377,6 +377,9 @@ export const am: Dictionary = {
     "store.viewed": "ሱቅ ተጎብኝቷል",
     "business.viewed": "ሱቅ ተጎብኝቷል",
     "product.viewed": "ምርት ታይቷል",
+    "store.shared": "ሱቅ ተጋርቷል",
+    "business.shared": "ሱቅ ተጋርቷል",
+    "product.shared": "ምርት ተጋርቷል",
   },
   settings: {
     general: "የትዕዛዝ ደረጃ ዝርዝር",

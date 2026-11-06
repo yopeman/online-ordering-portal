@@ -378,6 +378,9 @@ export const ti: Dictionary = {
     "store.viewed": "ዱኳን ተበጺሑ",
     "business.viewed": "ዱኳን ተበጺሑ",
     "product.viewed": "ፍርያት ተራእዩ",
+    "store.shared": "ዱኳን ተኻፊሉ",
+    "business.shared": "ዱኳን ተኻፊሉ",
+    "product.shared": "ፍርያት ተኻፊሉ",
   },
   settings: {
     general: "የትዕዛዝ ደረጃ ዝርዝር",

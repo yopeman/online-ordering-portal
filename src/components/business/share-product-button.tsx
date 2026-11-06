@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ShareModal } from "@/components/ui/share-modal";
 
 export interface ShareProductButtonProps {
+  businessId?: string;
   productName: string;
   businessName?: string;
   description?: string;
@@ -22,6 +23,7 @@ export interface ShareProductButtonProps {
 }
 
 export function ShareProductButton({
+  businessId,
   productName,
   businessName,
   description = "",
@@ -53,6 +55,7 @@ export function ShareProductButton({
       <ShareModal
         open={open}
         onClose={() => setOpen(false)}
+        businessId={businessId}
         type="product"
         title={productName}
         subtitle={businessName}

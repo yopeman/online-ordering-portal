@@ -381,6 +381,9 @@ export const om: Dictionary = {
     "store.viewed": "Suuqiin daawwatameera",
     "business.viewed": "Suuqiin daawwatameera",
     "product.viewed": "Oomishni daawwatameera",
+    "store.shared": "Suuqiin qoodameera",
+    "business.shared": "Suuqiin qoodameera",
+    "product.shared": "Oomishni qoodameera",
   },
   settings: {
     general: "Faayyaa daldalaa",

@@ -377,6 +377,9 @@ export const en = {
     "store.viewed": "Store visited",
     "business.viewed": "Store visited",
     "product.viewed": "Product viewed",
+    "store.shared": "Store shared",
+    "business.shared": "Store shared",
+    "product.shared": "Product shared",
   },
   settings: {
     general: "Business details",

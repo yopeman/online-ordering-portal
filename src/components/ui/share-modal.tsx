@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import {
   Check,
@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 
+import { logShareActivityAction } from "@/app/actions/activity";
 import { useTranslation } from "@/components/providers/app-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ export interface ShareModalProps {
   priceFormatted?: string;
   imageUrl?: string;
   isOwner?: boolean;
+  businessId?: string;
 }
 
 function subscribeToUrl(callback: () => void) {
@@ -60,12 +62,14 @@ function ShareModalDialog({
   priceFormatted,
   imageUrl,
   isOwner = false,
+  businessId,
 }: ShareModalProps) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [showQr, setShowQr] = useState(false);
   const [remark, setRemark] = useState("");
   const rawUrl = useShareUrl(initialUrl);
+  const lastLoggedRef = useRef<{ channel: string; time: number } | null>(null);
 
   const currentUrl = useMemo(() => {
     if (!rawUrl) return "";
@@ -106,6 +110,29 @@ function ShareModalDialog({
     };
   }, [onClose]);
 
+  const logShare = (channel: string) => {
+    const now = Date.now();
+    if (
+      lastLoggedRef.current &&
+      lastLoggedRef.current.channel === channel &&
+      now - lastLoggedRef.current.time < 3000
+    ) {
+      return;
+    }
+    lastLoggedRef.current = { channel, time: now };
+
+    logShareActivityAction({
+      businessId,
+      type,
+      title,
+      channel,
+      url: currentUrl || rawUrl,
+      remark: remark.trim() || undefined,
+    }).catch((err) => {
+      console.error("[share] failed to log activity:", err);
+    });
+  };
+
   const shareText =
     type === "product"
       ? `Check out ${title}${subtitle ? ` from ${subtitle}` : ""}${priceFormatted ? ` (${priceFormatted})` : ""
@@ -124,8 +151,10 @@ function ShareModalDialog({
       } else {
         window.prompt(t("common.copyLink"), copyUrl);
       }
+      logShare("copy_link");
     } catch {
       window.prompt(t("common.copyLink"), copyUrl);
+      logShare("copy_link");
     }
   };
 
@@ -141,6 +170,7 @@ function ShareModalDialog({
           text: shareText,
           url: nativeUrl,
         });
+        logShare("native_share");
       } catch (err: unknown) {
         if ((err as DOMException)?.name === "AbortError") return;
       }
@@ -161,6 +191,7 @@ function ShareModalDialog({
     } else {
       window.open(tgUrl, "_blank", "noopener,noreferrer");
     }
+    logShare("telegram");
   };
 
   const openWhatsAppShare = () => {
@@ -169,6 +200,7 @@ function ShareModalDialog({
       `${shareText} ${shareUrl}`,
     )}`;
     window.open(waUrl, "_blank", "noopener,noreferrer");
+    logShare("whatsapp");
   };
 
   const openFacebookShare = () => {
@@ -177,6 +209,7 @@ function ShareModalDialog({
       shareUrl,
     )}`;
     window.open(fbUrl, "_blank", "noopener,noreferrer");
+    logShare("facebook");
   };
 
   const openXShare = () => {
@@ -185,6 +218,7 @@ function ShareModalDialog({
       shareUrl,
     )}&text=${encodeURIComponent(shareText)}`;
     window.open(xUrl, "_blank", "noopener,noreferrer");
+    logShare("x_twitter");
   };
 
   const hasNativeShare =
@@ -429,7 +463,12 @@ function ShareModalDialog({
           <div className="border-t border-border pt-3">
             <button
               type="button"
-              onClick={() => setShowQr((v) => !v)}
+              onClick={() => {
+                if (!showQr) {
+                  logShare("qr_code");
+                }
+                setShowQr((v) => !v);
+              }}
               className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
             >
               <span className="flex items-center gap-2">

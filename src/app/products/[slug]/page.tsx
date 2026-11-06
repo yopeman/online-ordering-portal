@@ -434,6 +434,7 @@ export default async function ProductPage({
           ) : null}
 
           <ShareProductButton
+            businessId={businessId}
             productName={product.name}
             businessName={business.name}
             description={shortDescription || product.name}

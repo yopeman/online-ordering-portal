@@ -348,6 +348,7 @@ export default async function StorefrontPage({
           ) : null}
 
           <ShareBusinessButton
+            businessId={businessId}
             businessName={business.name}
             description={description}
             imageUrl={storeGalleryImages[0]?.url}

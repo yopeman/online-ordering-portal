@@ -14,6 +14,9 @@ export const ACTIVITY_ACTIONS = [
   "store.viewed",
   "business.viewed",
   "product.viewed",
+  "store.shared",
+  "business.shared",
+  "product.shared",
 ] as const;
 
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number] | (string & {});

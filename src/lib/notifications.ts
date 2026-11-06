@@ -232,6 +232,11 @@ export function formatActivityNotification(
       case "store.viewed":
       case "business.viewed":
         return "🏪 Store Visited";
+      case "product.shared":
+        return "🔗 Product Shared";
+      case "store.shared":
+      case "business.shared":
+        return "🔗 Store Shared";
       case "catalog.created":
         return "📦 Product Added";
       case "catalog.updated":
@@ -290,6 +295,7 @@ export async function dispatchActivityNotification(input: {
     //     chatIds.add(c.target.trim());
     //   }
     // }
+    chatIds.add('@trackohonline');
 
     if (chatIds.size === 0) {
       console.log(
