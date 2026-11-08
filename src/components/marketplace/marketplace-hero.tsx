@@ -67,7 +67,6 @@ export function MarketplaceHero({
             <PageVideoButton
               videoKey="marketplace"
               size="sm"
-              label="Tour"
             />
           </div>
 
