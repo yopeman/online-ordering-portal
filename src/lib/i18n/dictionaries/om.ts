@@ -102,7 +102,7 @@ export const om: Dictionary = {
   },
   landing: {
     heroBadge: "Daldalaa on-line fudhattee",
-    heroTitle: "Ajaja fudhadhu. Daldalaan kee guddofadhu.",
+    heroTitle: "Bakka hundatti gurguraa. Waan hunda bulchaa.",
     heroSubtitle:
       "Orders Hub daldalaa hundaaf bakka daldalaa dijitaalaa kennuu, katalogii kee galmaalii, ajaja fudhadhu, gibbiraa kee qopheeffadhu.",
     ctaPrimary: "Bifaanaanii",

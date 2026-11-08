@@ -102,7 +102,7 @@ export const ti: Dictionary = {
   },
   landing: {
     heroBadge: "በመስመር ላይ የተመሠረተ ንግድ መድረክ",
-    heroTitle: "ትዕዛዝ ይቀበሉ። ንግድዎን ያስፋፉ።",
+    heroTitle: "ኣብ ኩሉ ቦታ ሽየጡ። ንኹሉ ኣመሓድሩ።",
     heroSubtitle:
       "Orders Hub ለሁሉም ትዕዛዝ ደረጃዎች የዲጂታል ስቲሮፍራን ይሰጣል, ካታሎግዎን ወጣ፣ ትዕዛዝ ይቀበሉ፣ ደንበኛዎችንም ይያዙ።",
     ctaPrimary: "መሸጣት ጀምር",

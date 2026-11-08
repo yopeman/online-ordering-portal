@@ -100,7 +100,7 @@ export const en = {
   },
   landing: {
     heroBadge: "Online ordering, simplified",
-    heroTitle: "Accept orders. Grow your business.",
+    heroTitle: "Sell Everywhere. Manage Everything.",
     heroSubtitle:
       "Orders Hub gives every business a digital storefront, publish your catalog, receive orders and keep customers coming back.",
     ctaPrimary: "Start selling",
