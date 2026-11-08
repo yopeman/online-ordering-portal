@@ -6,39 +6,12 @@ import { om } from "./dictionaries/om";
 import { ti } from "./dictionaries/ti";
 import { aa } from "./dictionaries/aa";
 
-/** Fills missing keys from `base`, leaving translated values untouched. */
-function merge(base: object, override: object): Record<string, unknown> {
-  const result: Record<string, unknown> = { ...base };
-
-  for (const key of Object.keys(override)) {
-    const baseValue = result[key as string];
-    const overrideValue = (override as Record<string, unknown>)[key];
-
-    if (
-      overrideValue &&
-      typeof overrideValue === "object" &&
-      !Array.isArray(overrideValue) &&
-      baseValue &&
-      typeof baseValue === "object"
-    ) {
-      result[key] = merge(
-        baseValue as object,
-        overrideValue as object,
-      );
-    } else if (overrideValue !== undefined) {
-      result[key] = overrideValue;
-    }
-  }
-
-  return result;
-}
-
 const dictionaries: Record<Locale, Dictionary> = {
   en,
   am,
   om,
   ti,
-  aa: merge(en, aa) as unknown as Dictionary,
+  aa,
 };
 
 export function getDictionary(locale: Locale): Dictionary {
@@ -57,7 +30,21 @@ function resolve(dict: Dictionary, path: Path): string | undefined {
           : undefined,
       dict,
     );
-  return typeof value === "string" ? value : undefined;
+  if (typeof value === "string") return value;
+
+  // Handle keys that contain dots, e.g. `activityActions.business.created`
+  const firstDot = path.indexOf(".");
+  if (firstDot !== -1) {
+    const section = path.slice(0, firstDot);
+    const rest = path.slice(firstDot + 1);
+    const sectionObj = (dict as Record<string, unknown>)[section];
+    if (sectionObj && typeof sectionObj === "object") {
+      const restValue = (sectionObj as Record<string, unknown>)[rest];
+      if (typeof restValue === "string") return restValue;
+    }
+  }
+
+  return undefined;
 }
 
 export type TranslateValues = Record<string, string | number>;
