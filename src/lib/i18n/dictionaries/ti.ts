@@ -122,9 +122,9 @@ export const ti: Dictionary = {
     featurePublicTitle: "የህዝብ ስቲሮፍራን",
     featurePublicBody:
       "አንድ ሊንክ ያጋሩ, ደንበኛዎች ምናሌዎን በጥቂት ጊዜ ተመልከተው ትዕዛዝ ይስጡ።",
-    featureLimitsTitle: "ለእድገት የተዘጋጀ",
-    featureLimitsBody:
-      "እያንዳንዱ መለያ የተወሰኑ የትዕዛዝ ደረጃ እና የካታሎግ ገደቦች አለው, በማንኛውም ጊዜ ሊስተካከሉ ይችላሉ።",
+    featureGrowthTitle: "ንዕቤት ዝተዳለወ",
+    featureGrowthBody:
+      "ብዘይ ዝኾነ ናይ ደላሊ ኮሚሽን ብቐጥታ ንዓማዊልኩም ሸጡ። መሸጣኹም ንምዕባይ ብናይ QR ኮድን መወዓውዒ መላግቦታትን ድኳንኩም ኣስፍሑ።",
     stepsTitle: "እንዴት ይሠራል",
     stepOneTitle: "የትዕዛዝ ደረጃዎን ፍጠር",
     stepOneBody:

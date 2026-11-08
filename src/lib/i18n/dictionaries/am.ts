@@ -123,9 +123,9 @@ export const am: Dictionary = {
     featurePublicTitle: "የህዝብ ስቲሮፍራን",
     featurePublicBody:
       "አንድ ሊንክ ያጋሩ, ደንበኛዎች ምናሌዎን በጥቂት ጊዜ ማየትና ትዕዛዝ መስጠት ይችላሉ።",
-    featureLimitsTitle: "ለእድገት የተዘጋጀ",
-    featureLimitsBody:
-      "እያንዳንዱ መለያ የተወሰኑ የትዕዛዝ ደረጃ እና የካታሎግ ገደቦች አለው, በማንኛውም ጊዜ ሊስተካከሉ ይችላሉ።",
+    featureGrowthTitle: "ለእድገት የተዘጋጀ",
+    featureGrowthBody:
+      "ያለ ምንም ደላላ ወይም መካከለኛ ኮሚሽን በቀጥታ ለደንበኞችዎ ይሽጡ። ሽያጭዎን ለማሳደግ በQR ኮድ እና በማስተዋወቂያ መለያዎች ሱቅዎን ያስፋፉ።",
     stepsTitle: "እንዴት ይሰራል",
     stepOneTitle: "የትዕዛዝ ደረጃዎን ፍጠር",
     stepOneBody:

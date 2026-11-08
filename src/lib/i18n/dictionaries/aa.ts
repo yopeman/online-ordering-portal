@@ -123,9 +123,9 @@ export const aa: Dictionary = {
     featurePublicTitle: "Umman numuh fakkiite suuq",
     featurePublicBody:
       "Inki liinki qoodah, maamiliina ku menyuu wagitak daffeyyaak amri rubtam dandiican.",
-    featureLimitsTitle: "Daddoosah gintem",
-    featureLimitsBody:
-      "Umman akawntih isi daldalitte kee kaatologitte caddoddu le, umman wakti massoysan.",
+    featureGrowthTitle: "Daddoosah gintem",
+    featureGrowthBody:
+      "Tu-gaciseyna maleh ku maamiliinah fanteenaan iyyici. Ku daldal daddosuh QR kooditte kee daldal daddoos tags-it fayyis.",
     stepsTitle: "Akku innah taamitta",
     stepOneTitle: "Ku daldal gen",
     stepOneBody: "Ku migaq, silki lakqoota kee maamiliina gacissuh faxxa esseroora dabal.",

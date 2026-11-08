@@ -123,9 +123,9 @@ export const om: Dictionary = {
     featurePublicTitle: "Bakka dhimmammoo",
     featurePublicBody:
       "Lakkka isaa tokkoon kutaa daldalaa kootiin ilaluu, ajaja hunda kennuun.",
-    featureLimitsTitle: "Kabadhaaf",
-    featureLimitsBody:
-      "Akeekkachiisaan hunda kamaa daldalaa fi katalogii qabu, yeroo kamiyyuu fooyyaa'i.",
+    featureGrowthTitle: "Guddinaaf kan qophaa'e",
+    featureGrowthBody:
+      "Kaffaltii komishinii qaama sadaffaa malee kallattiin maamiltoota keessaniif gurguraa. Gurgurtaan keessan akka dabaluuf koodii QR fi mallattoolee beeksisaatiin daldala keessan babal'isaa.",
     stepsTitle: "Akkaata hojjeti",
     stepOneTitle: "Daldalaan kee uumamaa",
     stepOneBody: "Maqaa, bilisaa, gaanni hojjechuuf barattoo daldalaa kaa dhaabu.",

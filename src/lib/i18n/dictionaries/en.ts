@@ -121,9 +121,9 @@ export const en = {
     featurePublicTitle: "Public storefront",
     featurePublicBody:
       "Share one link and customers can browse your menu and order in a few taps.",
-    featureLimitsTitle: "Built for growth",
-    featureLimitsBody:
-      "Each account has its own limits on businesses and catalogs, adjustable at any time.",
+    featureGrowthTitle: "Built for growth",
+    featureGrowthBody:
+      "Sell directly to your customers with zero middleman commissions. Promote your store with custom QR codes and campaign tags to boost sales.",
     stepsTitle: "How it works",
     stepOneTitle: "Create your business",
     stepOneBody: "Add your name, contact numbers and the questions you want customers to answer.",

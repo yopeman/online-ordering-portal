@@ -63,8 +63,8 @@ export default async function LandingPage() {
     },
     {
       icon: TrendingUp,
-      title: t("landing.featureLimitsTitle"),
-      body: t("landing.featureLimitsBody"),
+      title: t("landing.featureGrowthTitle"),
+      body: t("landing.featureGrowthBody"),
     },
   ];
 
