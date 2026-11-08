@@ -28,57 +28,84 @@ export const platformDescriptionVideos: Record<
   },
   marketplace: {
     desktop: "https://www.youtube.com/watch?v=MH1_wtNhJ28",
-    mobile: "https://www.youtube.com/watch?v=MH1_wtNhJ28",
+    mobile: "https://youtube.com/shorts/hNPw9K5gIm8?si=AX3HOZ6gJZzjgsNF",
   },
   login: {
     desktop: "https://www.youtube.com/watch?v=btzWrusgm18",
-    mobile: "https://www.youtube.com/watch?v=btzWrusgm18",
+    mobile: "https://youtube.com/shorts/AkfSDN_uu10?si=c_1KfcncObJjqjrt",
   },
   businessFront: {
     desktop: "https://www.youtube.com/watch?v=yKgSx_OFod0",
-    mobile: "https://www.youtube.com/watch?v=yKgSx_OFod0",
+    mobile: "https://youtube.com/shorts/EXzj5hwwD80?si=lpiAwW1Hc-pVy8fE",
   },
   productDetail: {
     desktop: "https://www.youtube.com/watch?v=qFjNVcY2ivo",
-    mobile: "https://www.youtube.com/watch?v=qFjNVcY2ivo",
+    mobile: "https://youtube.com/shorts/RwjnIbGHum8?si=XfpJKJZKXEoXls4D",
   },
   businessOverview: {
     desktop: "https://www.youtube.com/watch?v=4yUgGsqKPGI",
-    mobile: "https://www.youtube.com/watch?v=4yUgGsqKPGI",
+    mobile: "https://youtube.com/shorts/y1dTcKcvfVs?si=vOkxNYBGv3UxbKRR",
   },
   businessWorkspace: {
     desktop: "https://www.youtube.com/watch?v=kGkK_l9C-00",
-    mobile: "https://www.youtube.com/watch?v=kGkK_l9C-00",
+    mobile: "https://youtube.com/shorts/blWev_nR610?si=Hn5HDRRukz9aIHhN",
   },
   catalogTab: {
     desktop: "https://www.youtube.com/watch?v=N2S4E5DBQ18",
-    mobile: "https://www.youtube.com/watch?v=N2S4E5DBQ18",
+    mobile: "https://youtube.com/shorts/v_khUSQ-plM?si=-wRqtN6Rr1lAHqqu",
   },
   ordersTab: {
     desktop: "https://www.youtube.com/watch?v=3puVyvd0Qxk",
-    mobile: "https://www.youtube.com/watch?v=3puVyvd0Qxk",
+    mobile: "https://youtube.com/shorts/Ae1hsG8DE2s?si=uNhD4bEjAMle6Igz",
   },
   activityTab: {
     desktop: "https://www.youtube.com/watch?v=X9B_Ok9b0Hk",
-    mobile: "https://www.youtube.com/watch?v=X9B_Ok9b0Hk",
+    mobile: "https://youtube.com/shorts/9M47HjA2Ja8?si=or4aLAZVgX1AtlUd",
   },
   settingsTab: {
     desktop: "https://www.youtube.com/watch?v=kiEIS9DYo5c",
-    mobile: "https://www.youtube.com/watch?v=kiEIS9DYo5c",
+    mobile: "https://youtube.com/shorts/ZTZ7kVuu36M?si=xJjSezYWhM_moGN1",
   },
 };
 
 /**
- * Extracts 11-character YouTube video ID from various YouTube URL formats.
+ * Detects whether a given YouTube URL is a YouTube Shorts video link.
+ */
+export function isYouTubeShort(url: string): boolean {
+  if (!url) return false;
+  return /(?:youtube\.com|youtu\.be)\/shorts\//i.test(url.trim());
+}
+
+/**
+ * Extracts 11-character YouTube video ID from various YouTube URL formats
+ * including standard watch URLs, YouTube Shorts, embed links, youtu.be, and live links.
  */
 export function extractYouTubeId(url: string): string | null {
   if (!url) return null;
   const trimmed = url.trim();
+
+  // Bare 11-character video ID
+  if (/^[\w-]{11}$/.test(trimmed)) return trimmed;
+
+  // Primary regex covering shorts, watch, embed, v, live, and youtu.be
   const match = trimmed.match(
-    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/
+    /(?:youtu\.be\/|(?:www\.|m\.)?youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|shorts\/|live\/|watch\?(?:.*&)?v=))([\w-]{11})/
   );
   if (match && match[1]) return match[1];
-  if (/^[\w-]{11}$/.test(trimmed)) return trimmed;
+
+  // URL parser fallback for deep or complex query string combinations
+  try {
+    const parsed = new URL(trimmed.startsWith("http") ? trimmed : `https://${trimmed}`);
+    const vParam = parsed.searchParams.get("v");
+    if (vParam && /^[\w-]{11}$/.test(vParam)) return vParam;
+
+    const parts = parsed.pathname.split("/").filter(Boolean);
+    const lastPart = parts[parts.length - 1];
+    if (lastPart && /^[\w-]{11}$/.test(lastPart)) return lastPart;
+  } catch {
+    // ignore parsing errors
+  }
+
   return null;
 }
 
@@ -94,11 +121,27 @@ export function getYouTubeEmbedUrl(
 
   const autoplay = options.autoplay ?? true ? "1" : "0";
   const rel = options.rel ? "1" : "0";
-  const loop = options.loop ? "1" : "0";
+  const loopParam = options.loop ? `&loop=1&playlist=${videoId}` : "&loop=0";
 
-  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=${autoplay}&rel=${rel}&loop=${loop}&enablejsapi=1&origin=${
-    typeof window !== "undefined" ? encodeURIComponent(window.location.origin) : ""
-  }`;
+  const originParam =
+    typeof window !== "undefined" && window.location?.origin && window.location.origin !== "null"
+      ? `&origin=${encodeURIComponent(window.location.origin)}`
+      : "";
+
+  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=${autoplay}&rel=${rel}${loopParam}&enablejsapi=1${originParam}`;
+}
+
+/**
+ * Returns YouTube thumbnail image URL for a given video URL or ID.
+ */
+export function getYouTubeThumbnailUrl(
+  urlOrId: string,
+  quality: "maxres" | "hq" | "mq" | "default" = "hq"
+): string | null {
+  const videoId = extractYouTubeId(urlOrId);
+  if (!videoId) return null;
+  const filename = quality === "maxres" ? "maxresdefault.jpg" : `${quality}default.jpg`;
+  return `https://img.youtube.com/vi/${videoId}/${filename}`;
 }
 
 /**

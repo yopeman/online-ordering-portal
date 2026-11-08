@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import {
   getDetectedDeviceMode,
   getYouTubeEmbedUrl,
+  isYouTubeShort,
   platformDescriptionVideos,
   type PlatformVideoKey,
 } from "@/lib/videos";
@@ -18,6 +19,7 @@ export interface VideoModalProps {
 
 /**
  * Clean, lightweight video modal for displaying YouTube demos with no complexity.
+ * Supports both standard horizontal (16:9) videos and vertical (9:16) YouTube Shorts.
  */
 export function VideoModal({ open, onClose, videoKey }: VideoModalProps) {
   useEffect(() => {
@@ -34,13 +36,16 @@ export function VideoModal({ open, onClose, videoKey }: VideoModalProps) {
     };
   }, [open, onClose]);
 
-  const embedUrl = useMemo(() => {
-    if (!open) return null;
+  const { embedUrl, isShort } = useMemo(() => {
+    if (!open) return { embedUrl: null, isShort: false };
     const item = platformDescriptionVideos[videoKey];
-    if (!item) return null;
+    if (!item) return { embedUrl: null, isShort: false };
     const mode = getDetectedDeviceMode();
     const rawUrl = mode === "mobile" ? item.mobile : item.desktop;
-    return getYouTubeEmbedUrl(rawUrl, { autoplay: true });
+    return {
+      embedUrl: getYouTubeEmbedUrl(rawUrl, { autoplay: true }),
+      isShort: isYouTubeShort(rawUrl),
+    };
   }, [open, videoKey]);
 
   if (!open) return null;
@@ -61,7 +66,11 @@ export function VideoModal({ open, onClose, videoKey }: VideoModalProps) {
       />
 
       {/* Modal Dialog */}
-      <div className="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl">
+      <div
+        className={`relative z-10 w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl transition-all duration-200 ${
+          isShort ? "max-w-[400px]" : "max-w-4xl"
+        }`}
+      >
         {/* Close Button */}
         <button
           type="button"
@@ -72,8 +81,14 @@ export function VideoModal({ open, onClose, videoKey }: VideoModalProps) {
           <X className="h-5 w-5" />
         </button>
 
-        {/* 16:9 Video Player */}
-        <div className="relative aspect-video w-full bg-black">
+        {/* Video Player (Responsive for 16:9 horizontal and 9:16 Shorts) */}
+        <div
+          className="relative w-full bg-black flex items-center justify-center"
+          style={{
+            aspectRatio: isShort ? "9 / 16" : "16 / 9",
+            maxHeight: isShort ? "82vh" : undefined,
+          }}
+        >
           {embedUrl ? (
             <iframe
               src={embedUrl}

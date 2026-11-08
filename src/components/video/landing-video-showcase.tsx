@@ -22,6 +22,7 @@ export function LandingVideoShowcase({
   className = "",
 }: LandingVideoShowcaseProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [imgSrc, setImgSrc] = useState<string | null>(null);
 
   const videoItem = platformDescriptionVideos.landingPage;
   const mode = getDetectedDeviceMode();
@@ -29,7 +30,8 @@ export function LandingVideoShowcase({
   const videoId = extractYouTubeId(rawUrl) || "umP2-lG2x7Y";
   const embedUrl = getYouTubeEmbedUrl(rawUrl, { autoplay: true });
 
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  const thumbnailUrl =
+    imgSrc || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
   return (
     <div
@@ -58,6 +60,11 @@ export function LandingVideoShowcase({
               alt="Orders Hub Platform Video Preview"
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-102"
               loading="lazy"
+              onError={() => {
+                if (!imgSrc) {
+                  setImgSrc(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`);
+                }
+              }}
             />
 
             {/* Gradient Overlay */}
