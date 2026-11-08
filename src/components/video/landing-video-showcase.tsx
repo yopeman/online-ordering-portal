@@ -66,19 +66,6 @@ export function LandingVideoShowcase({
                 }
               }}
             />
-
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent transition-opacity group-hover:opacity-85" />
-
-            {/* Centered Play Button & Label */}
-            <div className="relative flex flex-col items-center gap-3">
-              <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-red-600 text-white shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:bg-red-700 group-hover:shadow-red-500/40">
-                <YouTubeIcon className="h-10 w-10 sm:h-12 sm:w-12" />
-              </div>
-              <span className="rounded-full border border-white/20 bg-black/60 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-md transition-all group-hover:bg-black/80">
-                Watch Platform Demo
-              </span>
-            </div>
           </button>
         )}
       </div>
