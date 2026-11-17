@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
     },
   },
   experimental: {
+    agentUpgrade: "security",
     serverActions: {
       bodySizeLimit: "25mb",
     },
