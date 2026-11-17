@@ -124,7 +124,7 @@ export function OnboardingGuidance({
       titleKey: "onboarding.step4Title",
       descKey: "onboarding.step4Desc",
       done: stats.hasShared,
-      videoKey: "businessFront",
+      videoKey: "productDetail", //"businessFront",
     },
     {
       id: 5,
