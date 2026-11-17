@@ -48,7 +48,11 @@ export function ShareBusinessButton({
         type="button"
         variant={variant}
         size={size}
-        onClick={() => setOpen(true)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen(true);
+        }}
         className={`gap-1.5 transition-all ${className}`}
         aria-label={label}
       >

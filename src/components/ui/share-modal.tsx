@@ -42,7 +42,18 @@ function subscribeToUrl(callback: () => void) {
 function useShareUrl(initialUrl?: string): string {
   return useSyncExternalStore(
     subscribeToUrl,
-    () => initialUrl || (typeof window !== "undefined" ? window.location.href : ""),
+    () => {
+      if (typeof window !== "undefined") {
+        if (initialUrl) {
+          if (initialUrl.startsWith("/")) {
+            return `${window.location.origin}${initialUrl}`;
+          }
+          return initialUrl;
+        }
+        return window.location.href;
+      }
+      return initialUrl || "";
+    },
     () => initialUrl || ""
   );
 }

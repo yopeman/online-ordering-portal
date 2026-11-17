@@ -4,6 +4,7 @@ import { Store } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { TabsNav } from "@/components/ui/tabs-nav";
+import { ShareBusinessButton } from "@/components/business/share-business-button";
 import { PageVideoButton } from "@/components/video";
 import { requireUser } from "@/lib/auth/guards";
 import { readDetails } from "@/lib/models";
@@ -70,6 +71,16 @@ export default async function BusinessLayout({
 
           <div className="flex items-center gap-2">
             <PageVideoButton videoKey="businessWorkspace" size="sm" />
+            <ShareBusinessButton
+              businessId={id}
+              businessName={business.name}
+              description={typeof details.description === "string" ? details.description : ""}
+              imageUrl={business.image || (typeof details.image === "string" ? details.image : undefined)}
+              url={`/store/${business.slug}`}
+              isOwner={true}
+              size="sm"
+              label={t("common.share")}
+            />
             <Link
               href={withRemark(`/store/${business.slug}`, "owner_dashboard")}
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm text-foreground hover:bg-surface-muted"

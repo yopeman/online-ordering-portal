@@ -2,6 +2,7 @@ import { Store } from "lucide-react";
 
 import { CreateBusinessButton } from "@/components/business/create-business-button";
 import { BusinessOwnerCard } from "@/components/business/business-card";
+import { ShareBusinessButton } from "@/components/business/share-business-button";
 import { PageVideoButton } from "@/components/video";
 import { PageHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -30,6 +31,7 @@ export default async function BusinessesPage() {
     orders: t("business.tabOrders"),
     activities: t("business.tabActivities"),
     settings: t("business.tabSettings"),
+    share: t("common.share"),
   };
 
   return (
@@ -70,6 +72,19 @@ export default async function BusinessesPage() {
               business={business}
               locale={locale}
               labels={cardLabels}
+              shareAction={
+                <ShareBusinessButton
+                  businessId={business.id}
+                  businessName={business.name}
+                  description={business.description}
+                  url={`/store/${business.slug}`}
+                  imageUrl={business.image}
+                  isOwner={true}
+                  size="sm"
+                  label={t("common.share")}
+                  className="bg-surface/90 shadow-sm backdrop-blur-sm hover:bg-surface text-xs"
+                />
+              }
             />
           ))}
         </div>

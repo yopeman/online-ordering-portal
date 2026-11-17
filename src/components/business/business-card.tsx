@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { ShareBusinessButton } from "./share-business-button";
 import type { BusinessListItem } from "@/lib/queries";
 import { formatNumber } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
@@ -164,6 +165,7 @@ export interface BusinessOwnerCardLabels {
   orders: string;
   activities: string;
   settings: string;
+  share?: string;
 }
 
 export type BusinessOwnerItem = BusinessListItem & {
@@ -176,14 +178,32 @@ export function BusinessOwnerCard({
   business,
   locale,
   labels,
+  shareAction,
 }: {
   business: BusinessOwnerItem;
   locale: Locale;
   labels: BusinessOwnerCardLabels;
+  shareAction?: React.ReactNode;
 }) {
   const productCountFormatted = formatNumber(business.productCount, locale);
   const unreadOrders = business.unreadOrders ?? 0;
   const unreadActivities = business.unreadActivities ?? 0;
+
+  const shareButton =
+    shareAction ??
+    (labels.share ? (
+      <ShareBusinessButton
+        businessId={business.id}
+        businessName={business.name}
+        description={business.description}
+        imageUrl={business.image}
+        url={`/store/${business.slug}`}
+        isOwner={true}
+        size="sm"
+        label={labels.share}
+        className="bg-surface/90 shadow-sm backdrop-blur-sm hover:bg-surface text-xs"
+      />
+    ) : null);
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-all duration-200 hover:border-border-strong hover:shadow-md">
@@ -227,14 +247,17 @@ export function BusinessOwnerCard({
             ) : null}
           </div>
 
-          <Link
-            href={withRemark(`/store/${business.slug}`, "dashboard")}
-            className="pointer-events-auto inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-surface/90 px-2.5 py-1 text-xs font-medium text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-surface hover:text-primary hover:border-primary-border"
-          >
-            <Store className="h-3 w-3" />
-            <span>{labels.viewStore}</span>
-            <ExternalLink className="h-2.5 w-2.5 opacity-70" />
-          </Link>
+          <div className="pointer-events-auto flex items-center gap-1.5">
+            {shareButton}
+            <Link
+              href={withRemark(`/store/${business.slug}`, "dashboard")}
+              className="pointer-events-auto inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-surface/90 px-2.5 py-1 text-xs font-medium text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-surface hover:text-primary hover:border-primary-border"
+            >
+              <Store className="h-3 w-3" />
+              <span>{labels.viewStore}</span>
+              <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+            </Link>
+          </div>
         </div>
       </div>
 
