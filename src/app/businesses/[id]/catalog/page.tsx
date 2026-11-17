@@ -1,17 +1,16 @@
 import { notFound } from "next/navigation";
-import { LayoutGrid } from "lucide-react";
 
 import { CatalogProductList, type CatalogRow } from "@/components/business/catalog-product-list";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/card";
 import { PageVideoButton } from "@/components/video";
-import { EmptyState } from "@/components/ui/empty-state";
 import { createProductAction, updateProductAction } from "@/app/actions/catalog";
 import { requireUser } from "@/lib/auth/guards";
-import { User } from "@/lib/models";
+import { readDetails, User } from "@/lib/models";
 import { getFormatters, getTranslator } from "@/lib/i18n-server";
 import {
   getBusinessForOwner,
+  getOwnerOnboardingStats,
   listAttachments,
   listProductCategories,
   listProductsForBusiness,
@@ -32,11 +31,14 @@ export default async function CatalogTabPage({
   const business = await getBusinessForOwner(id, user.id);
   if (!business) notFound();
 
-  const [products, categories, owner] = await Promise.all([
+  const [products, categories, owner, onboardingStats] = await Promise.all([
     listProductsForBusiness(id, { includeInactive: true }),
     listProductCategories(id),
     User.findById(business.owner).select("maxCatalogs").lean(),
+    getOwnerOnboardingStats(user.id, id),
   ]);
+
+  const details = readDetails(business.details);
 
   const attachmentsByProduct = await Promise.all(
     products.map(async (product) => {
@@ -100,17 +102,17 @@ export default async function CatalogTabPage({
         }
       />
 
-      {products.length === 0 ? (
-        <EmptyState
-          icon={<LayoutGrid className="h-8 w-8" />}
-          title={t("business.noProducts")}
-          description={t("business.noProductsHint")}
-        />
-      ) : null}
-
       <CatalogProductList
         businessId={id}
         businessName={business.name}
+        business={{
+          id,
+          name: business.name,
+          slug: business.slug,
+          image: business.image,
+          description: typeof details.description === "string" ? details.description : "",
+        }}
+        onboardingStats={onboardingStats}
         products={rows}
         categories={categories}
         createAction={createProductAction}

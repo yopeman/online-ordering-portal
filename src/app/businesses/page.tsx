@@ -1,14 +1,12 @@
-import { Store } from "lucide-react";
-
 import { CreateBusinessButton } from "@/components/business/create-business-button";
 import { BusinessOwnerCard } from "@/components/business/business-card";
 import { ShareBusinessButton } from "@/components/business/share-business-button";
+import { OnboardingGuidance } from "@/components/business/onboarding-guidance";
 import { PageVideoButton } from "@/components/video";
 import { PageHeader } from "@/components/ui/card";
-import { EmptyState } from "@/components/ui/empty-state";
 import { requireUser } from "@/lib/auth/guards";
 import { getFormatters, getTranslator } from "@/lib/i18n-server";
-import { listBusinessesForOwner } from "@/lib/queries";
+import { getOwnerOnboardingStats, listBusinessesForOwner } from "@/lib/queries";
 
 export const metadata = { title: "My businesses" };
 
@@ -17,7 +15,10 @@ export default async function BusinessesPage() {
   const t = await getTranslator();
   const { locale } = await getFormatters();
 
-  const businesses = await listBusinessesForOwner(user.id);
+  const [businesses, onboardingStats] = await Promise.all([
+    listBusinessesForOwner(user.id),
+    getOwnerOnboardingStats(user.id),
+  ]);
   const canCreate = businesses.length < user.maxBusinesses;
 
   const cardLabels = {
@@ -51,21 +52,25 @@ export default async function BusinessesPage() {
       />
 
       {businesses.length === 0 ? (
-        <EmptyState
-          icon={<Store className="h-8 w-8" />}
-          title={t("dashboard.empty")}
-          description={t("dashboard.emptyHint")}
-          action={
-            <CreateBusinessButton
-              canCreate={canCreate}
-              reachedLimit={!canCreate}
-              max={user.maxBusinesses}
-              label={t("dashboard.createAction")}
-            />
-          }
+        <OnboardingGuidance
+          stats={onboardingStats}
+          canCreateBusiness={canCreate}
+          maxBusinesses={user.maxBusinesses}
+          variant="hero"
         />
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <>
+          {onboardingStats.completedCount < onboardingStats.totalSteps ? (
+            <OnboardingGuidance
+              stats={onboardingStats}
+              business={businesses[0]}
+              canCreateBusiness={canCreate}
+              maxBusinesses={user.maxBusinesses}
+              variant="banner"
+            />
+          ) : null}
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {businesses.map((business) => (
             <BusinessOwnerCard
               key={business.id}
@@ -87,7 +92,8 @@ export default async function BusinessesPage() {
               }
             />
           ))}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

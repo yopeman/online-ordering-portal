@@ -19,6 +19,10 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  OnboardingGuidance,
+  type OnboardingBusinessInfo,
+} from "@/components/business/onboarding-guidance";
 import { ShareProductButton } from "@/components/business/share-product-button";
 import { withRemark } from "@/lib/remark";
 import { useApp } from "@/components/providers/app-provider";
@@ -27,7 +31,7 @@ import {
   ProductFormModal,
   type ProductFormValues,
 } from "@/components/business/product-form-modal";
-import type { ProductListItem } from "@/lib/queries";
+import type { OnboardingStats, ProductListItem } from "@/lib/queries";
 import type { ActionState } from "@/app/actions/businesses";
 
 export interface CatalogRow extends ProductListItem {
@@ -48,6 +52,8 @@ export type SubmitFn = (
 export function CatalogProductList({
   businessId,
   businessName,
+  business,
+  onboardingStats,
   products,
   categories = [],
   createAction,
@@ -56,6 +62,8 @@ export function CatalogProductList({
 }: {
   businessId: string;
   businessName?: string;
+  business?: OnboardingBusinessInfo;
+  onboardingStats?: OnboardingStats;
   products: CatalogRow[];
   categories?: string[];
   createAction: SubmitFn;
@@ -165,7 +173,39 @@ export function CatalogProductList({
         </p>
       ) : null}
 
-      {products.length === 0 ? null : viewMode === "grid" ? (
+      {products.length > 0 &&
+      onboardingStats &&
+      onboardingStats.completedCount < onboardingStats.totalSteps ? (
+        <OnboardingGuidance
+          variant="banner"
+          stats={onboardingStats}
+          business={
+            business || {
+              id: businessId,
+              name: businessName || "",
+              slug: "",
+            }
+          }
+          onAddProduct={openCreate}
+        />
+      ) : null}
+
+      {products.length === 0 ? (
+        onboardingStats ? (
+          <OnboardingGuidance
+            variant="hero"
+            stats={onboardingStats}
+            business={
+              business || {
+                id: businessId,
+                name: businessName || "",
+                slug: "",
+              }
+            }
+            onAddProduct={openCreate}
+          />
+        ) : null
+      ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => {
             const coverImage = product.files[0]?.url || product.image;

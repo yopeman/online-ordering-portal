@@ -704,3 +704,82 @@ export async function platformStats(): Promise<{
   ]);
   return { businesses, products, orders };
 }
+
+/* -------------------------------------------------------------------------- */
+/* Onboarding                                                                 */
+/* -------------------------------------------------------------------------- */
+
+export interface OnboardingStats {
+  hasAccount: boolean;
+  hasBusiness: boolean;
+  hasProducts: boolean;
+  hasShared: boolean;
+  hasOrders: boolean;
+  completedCount: number;
+  totalSteps: number;
+  percentage: number;
+}
+
+export async function getOwnerOnboardingStats(
+  ownerId: string,
+  businessId?: string,
+): Promise<OnboardingStats> {
+  await connectDB();
+
+  let businessIds: Types.ObjectId[] = [];
+  if (businessId && Types.ObjectId.isValid(businessId)) {
+    businessIds = [new Types.ObjectId(businessId)];
+  } else {
+    const businesses = await Business.find({ owner: ownerId }).select("_id").lean();
+    businessIds = businesses.map((b) => b._id as Types.ObjectId);
+  }
+
+  const hasAccount = true;
+  const hasBusiness = businessIds.length > 0;
+
+  if (!hasBusiness) {
+    return {
+      hasAccount,
+      hasBusiness: false,
+      hasProducts: false,
+      hasShared: false,
+      hasOrders: false,
+      completedCount: 1,
+      totalSteps: 5,
+      percentage: 20,
+    };
+  }
+
+  const [productExists, shareExists, orderExists] = await Promise.all([
+    Catalog.exists({ business: { $in: businessIds } }),
+    Activity.exists({
+      business: { $in: businessIds },
+      action: { $in: ["store.shared", "product.shared"] },
+    }),
+    Order.exists({ business: { $in: businessIds } }),
+  ]);
+
+  const hasProducts = Boolean(productExists);
+  const hasShared = Boolean(shareExists);
+  const hasOrders = Boolean(orderExists);
+
+  let completedCount = 1;
+  if (hasBusiness) completedCount++;
+  if (hasProducts) completedCount++;
+  if (hasShared) completedCount++;
+  if (hasOrders) completedCount++;
+
+  const totalSteps = 5;
+  const percentage = Math.round((completedCount / totalSteps) * 100);
+
+  return {
+    hasAccount,
+    hasBusiness,
+    hasProducts,
+    hasShared,
+    hasOrders,
+    completedCount,
+    totalSteps,
+    percentage,
+  };
+}
