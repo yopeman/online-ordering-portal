@@ -24,7 +24,7 @@
 
 ### Step 2: Set Up Your Business Profile
 - Head to **My Businesses** and create your store profile.
-- Choose your unique **store slug** (this will be your shareable URL, e.g., `yopeorder.com/store/your-shop`).
+- Choose your unique **store slug** (this will be your shareable URL, e.g., `ordershub.com/store/your-shop`).
 - Add your primary contact phone numbers and business description.
 
 ### Step 3: Build Your Product Catalog

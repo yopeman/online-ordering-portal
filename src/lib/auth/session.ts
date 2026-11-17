@@ -21,7 +21,7 @@ export interface SessionPayload {
 }
 
 function getSecret(): Uint8Array {
-  const secret = process.env.JWT_SECRET ?? "yope-order-development-secret";
+  const secret = process.env.JWT_SECRET ?? "orders-hub-development-secret";
   return new TextEncoder().encode(secret);
 }
 

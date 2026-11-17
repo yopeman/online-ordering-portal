@@ -55,7 +55,7 @@ export async function saveUpload(file: File): Promise<UploadedFile> {
     const result = await new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadStream = cld.uploader.upload_stream(
         {
-          folder: "yope-order",
+          folder: "orders-hub",
           resource_type: "auto",
         },
         (error: UploadApiErrorResponse | undefined, res: UploadApiResponse | undefined) => {
