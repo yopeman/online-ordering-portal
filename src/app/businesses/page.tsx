@@ -80,9 +80,9 @@ export default async function BusinessesPage() {
                   url={`/store/${business.slug}`}
                   imageUrl={business.image}
                   isOwner={true}
-                  size="sm"
-                  label={t("common.share")}
-                  className="bg-surface/90 shadow-sm backdrop-blur-sm hover:bg-surface text-xs"
+                  size="icon"
+                  label={''}
+                  className="h-8 w-8 !p-0"
                 />
               }
             />

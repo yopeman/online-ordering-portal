@@ -248,7 +248,6 @@ export function BusinessOwnerCard({
           </div>
 
           <div className="pointer-events-auto flex items-center gap-1.5">
-            {shareButton}
             <Link
               href={withRemark(`/store/${business.slug}`, "dashboard")}
               className="pointer-events-auto inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-surface/90 px-2.5 py-1 text-xs font-medium text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-surface hover:text-primary hover:border-primary-border"
@@ -338,6 +337,7 @@ export function BusinessOwnerCard({
         {/* Card Footer: Quick tab shortcuts & Primary Catalog/Manage button */}
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-3">
           <div className="flex items-center gap-1">
+            {shareButton}
             <Link
               href={`/businesses/${business.id}/orders`}
               title={labels.orders}
