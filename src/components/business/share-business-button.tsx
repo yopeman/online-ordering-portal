@@ -13,9 +13,10 @@ export interface ShareBusinessButtonProps {
   url?: string;
   imageUrl?: string;
   label?: string;
+  title?: string;
   copiedLabel?: string;
   variant?: "primary" | "secondary" | "ghost" | "subtle";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "icon";
   className?: string;
   type?: "business" | "product";
   productName?: string;
@@ -29,7 +30,8 @@ export function ShareBusinessButton({
   description = "",
   url,
   imageUrl,
-  label = "Share",
+  label,
+  title,
   variant = "secondary",
   size = "md",
   className = "",
@@ -41,6 +43,8 @@ export function ShareBusinessButton({
   const [open, setOpen] = useState(false);
 
   const isProduct = type === "product" || Boolean(productName);
+  const displayLabel = label ?? (size === "icon" ? undefined : "Share");
+  const accessibilityLabel = displayLabel || title || "Share";
 
   return (
     <>
@@ -54,10 +58,11 @@ export function ShareBusinessButton({
           setOpen(true);
         }}
         className={`gap-1.5 transition-all ${className}`}
-        aria-label={label}
+        aria-label={accessibilityLabel}
+        title={title || displayLabel}
       >
         <Share2 className="h-4 w-4 text-primary" />
-        <span>{label}</span>
+        {displayLabel ? <span>{displayLabel}</span> : null}
       </Button>
 
       <ShareModal

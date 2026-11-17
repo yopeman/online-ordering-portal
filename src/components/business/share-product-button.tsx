@@ -15,9 +15,10 @@ export interface ShareProductButtonProps {
   imageUrl?: string;
   url?: string;
   label?: string;
+  title?: string;
   copiedLabel?: string;
   variant?: "primary" | "secondary" | "ghost" | "subtle";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "icon";
   className?: string;
   isOwner?: boolean;
 }
@@ -30,13 +31,17 @@ export function ShareProductButton({
   priceFormatted,
   imageUrl,
   url,
-  label = "Share",
+  label,
+  title,
   variant = "secondary",
   size = "md",
   className = "",
   isOwner = false,
 }: ShareProductButtonProps) {
   const [open, setOpen] = useState(false);
+
+  const displayLabel = label ?? (size === "icon" ? undefined : "Share");
+  const accessibilityLabel = displayLabel || title || "Share";
 
   return (
     <>
@@ -50,10 +55,11 @@ export function ShareProductButton({
           setOpen(true);
         }}
         className={`gap-1.5 transition-all ${className}`}
-        aria-label={label}
+        aria-label={accessibilityLabel}
+        title={title || displayLabel}
       >
         <Share2 className="h-4 w-4 text-primary" />
-        <span>{label}</span>
+        {displayLabel ? <span>{displayLabel}</span> : null}
       </Button>
 
       <ShareModal

@@ -19,6 +19,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ShareProductButton } from "@/components/business/share-product-button";
 import { withRemark } from "@/lib/remark";
 import { useApp } from "@/components/providers/app-provider";
 import {
@@ -46,6 +47,7 @@ export type SubmitFn = (
 
 export function CatalogProductList({
   businessId,
+  businessName,
   products,
   categories = [],
   createAction,
@@ -53,6 +55,7 @@ export function CatalogProductList({
   limitReached,
 }: {
   businessId: string;
+  businessName?: string;
   products: CatalogRow[];
   categories?: string[];
   createAction: SubmitFn;
@@ -254,6 +257,19 @@ export function CatalogProductList({
 
                   {/* Actions Bar */}
                   <div className="mt-auto flex items-center justify-end gap-1.5 pt-4 border-t border-border/60">
+                    <ShareProductButton
+                      businessId={businessId}
+                      productName={product.name}
+                      businessName={product.businessName || businessName}
+                      description={product.description}
+                      priceFormatted={product.priceLabel}
+                      imageUrl={coverImage}
+                      url={`/products/${product.slug}`}
+                      isOwner={true}
+                      size="icon"
+                      title={t("common.shareProduct")}
+                      className="h-8 w-8 !p-0"
+                    />
                     <Link
                       href={withRemark(`/products/${product.slug}`, "dashboard")}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
@@ -344,6 +360,19 @@ export function CatalogProductList({
                   </div>
 
                   <div className="flex items-center gap-2">
+                    <ShareProductButton
+                      businessId={businessId}
+                      productName={product.name}
+                      businessName={product.businessName || businessName}
+                      description={product.description}
+                      priceFormatted={product.priceLabel}
+                      imageUrl={coverImage}
+                      url={`/products/${product.slug}`}
+                      isOwner={true}
+                      size="icon"
+                      title={t("common.shareProduct")}
+                      className="h-8 w-8 !p-0"
+                    />
                     <Link
                       href={withRemark(`/products/${product.slug}`, "dashboard")}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-surface-muted hover:text-foreground"

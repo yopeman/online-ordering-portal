@@ -110,6 +110,7 @@ export default async function CatalogTabPage({
 
       <CatalogProductList
         businessId={id}
+        businessName={business.name}
         products={rows}
         categories={categories}
         createAction={createProductAction}
